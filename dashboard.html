@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RCTC Envoys — My Exams</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header" id="siteHeader"></header>
+
+  <!-- MAIN -->
+  <main class="dashboard-main">
+
+    <!-- Welcome Banner -->
+    <div class="dashboard-welcome" id="welcomeBanner"></div>
+
+    <!-- Exam Grid -->
+    <p class="section-title">📚 Available Examinations</p>
+    <div class="exam-grid" id="examGrid"></div>
+
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // ---- AUTH CHECK ----
+    const matric = requireStudentAuth();
+    if (!matric) throw new Error('Not authenticated');
+
+    const studentName = STUDENTS[matric];
+    const completedCount = countCompletedExams(matric);
+    const totalExams = EXAMS.length;
+    const pendingCount = totalExams - completedCount;
+
+    // ---- HEADER ----
+    renderHeader(matric);
+
+    // ---- WELCOME BANNER ----
+    document.getElementById('welcomeBanner').innerHTML = `
+      <div class="welcome-text">
+        <h2>Welcome back, ${studentName}!</h2>
+        <p>Select an exam below to begin. Each exam is timed at 60 minutes.</p>
+      </div>
+      <div class="welcome-stats">
+        <div class="stat-pill"><strong>${totalExams}</strong>Total Exams</div>
+        <div class="stat-pill"><strong>${completedCount}</strong>Completed</div>
+        <div class="stat-pill"><strong>${pendingCount}</strong>Remaining</div>
+      </div>`;
+
+    // ---- BUILD EXAM CARDS ----
+    const grid  = document.getElementById('examGrid');
+    const locks = store.get('rctc_exam_locks') || {};
+
+    EXAMS.forEach(exam => {
+      const taken      = hasStudentTakenExam(matric, exam.id);
+      const examLocked = locks[exam.id] === true;
+      const card = document.createElement('div');
+      card.className = 'exam-card' + (taken ? ' completed' : '');
+
+      let footerHTML;
+      if (taken) {
+        const pct = Math.round((taken.score / taken.total) * 100);
+        const grade = getGrade(pct);
+        footerHTML = `
+          <div class="score-display">
+            <div class="score-pct">${pct}%</div>
+            <div class="score-label">${taken.score}/${taken.total} correct &mdash; <span class="${grade.cls}" style="font-weight:700">${grade.label}</span></div>
+          </div>
+          <button class="btn btn-outline btn-full btn-sm" disabled>&#10003; Completed</button>`;
+      } else if (examLocked) {
+        footerHTML = `
+          <button class="btn btn-full" style="background:#6c757d;color:#fff;cursor:not-allowed;opacity:0.85;" disabled>
+            &#128274; Locked by Admin
+          </button>`;
+      } else {
+        footerHTML = `
+          <button
+            class="btn btn-primary btn-full"
+            onclick="startExam(${exam.id})"
+          >&#9654; Start Exam</button>`;
+      }
+
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-icon">${exam.icon}</div>
+          <span class="card-code">${exam.code}</span>
+        </div>
+        <div class="card-title">${exam.title}</div>
+        <div class="card-meta">
+          <span class="badge badge-navy">&#9201; ${exam.duration} min</span>
+          <span class="badge badge-gray">&#128221; ${exam.questions.length} Questions</span>
+          ${taken
+            ? '<span class="badge badge-success">&#10003; Done</span>'
+            : (examLocked
+                ? '<span class="badge" style="background:#fdecea;color:#e74c3c;">&#128274; Locked</span>'
+                : '<span class="badge badge-warning">Pending</span>')}
+        </div>
+        <div class="card-footer">${footerHTML}</div>`;
+
+      grid.appendChild(card);
+    });
+
+    // ---- START EXAM ----
+    function startExam(examId) {
+      const currentLocks = store.get('rctc_exam_locks') || {};
+      if (currentLocks[examId] === true) {
+        alert('This exam is currently locked by the administrator. Please check the timetable and try again at the scheduled time.');
+        return;
+      }
+      clearExamProgress();
+      const startTime = Date.now();
+      saveExamProgress(examId, startTime, {});
+      window.location.href = `exam.html?id=${examId}`;
+    }
+  </script>
+</body>
+</html>
