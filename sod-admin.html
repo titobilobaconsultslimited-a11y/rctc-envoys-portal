@@ -175,6 +175,7 @@
           <p>Redeemed Christian Theology College — Envoys Campus, School of Discipleship</p>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button onclick="showSection('theory')" class="btn btn-navy btn-sm">✍️ Theory Results</button>
           <button onclick="downloadAllCSV()" class="btn btn-success">⬇ Download CSV</button>
           <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
         </div>
@@ -258,9 +259,113 @@
         </div>
       </div>
 
-      <!-- Clear all data -->
+      <!-- Clear all MCQ data -->
       <div style="margin-top:24px;text-align:right;">
-        <button onclick="clearAllData()" class="clear-data-btn">🗑 Clear All SOD Exam Data</button>
+        <button onclick="clearAllData()" class="clear-data-btn">🗑 Clear All MCQ Exam Data</button>
+      </div>
+
+    </main>
+  </div>
+
+
+  <!-- ============================================================ -->
+  <!-- THEORY DASHBOARD (shown after admin login, same session)     -->
+  <!-- ============================================================ -->
+  <div id="theoryDashSection" class="hidden">
+    <main class="admin-main">
+
+      <div class="admin-header-bar">
+        <div>
+          <h2>✍️ SOD Theory Results Dashboard</h2>
+          <p>Redeemed Christian Theology College — Envoys Campus, School of Discipleship</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button onclick="showSection('mcq')" class="btn btn-outline btn-sm">&#8592; MCQ Results</button>
+          <button onclick="downloadAllTheoryCSV()" class="btn btn-success">&#8595; Download CSV</button>
+          <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
+        </div>
+      </div>
+
+      <!-- Theory Stats -->
+      <div class="stats-grid" id="theoryStatsGrid"></div>
+
+      <!-- Theory Lock Panel -->
+      <div class="exam-lock-section">
+        <div class="exam-lock-header" onclick="toggleTheoryLockSection()">
+          <div>
+            <h3>&#128197; Theory Exam Timetable Control</h3>
+            <div class="exam-lock-summary" id="theoryLockSummary">Loading&hellip;</div>
+          </div>
+          <div class="exam-lock-bulk">
+            <button class="btn-lock-bulk" onclick="event.stopPropagation();unlockAllTheoryExams()">&#128275; Open All</button>
+            <button class="btn-lock-bulk bulk-danger" onclick="event.stopPropagation();lockAllTheoryExams()">&#128274; Lock All</button>
+            <span class="lock-chevron" id="theoryLockChevron">&#9650;</span>
+          </div>
+        </div>
+        <div class="exam-lock-body" id="theoryExamLockBody"></div>
+      </div>
+
+      <!-- Filters -->
+      <div class="admin-toolbar">
+        <div class="form-group">
+          <label for="tFilterExam">Filter by Exam</label>
+          <select id="tFilterExam" onchange="applyTheoryFilters()">
+            <option value="">All Theory Exams</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tFilterMatric">Filter by Matric No.</label>
+          <input type="text" id="tFilterMatric" placeholder="e.g. SOD202670646" oninput="applyTheoryFilters()">
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:8px;">
+          <button onclick="clearTheoryFilters()" class="btn btn-outline btn-sm">Clear Filters</button>
+          <button onclick="downloadFilteredTheoryCSV()" class="btn btn-navy btn-sm">&#8595; Export Filtered</button>
+        </div>
+      </div>
+
+      <!-- Theory Results Table -->
+      <div class="results-table-wrap">
+        <div class="table-header">
+          <h3 id="theoryTableTitle">All Theory Results</h3>
+          <span id="theoryTableCount" class="badge badge-navy">0 records</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="results-table" id="theoryResultsTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Matric No.</th>
+                <th>Student Name</th>
+                <th>Exam</th>
+                <th>Score</th>
+                <th>%</th>
+                <th>Result</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>View</th>
+              </tr>
+            </thead>
+            <tbody id="theoryResultsBody"></tbody>
+          </table>
+        </div>
+        <div id="theoryNoResults" class="no-results hidden">
+          <div class="no-icon">&#128205;</div>
+          <p>No theory results found.</p>
+        </div>
+      </div>
+
+      <!-- Answer View Panel -->
+      <div id="theoryAnswerPanel" class="hidden" style="margin-top:24px;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+        <div style="background:var(--navy);color:#fff;padding:13px 18px;display:flex;justify-content:space-between;align-items:center;">
+          <h3 style="font-size:0.92rem;margin:0;color:#fff;" id="answerPanelTitle">Student Answers</h3>
+          <button onclick="document.getElementById('theoryAnswerPanel').classList.add('hidden')" style="background:transparent;border:none;color:#fff;cursor:pointer;font-size:1.1rem;">&#10005;</button>
+        </div>
+        <div id="answerPanelBody" style="padding:18px;"></div>
+      </div>
+
+      <!-- Clear theory data -->
+      <div style="margin-top:24px;text-align:right;">
+        <button onclick="clearAllTheoryData()" class="clear-data-btn">🗑 Clear All Theory Data</button>
       </div>
 
     </main>
@@ -297,6 +402,18 @@
     </div>
   </div>
 
+  <!-- CLEAR THEORY DATA CONFIRM MODAL -->
+  <div class="modal-overlay hidden" id="clearTheoryModal">
+    <div class="modal">
+      <h3>⚠️ Clear All Theory Data?</h3>
+      <p>This will permanently delete ALL theory exam results. This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button onclick="document.getElementById('clearTheoryModal').classList.add('hidden')" class="btn btn-outline">Cancel</button>
+        <button onclick="confirmClearAllTheory()" class="btn btn-danger">Yes, Delete All</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/data.js"></script>
   <script src="js/supabase-client.js"></script>
@@ -319,6 +436,13 @@
           </div>
         </div>
       </div>`;
+
+    // ---- SECTION SWITCHER ----
+    function showSection(which) {
+      document.getElementById('adminDashSection').classList.toggle('hidden', which !== 'mcq');
+      document.getElementById('theoryDashSection').classList.toggle('hidden', which !== 'theory');
+      if (which === 'theory') initTheoryDashboard();
+    }
 
     if (store.sessionGet('rctc_admin')) {
       showAdminDashboard();
@@ -622,6 +746,208 @@
       renderStats();
       document.getElementById('clearModal').classList.add('hidden');
       document.getElementById('tableCount').textContent = '0 records';
+    }
+
+    // ============================================================
+    // THEORY DASHBOARD LOGIC
+    // ============================================================
+    let allTheoryResults      = [];
+    let filteredTheoryResults = [];
+
+    async function initTheoryDashboard() {
+      allTheoryResults = await dbGetAllSodTheoryResults();
+      allTheoryResults.sort((a, b) => b.dateTaken - a.dateTaken);
+      populateTheoryExamFilter();
+      applyTheoryFilters();
+      renderTheoryStats();
+      renderTheoryLockSection();
+    }
+
+    // ---- Theory Lock Panel ----
+    function toggleTheoryLockSection() {
+      const body    = document.getElementById('theoryExamLockBody');
+      const chevron = document.getElementById('theoryLockChevron');
+      const hiding  = !body.classList.toggle('hidden');
+      chevron.innerHTML = hiding ? '&#9660;' : '&#9650;';
+    }
+
+    async function renderTheoryLockSection() {
+      const locks       = await dbGetSodTheoryLocks();
+      const lockedCount = SOD_THEORY_EXAMS.filter(e => locks[e.id] === true).length;
+      const openCount   = SOD_THEORY_EXAMS.length - lockedCount;
+      document.getElementById('theoryLockSummary').textContent =
+        openCount + ' Open  \u2022  ' + lockedCount + ' Locked';
+
+      document.getElementById('theoryExamLockBody').innerHTML = SOD_THEORY_EXAMS.map((exam, idx) => {
+        const lk = locks[exam.id] === true;
+        return `
+          <div class="exam-lock-row ${lk ? 'row-locked' : ''}">
+            <span class="elr-num">${idx + 1}</span>
+            <span class="elr-icon">${exam.icon}</span>
+            <span class="elr-code">${exam.code}</span>
+            <span class="elr-title">${exam.title}</span>
+            <span class="elr-status ${lk ? 'st-locked' : 'st-open'}">${lk ? '&#128274; Locked' : '&#128275; Open'}</span>
+            <button class="btn-exam-tog ${lk ? 'do-unlock' : 'do-lock'}" onclick="toggleSingleTheoryLock(${exam.id})">
+              ${lk ? 'Unlock' : 'Lock'}
+            </button>
+          </div>`;
+      }).join('');
+    }
+
+    async function toggleSingleTheoryLock(examId) {
+      const locks = await dbGetSodTheoryLocks();
+      await dbSetSodTheoryLock(examId, !locks[examId]);
+      renderTheoryLockSection();
+    }
+
+    async function lockAllTheoryExams() {
+      await dbSetAllSodTheoryLocks(SOD_THEORY_EXAMS.map(e => e.id), true);
+      renderTheoryLockSection();
+    }
+
+    async function unlockAllTheoryExams() {
+      await dbSetAllSodTheoryLocks(SOD_THEORY_EXAMS.map(e => e.id), false);
+      renderTheoryLockSection();
+    }
+
+    // ---- Theory Stats ----
+    function renderTheoryStats() {
+      const total     = allTheoryResults.length;
+      const students  = new Set(allTheoryResults.map(r => r.matric)).size;
+      const avgPct    = total ? Math.round(allTheoryResults.reduce((s, r) => s + r.percentage, 0) / total) : 0;
+      const passCount = allTheoryResults.filter(r => r.percentage >= 50).length;
+      document.getElementById('theoryStatsGrid').innerHTML = `
+        <div class="stat-card navy"><div class="stat-num">${total}</div><div class="stat-lbl">Total Attempts</div></div>
+        <div class="stat-card gold"><div class="stat-num">${students}</div><div class="stat-lbl">Students Tested</div></div>
+        <div class="stat-card green"><div class="stat-num">${passCount}</div><div class="stat-lbl">Passes (\u226550%)</div></div>
+        <div class="stat-card orange"><div class="stat-num">${avgPct}%</div><div class="stat-lbl">Avg. Score</div></div>`;
+    }
+
+    // ---- Theory Filter ----
+    function populateTheoryExamFilter() {
+      const sel     = document.getElementById('tFilterExam');
+      const examIds = [...new Set(allTheoryResults.map(r => r.examId))].sort((a, b) => a - b);
+      examIds.forEach(id => {
+        const r = allTheoryResults.find(x => x.examId === id);
+        if (r) {
+          const opt = document.createElement('option');
+          opt.value = id;
+          opt.textContent = r.examCode + ' \u2014 ' + r.examTitle;
+          sel.appendChild(opt);
+        }
+      });
+    }
+
+    function applyTheoryFilters() {
+      const examFilter   = document.getElementById('tFilterExam').value;
+      const matricFilter = document.getElementById('tFilterMatric').value.trim().toUpperCase();
+      filteredTheoryResults = allTheoryResults.filter(r => {
+        if (examFilter   && r.examId !== parseInt(examFilter, 10)) return false;
+        if (matricFilter && !r.matric.includes(matricFilter))      return false;
+        return true;
+      });
+      renderTheoryTable(filteredTheoryResults);
+      document.getElementById('theoryTableCount').textContent =
+        filteredTheoryResults.length + ' record' + (filteredTheoryResults.length !== 1 ? 's' : '');
+    }
+
+    function clearTheoryFilters() {
+      document.getElementById('tFilterExam').value   = '';
+      document.getElementById('tFilterMatric').value = '';
+      applyTheoryFilters();
+    }
+
+    // ---- Theory Table ----
+    function renderTheoryTable(rows) {
+      const tbody = document.getElementById('theoryResultsBody');
+      const noEl  = document.getElementById('theoryNoResults');
+      if (!rows.length) {
+        tbody.innerHTML = '';
+        noEl.classList.remove('hidden');
+        return;
+      }
+      noEl.classList.add('hidden');
+      tbody.innerHTML = rows.map((r, idx) => {
+        const grade = getGrade(r.percentage);
+        const scCls = getScoreClass(r.percentage);
+        return `
+          <tr>
+            <td><span class="rank-num">${idx + 1}</span></td>
+            <td><code style="font-size:0.8rem;font-weight:600;">${r.matric}</code></td>
+            <td>${r.name || '\u2014'}</td>
+            <td><span class="badge badge-navy">${r.examCode}</span></td>
+            <td style="font-weight:700;">${r.score}/${r.total}</td>
+            <td><span class="score-cell ${scCls}">${r.percentage}%</span></td>
+            <td><span class="badge ${grade.cls}">${grade.label}</span></td>
+            <td style="white-space:nowrap;font-size:0.8rem;">${formatDate(r.dateTaken)}</td>
+            <td style="white-space:nowrap;font-size:0.8rem;">${formatTime(r.dateTaken)}</td>
+            <td><button class="btn btn-outline btn-sm" onclick="viewAnswers(${idx})">View</button></td>
+          </tr>`;
+      }).join('');
+    }
+
+    function viewAnswers(rowIdx) {
+      const r       = filteredTheoryResults[rowIdx];
+      const answers = r.answers || [];
+      document.getElementById('answerPanelTitle').textContent =
+        r.matric + (r.name ? '  \u2014  ' + r.name : '') + '  |  ' + r.examTitle;
+      document.getElementById('answerPanelBody').innerHTML = answers.length
+        ? answers.map((a, i) => `
+          <div style="margin-bottom:20px;padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);">
+            <div style="font-weight:700;color:var(--navy);margin-bottom:8px;">Q${i+1}. ${a.question}</div>
+            <div style="background:#f8f9fa;border-radius:6px;padding:10px 14px;font-size:0.88rem;line-height:1.6;white-space:pre-wrap;">${a.studentAnswer || '<em style="color:var(--gray);">No answer provided</em>'}</div>
+            <div style="margin-top:8px;font-size:0.78rem;color:var(--gray);">
+              Marks: <strong>${a.marksEarned}/${a.totalMarks}</strong>
+              &nbsp;&nbsp;Keywords matched: <strong>${(a.matchedKeywords || []).join(', ') || 'none'}</strong>
+            </div>
+          </div>`).join('')
+        : '<p style="color:var(--gray);">No answer data available.</p>';
+      document.getElementById('theoryAnswerPanel').classList.remove('hidden');
+      document.getElementById('theoryAnswerPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ---- Theory CSV ----
+    function downloadAllTheoryCSV() {
+      if (!allTheoryResults.length) { alert('No theory results to export.'); return; }
+      downloadCSV(
+        'RCTC_SOD_Theory_All_' + new Date().toISOString().slice(0,10) + '.csv',
+        allTheoryResults.map(r => ({
+          matric: r.matric, name: r.name || '', examCode: r.examCode, examTitle: r.examTitle,
+          score: r.score, total: r.total, percentage: r.percentage + '%',
+          dateTaken: formatDate(r.dateTaken) + ' ' + formatTime(r.dateTaken)
+        })),
+        ['matric','name','examCode','examTitle','score','total','percentage','dateTaken']
+      );
+    }
+
+    function downloadFilteredTheoryCSV() {
+      if (!filteredTheoryResults.length) { alert('No results to export.'); return; }
+      downloadCSV(
+        'RCTC_SOD_Theory_Filtered_' + new Date().toISOString().slice(0,10) + '.csv',
+        filteredTheoryResults.map(r => ({
+          matric: r.matric, name: r.name || '', examCode: r.examCode, examTitle: r.examTitle,
+          score: r.score, total: r.total, percentage: r.percentage + '%',
+          dateTaken: formatDate(r.dateTaken) + ' ' + formatTime(r.dateTaken)
+        })),
+        ['matric','name','examCode','examTitle','score','total','percentage','dateTaken']
+      );
+    }
+
+    // ---- Clear Theory ----
+    function clearAllTheoryData() {
+      document.getElementById('clearTheoryModal').classList.remove('hidden');
+    }
+
+    async function confirmClearAllTheory() {
+      await dbClearAllSodTheoryResults();
+      allTheoryResults      = [];
+      filteredTheoryResults = [];
+      document.getElementById('tFilterExam').innerHTML = '<option value="">All Theory Exams</option>';
+      renderTheoryTable([]);
+      renderTheoryStats();
+      document.getElementById('clearTheoryModal').classList.add('hidden');
+      document.getElementById('theoryTableCount').textContent = '0 records';
+      document.getElementById('theoryAnswerPanel').classList.add('hidden');
     }
   </script>
 </body>

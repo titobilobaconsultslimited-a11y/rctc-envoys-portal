@@ -661,8 +661,23 @@ const SOD_EXAMS = [
     title: "Year 1",
     icon: "📖",
     duration: 60,
+    theoryDuration: 45,
     questions: [
       { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ],
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
     ]
   },
 
@@ -673,8 +688,23 @@ const SOD_EXAMS = [
     title: "Year 2",
     icon: "📖",
     duration: 60,
+    theoryDuration: 45,
     questions: [
       { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ],
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
     ]
   },
 
@@ -685,8 +715,23 @@ const SOD_EXAMS = [
     title: "Year 3",
     icon: "📖",
     duration: 60,
+    theoryDuration: 45,
     questions: [
       { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ],
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
     ]
   },
 
@@ -697,8 +742,23 @@ const SOD_EXAMS = [
     title: "Year 4",
     icon: "📖",
     duration: 60,
+    theoryDuration: 45,
     questions: [
       { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ],
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
     ]
   },
 
@@ -709,8 +769,23 @@ const SOD_EXAMS = [
     title: "Year 5",
     icon: "📖",
     duration: 60,
+    theoryDuration: 45,
     questions: [
       { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ],
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
     ]
   },
 
@@ -721,8 +796,23 @@ const SOD_EXAMS = [
     title: "Year 6",
     icon: "📖",
     duration: 60,
+    theoryDuration: 45,
     questions: [
       { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ],
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
     ]
   },
 
@@ -733,8 +823,23 @@ const SOD_EXAMS = [
     title: "Year 7",
     icon: "📖",
     duration: 60,
+    theoryDuration: 45,
     questions: [
       { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ],
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
     ]
   },
 
@@ -745,8 +850,23 @@ const SOD_EXAMS = [
     title: "Year 8",
     icon: "📖",
     duration: 60,
+    theoryDuration: 45,
     questions: [
       { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ],
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
     ]
   },
 
@@ -757,8 +877,23 @@ const SOD_EXAMS = [
     title: "Year 9",
     icon: "📖",
     duration: 60,
+    theoryDuration: 45,
     questions: [
       { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ],
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
     ]
   },
 
@@ -769,9 +904,104 @@ const SOD_EXAMS = [
     title: "Year 10",
     icon: "📖",
     duration: 60,
+    theoryDuration: 45,
     questions: [
       { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ],
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
     ]
   },
+
+];
+
+// ============================================================
+// SOD THEORY EXAMS
+// Three grouped theory cards on the student dashboard.
+// Add actual questions by replacing the placeholders below.
+// keywords: words the student's answer must contain to earn marks.
+// marks: total marks available for that question.
+// ============================================================
+const SOD_THEORY_EXAMS = [
+
+  // 1. YEAR 1-3 THEORY
+  {
+    id: 1,
+    code: "THEORY Y1-3",
+    title: "Year 1\u20133 Theory",
+    icon: "\u270D\uFE0F",
+    duration: 45,
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
+    ]
+  },
+
+  // 2. YEAR 4-6 THEORY
+  {
+    id: 2,
+    code: "THEORY Y4-6",
+    title: "Year 4\u20136 Theory",
+    icon: "\u270D\uFE0F",
+    duration: 45,
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
+    ]
+  },
+
+  // 3. YEAR 7-10 THEORY
+  {
+    id: 3,
+    code: "THEORY Y7-10",
+    title: "Year 7\u201310 Theory",
+    icon: "\u270D\uFE0F",
+    duration: 45,
+    theoryQuestions: [
+      {
+        id: 1,
+        question: "Placeholder theory question 1. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      },
+      {
+        id: 2,
+        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        marks: 10,
+        keywords: ["keyword1", "keyword2", "keyword3"]
+      }
+    ]
+  }
 
 ];

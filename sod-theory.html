@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RCTC SOD — Theory Examination</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .theory-answer {
+      width: 100%;
+      min-height: 160px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      resize: vertical;
+      transition: border-color 0.2s, background 0.2s;
+      background: #fff;
+    }
+    .theory-answer:focus {
+      outline: none;
+      border-color: var(--navy);
+    }
+    .theory-answer.answered {
+      border-color: var(--success);
+      background: var(--success-light);
+    }
+    .theory-q-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .q-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+    }
+    .q-dot.answered     { background: var(--success);    border-color: var(--success);    color: #fff; }
+    .q-dot.active       { background: var(--navy);       border-color: var(--navy);       color: #fff; }
+    .q-dot.answered.active { background: var(--navy);   border-color: var(--navy);       color: #fff; }
+    .word-count { font-size: 0.74rem; color: var(--gray); text-align: right; margin-top: 5px; }
+    .marks-badge {
+      display: inline-block;
+      background: var(--gold-pale);
+      color: var(--navy);
+      border: 1px solid var(--gold);
+      border-radius: 20px;
+      padding: 2px 11px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header" id="siteHeader"></header>
+
+  <!-- EXAM MAIN -->
+  <main class="exam-main" id="examMain">
+    <p style="text-align:center;padding:40px;color:var(--gray);">Loading theory exam...</p>
+  </main>
+
+  <!-- SUBMIT CONFIRMATION MODAL -->
+  <div class="modal-overlay hidden" id="submitModal">
+    <div class="modal">
+      <h3>⚠️ Submit Theory Answers?</h3>
+      <p id="submitModalMsg">Are you sure you want to submit? You cannot go back after submitting.</p>
+      <div class="modal-actions">
+        <button onclick="closeSubmitModal()" class="btn btn-outline">Cancel</button>
+        <button onclick="confirmSubmit()" class="btn btn-primary">Submit Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT MODAL -->
+  <div class="modal-overlay hidden" id="resultModal">
+    <div class="modal">
+      <h3>✅ Theory Section Complete!</h3>
+      <div class="result-score-big" id="resultContent"></div>
+      <p id="resultSubTitle" style="text-align:center;font-size:0.85rem;color:var(--gray);margin-bottom:20px;"></p>
+      <div class="modal-actions" style="justify-content:center;">
+        <button onclick="goToDashboard()" class="btn btn-primary btn-lg">Back to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/data.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // ============================================================
+    // SOD THEORY EXAM PAGE
+    // ============================================================
+
+    // ---- AUTH ----
+    const matric = requireSodStudentAuth();
+    if (!matric) throw new Error('Not authenticated');
+    renderSodHeader(matric);
+
+    // ---- SHARED STATE ----
+    let exam, questions, totalQ, DURATION_SECS, startTime;
+    let answers       = {};
+    let currentQ      = 0;
+    let timerInterval = null;
+    let submitted     = false;
+
+    // ---- INIT ----
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const examId = parseInt(params.get('id'), 10);
+      exam = SOD_THEORY_EXAMS.find(e => e.id === examId);
+
+      if (!exam) {
+        document.getElementById('examMain').innerHTML = `
+          <div style="text-align:center;padding:60px 20px;">
+            <div style="font-size:3rem;">❌</div>
+            <h3 style="color:var(--navy);margin-bottom:12px;">Theory exam not found.</h3>
+            <button onclick="goToDashboard()" class="btn btn-primary" style="margin-top:8px;">Back to Dashboard</button>
+          </div>`;
+        return;
+      }
+
+      // Check lock
+      const locks = await dbGetSodTheoryLocks();
+      if (locks[examId] === true) {
+        document.getElementById('examMain').innerHTML = `
+          <div style="text-align:center;padding:60px 20px;">
+            <div style="font-size:3rem;">🔒</div>
+            <h2 style="color:var(--navy);margin-bottom:8px;">Theory Exam Locked</h2>
+            <p style="color:var(--gray);">This theory exam is currently locked by the administrator.</p>
+            <button onclick="goToDashboard()" class="btn btn-primary" style="margin-top:20px;">Back to Dashboard</button>
+          </div>`;
+        return;
+      }
+
+      // Check already submitted
+      const existing = await dbHasSodStudentTakenTheory(matric, examId);
+      if (existing) {
+        const pct   = existing.percentage;
+        const grade = getGrade(pct);
+        document.getElementById('examMain').innerHTML = `
+          <div style="text-align:center;padding:60px 20px;">
+            <div style="font-size:3rem;">✅</div>
+            <h2 style="color:var(--navy);margin-bottom:8px;">Already Submitted</h2>
+            <p style="color:var(--gray);margin-bottom:20px;">You have already completed this theory section.</p>
+            <div style="max-width:220px;margin:0 auto 20px;" class="login-card">
+              <div class="big-pct" style="font-size:2.5rem;font-weight:900;color:var(--navy);">${pct}%</div>
+              <div style="color:var(--gray);font-size:0.88rem;margin-top:6px;">${existing.score}/${existing.total} marks</div>
+              <div class="grade-tag ${grade.cls}" style="margin:10px auto 0;">${grade.label}</div>
+            </div>
+            <button onclick="goToDashboard()" class="btn btn-primary">Back to Dashboard</button>
+          </div>`;
+        return;
+      }
+
+      // Setup
+      questions     = exam.theoryQuestions;
+      totalQ        = questions.length;
+      DURATION_SECS = (exam.duration || 45) * 60;
+      startTime     = Date.now();
+      questions.forEach((_, i) => { answers[i] = ''; });
+
+      buildUI();
+      renderQuestion(0);
+      startTimer();
+    })();
+
+    // ---- BUILD PAGE SKELETON ----
+    function buildUI() {
+      document.getElementById('examMain').innerHTML = `
+        <div class="exam-topbar">
+          <div class="exam-info">
+            <div class="exam-code-badge">${exam.code}</div>
+            <h2>${exam.title}</h2>
+          </div>
+          <div class="timer-box" id="timerBox">
+            <span class="timer-icon">⏱</span>
+            <span id="timerDisplay">--:--</span>
+          </div>
+        </div>
+        <div class="question-container">
+          <div class="theory-q-nav" id="qNav"></div>
+          <div id="questionArea"></div>
+        </div>
+        <div class="exam-nav">
+          <button class="btn btn-outline" onclick="prevQ()" id="btnPrev">&#9664; Prev</button>
+          <button class="btn btn-primary" onclick="openSubmitModal()" id="btnSubmit" style="margin-left:auto;">Submit Theory &#10003;</button>
+          <button class="btn btn-primary" onclick="nextQ()" id="btnNext">Next &#9654;</button>
+        </div>`;
+      renderQNav();
+    }
+
+    // ---- QUESTION NAV DOTS ----
+    function renderQNav() {
+      const nav = document.getElementById('qNav');
+      if (!nav) return;
+      nav.innerHTML = questions.map((_, i) => {
+        let cls = 'q-dot';
+        if (i === currentQ)                       cls += ' active';
+        else if (answers[i] && answers[i].trim()) cls += ' answered';
+        return `<div class="${cls}" onclick="jumpQ(${i})">${i + 1}</div>`;
+      }).join('');
+    }
+
+    // ---- RENDER ONE QUESTION ----
+    function renderQuestion(idx) {
+      currentQ = idx;
+      const q  = questions[idx];
+
+      document.getElementById('questionArea').innerHTML = `
+        <div class="question-header">
+          <span class="question-num">Question ${idx + 1} of ${totalQ}</span>
+          <span class="marks-badge">${q.marks} mark${q.marks !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="question-text" style="margin-bottom:16px;">${q.question}</div>
+        <textarea
+          class="theory-answer${answers[idx] && answers[idx].trim() ? ' answered' : ''}"
+          id="answerBox_${idx}"
+          placeholder="Type your answer here..."
+          oninput="saveAnswer(${idx})"
+        >${escapeHtml(answers[idx] || '')}</textarea>
+        <div class="word-count" id="wordCount_${idx}">${wordCount(answers[idx])} words</div>`;
+
+      document.getElementById('btnPrev').disabled = idx === 0;
+      document.getElementById('btnNext').disabled = idx === totalQ - 1;
+      renderQNav();
+
+      // Focus textarea
+      const box = document.getElementById('answerBox_' + idx);
+      if (box) box.focus();
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ---- SAVE ANSWER ON TYPING ----
+    function saveAnswer(idx) {
+      const box = document.getElementById('answerBox_' + idx);
+      if (!box) return;
+      answers[idx] = box.value;
+      const wc = document.getElementById('wordCount_' + idx);
+      if (wc) wc.textContent = wordCount(answers[idx]) + ' words';
+      box.className = 'theory-answer' + (answers[idx].trim() ? ' answered' : '');
+      renderQNav();
+    }
+
+    function wordCount(text) {
+      if (!text || !text.trim()) return 0;
+      return text.trim().split(/\s+/).length;
+    }
+
+    // ---- NAVIGATION ----
+    function prevQ() { if (currentQ > 0)           renderQuestion(currentQ - 1); }
+    function nextQ() { if (currentQ < totalQ - 1)  renderQuestion(currentQ + 1); }
+    function jumpQ(idx) { renderQuestion(idx); }
+
+    // ---- TIMER ----
+    function startTimer() {
+      updateTimerDisplay(DURATION_SECS);
+      timerInterval = setInterval(() => {
+        const elapsed   = Math.floor((Date.now() - startTime) / 1000);
+        const remaining = DURATION_SECS - elapsed;
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          if (!submitted) { submitted = true; autoSubmit(); }
+        } else {
+          updateTimerDisplay(remaining);
+          if (remaining <= 300) {
+            const tb = document.getElementById('timerBox');
+            if (tb) tb.classList.add('timer-warning');
+          }
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay(secs) {
+      const m  = String(Math.floor(secs / 60)).padStart(2, '0');
+      const s  = String(secs % 60).padStart(2, '0');
+      const el = document.getElementById('timerDisplay');
+      if (el) el.textContent = `${m}:${s}`;
+    }
+
+    function autoSubmit() { submitExam(true); }
+
+    // ---- SUBMIT MODAL ----
+    function openSubmitModal() {
+      const unanswered = Object.values(answers).filter(a => !a || !a.trim()).length;
+      document.getElementById('submitModalMsg').textContent = unanswered > 0
+        ? `You have ${unanswered} unanswered question(s). They will receive 0 marks. Are you sure you want to submit?`
+        : 'You have answered all questions. Are you sure you want to submit?';
+      document.getElementById('submitModal').classList.remove('hidden');
+    }
+
+    function closeSubmitModal() {
+      document.getElementById('submitModal').classList.add('hidden');
+    }
+
+    function confirmSubmit() {
+      closeSubmitModal();
+      submitted = true;
+      clearInterval(timerInterval);
+      submitExam(false);
+    }
+
+    // ---- GRADE & SAVE ----
+    async function submitExam(timedOut) {
+      let totalScore    = 0;
+      let totalPossible = 0;
+      const answersPayload = [];
+
+      questions.forEach((q, idx) => {
+        const studentAnswer    = (answers[idx] || '').toLowerCase();
+        const matchedKeywords  = q.keywords.filter(kw => studentAnswer.includes(kw.toLowerCase()));
+        const marksEarned      = q.keywords.length > 0
+          ? Math.round((matchedKeywords.length / q.keywords.length) * q.marks)
+          : 0;
+        totalScore    += marksEarned;
+        totalPossible += q.marks;
+        answersPayload.push({
+          questionId:     q.id,
+          question:       q.question,
+          studentAnswer:  answers[idx] || '',
+          marksEarned,
+          totalMarks:     q.marks,
+          matchedKeywords
+        });
+      });
+
+      const pct   = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
+      const grade = getGrade(pct);
+      const now   = Date.now();
+
+      await dbSaveSodTheoryResult({
+        matric,
+        name:       SOD_STUDENTS[matric],
+        examId:     exam.id,
+        examCode:   exam.code,
+        examTitle:  exam.title,
+        answers:    answersPayload,
+        score:      totalScore,
+        total:      totalPossible,
+        percentage: pct,
+        dateTaken:  now
+      });
+
+      document.getElementById('resultContent').innerHTML = `
+        <div class="big-pct">${pct}%</div>
+        <div class="big-raw">${totalScore} out of ${totalPossible} marks</div>
+        <div class="grade-tag ${grade.cls}">${grade.label}</div>`;
+
+      document.getElementById('resultSubTitle').textContent = timedOut
+        ? 'Time expired — your answers have been automatically submitted.'
+        : `${exam.title} — submitted successfully.`;
+
+      document.getElementById('resultModal').classList.remove('hidden');
+      const btnSubmit = document.getElementById('btnSubmit');
+      if (btnSubmit) btnSubmit.disabled = true;
+    }
+
+    function goToDashboard() {
+      window.location.href = 'sod-dashboard.html';
+    }
+  </script>
+
+</body>
+</html>
