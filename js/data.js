@@ -636,6 +636,7 @@ const SOD_STUDENTS = {
   "SOD202640513": "Oluwapamilerin Olajide",
   "SOD202666276": "Nwasor Maureen kaobimdi",
   "SOD202683646": "Abiodun Adesanya",
+  "SOD202683439": "Peace Igbinosa",
 };
 
 // ---- SOD EXAM DATA ----
