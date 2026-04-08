@@ -941,20 +941,157 @@ const SOD_THEORY_EXAMS = [
     code: "THEORY Y1-3",
     title: "Year 1\u20133 Theory",
     icon: "\u270D\uFE0F",
-    duration: 45,
+    duration: 90,
     theoryQuestions: [
+
+      // ---- SECTION A (3 marks each) ----
       {
         id: 1,
-        question: "Placeholder theory question 1. (Replace with your actual question.)",
-        marks: 10,
-        keywords: ["keyword1", "keyword2", "keyword3"]
+        question: "SECTION A — Q1 (3 marks): What is the first thing you need to know about yourself?",
+        marks: 3,
+        keywords: ["important", "god"]
       },
       {
         id: 2,
-        question: "Placeholder theory question 2. (Replace with your actual question.)",
+        question: "SECTION A — Q2 (3 marks): Five will chase how many?",
+        marks: 3,
+        keywords: ["ten million", "10,000,000"]
+      },
+      {
+        id: 3,
+        question: "SECTION A — Q3 (3 marks): What is the one condition for certain victory?",
+        marks: 3,
+        keywords: ["obedience"]
+      },
+      {
+        id: 4,
+        question: "SECTION A — Q4 (3 marks): What weapon does Satan use to weigh us down?",
+        marks: 3,
+        keywords: ["fear"]
+      },
+      {
+        id: 5,
+        question: "SECTION A — Q5 (3 marks): Who is a disciple?",
+        marks: 3,
+        keywords: ["disciplined", "follower", "imitator"]
+      },
+      {
+        id: 6,
+        question: "SECTION A — Q6 (3 marks): Why has God chosen you?",
+        marks: 3,
+        keywords: ["praise", "glorify", "praises"]
+      },
+      {
+        id: 7,
+        question: "SECTION A — Q7 (3 marks): What is the only condition to sit on the same throne as Jesus?",
+        marks: 3,
+        keywords: ["overcomer", "overcome"]
+      },
+      {
+        id: 8,
+        question: "SECTION A — Q8 (3 marks): What is the first thing Satan wants to set against you?",
+        marks: 3,
+        keywords: ["body", "flesh"]
+      },
+      {
+        id: 9,
+        question: "SECTION A — Q9 (3 marks): Why must God chasten us?",
+        marks: 3,
+        keywords: ["holiness", "justice"]
+      },
+      {
+        id: 10,
+        question: "SECTION A — Q10 (3 marks): Why must we be like Christ in humility?",
+        marks: 3,
+        keywords: ["stoop", "down", "humble", "proud"]
+      },
+      {
+        id: 11,
+        question: "SECTION A — Q11 (3 marks): How can one become humble?",
+        marks: 3,
+        keywords: ["voluntarily", "force"]
+      },
+      {
+        id: 12,
+        question: "SECTION A — Q12 (3 marks): What is Zeal?",
+        marks: 3,
+        keywords: ["burning desire", "fuel"]
+      },
+      {
+        id: 13,
+        question: "SECTION A — Q13 (3 marks): Why is a disciple a pilgrim?",
+        marks: 3,
+        keywords: ["heaven", "stranger", "home"]
+      },
+      {
+        id: 14,
+        question: "SECTION A — Q14 (3 marks): What is the first pillar of the disciple\u2019s victory?",
+        marks: 3,
+        keywords: ["faith"]
+      },
+      {
+        id: 15,
+        question: "SECTION A — Q15 (3 marks): What are the conditions for the free flow of anointing?",
+        marks: 3,
+        keywords: ["pure", "holiness", "prayer"]
+      },
+      {
+        id: 16,
+        question: "SECTION A — Q16 (3 marks): What does examination signify for a disciple?",
+        marks: 3,
+        keywords: ["promotion"]
+      },
+      {
+        id: 17,
+        question: "SECTION A — Q17 (3 marks): How long is the disciple\u2019s examination?",
+        marks: 3,
+        keywords: ["temporary", "forever"]
+      },
+      {
+        id: 18,
+        question: "SECTION A — Q18 (3 marks): What are the ways anointing can be transferred?",
+        marks: 3,
+        keywords: ["conduction", "convection", "radiation"]
+      },
+      {
+        id: 19,
+        question: "SECTION A — Q19 (3 marks): What is the victory every disciple has?",
+        marks: 3,
+        keywords: ["faith", "greater", "overcomes"]
+      },
+      {
+        id: 20,
+        question: "SECTION A — Q20 (3 marks): What is the seventh pillar of the disciple\u2019s victory?",
+        marks: 3,
+        keywords: ["obedience"]
+      },
+
+      // ---- SECTION B (10 marks each) ----
+      {
+        id: 21,
+        question: "SECTION B — Q1 (10 marks): Mention five reasons you are important to God. (2 marks per point)",
         marks: 10,
-        keywords: ["keyword1", "keyword2", "keyword3"]
+        keywords: ["mindful", "visits", "magnifies", "crowned", "glory", "honour", "dominion", "recognise", "account", "needs"]
+      },
+      {
+        id: 22,
+        question: "SECTION B — Q2 (10 marks): Explain the ways anointing can be transferred with biblical examples. (3\u20134 marks per method)",
+        marks: 10,
+        keywords: ["conduction", "contact", "convection", "object", "radiation", "words", "distance"]
+      },
+      {
+        id: 23,
+        question: "SECTION B — Q3 (10 marks): Mention two things that might make disciples not be chastised. (5 marks per point)",
+        marks: 10,
+        keywords: ["young", "babe", "bastard", "given up", "ephraim"]
+      },
+      {
+        id: 24,
+        question: "SECTION B — Q4 (10 marks): Mention five things that happen when you shout. (2 marks per point)",
+        marks: 10,
+        keywords: ["offering", "accepted", "present", "faith", "enemy", "victory", "frightens"]
       }
+
     ]
   },
 
