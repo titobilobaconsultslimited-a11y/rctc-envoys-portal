@@ -343,6 +343,7 @@
                 <th>Date</th>
                 <th>Time</th>
                 <th>View</th>
+                <th>Reset</th>
               </tr>
             </thead>
             <tbody id="theoryResultsBody"></tbody>
@@ -398,6 +399,25 @@
       <div class="modal-actions">
         <button onclick="document.getElementById('resetModal').classList.add('hidden')" class="btn btn-outline">Cancel</button>
         <button onclick="confirmResetExam()" class="btn" style="background:#f39c12;color:#fff;">&#128260; Confirm Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- THEORY RESET MODAL -->
+  <div class="modal-overlay hidden" id="theoryResetModal">
+    <div class="modal">
+      <h3>&#128260; Reset Theory for Student</h3>
+      <p id="theoryResetModalExamName" style="font-weight:700;color:var(--navy);margin-bottom:12px;"></p>
+      <div class="form-group">
+        <label for="theoryResetStudentSelect">Select Student to Reset</label>
+        <select id="theoryResetStudentSelect" style="width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;">
+          <option value="__all__">&#128293; Reset ALL students for this exam</option>
+        </select>
+      </div>
+      <p style="font-size:0.8rem;color:var(--gray);margin-bottom:16px;">The selected student(s) result will be permanently deleted, allowing them to retake this theory exam.</p>
+      <div class="modal-actions">
+        <button onclick="document.getElementById('theoryResetModal').classList.add('hidden')" class="btn btn-outline">Cancel</button>
+        <button onclick="confirmResetTheory()" class="btn" style="background:#f39c12;color:#fff;">&#128260; Confirm Reset</button>
       </div>
     </div>
   </div>
@@ -882,6 +902,7 @@
             <td style="white-space:nowrap;font-size:0.8rem;">${formatDate(r.dateTaken)}</td>
             <td style="white-space:nowrap;font-size:0.8rem;">${formatTime(r.dateTaken)}</td>
             <td><button class="btn btn-outline btn-sm" onclick="viewAnswers(${idx})">View</button></td>
+            <td><button class="btn-exam-reset" onclick="openTheoryResetModal(${r.examId})">&#128260; Reset</button></td>
           </tr>`;
       }).join('');
     }
@@ -933,13 +954,65 @@
       );
     }
 
+    // ---- Theory Reset ----
+    let theoryResetTargetExamId = null;
+
+    function openTheoryResetModal(examId) {
+      theoryResetTargetExamId = examId;
+      const exam = SOD_THEORY_EXAMS.find(e => e.id === examId);
+      document.getElementById('theoryResetModalExamName').textContent = exam.code + ' — ' + exam.title;
+
+      const sel = document.getElementById('theoryResetStudentSelect');
+      sel.innerHTML = '<option value="__all__">&#128293; Reset ALL students for this exam</option>';
+      const takers = allTheoryResults.filter(r => r.examId === examId);
+      takers.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.matric;
+        opt.textContent = r.matric + (r.name ? '  —  ' + r.name : '');
+        sel.appendChild(opt);
+      });
+      if (!takers.length) {
+        sel.innerHTML = '<option value="">No students have taken this theory exam yet</option>';
+      }
+      document.getElementById('theoryResetModal').classList.remove('hidden');
+    }
+
+    async function confirmResetTheory() {
+      const sel    = document.getElementById('theoryResetStudentSelect');
+      const target = sel.value;
+      if (!target) return;
+
+      if (target === '__all__') {
+        await dbDeleteSodTheoryResults(theoryResetTargetExamId, null);
+      } else {
+        await dbDeleteSodTheoryResults(theoryResetTargetExamId, target);
+      }
+
+      allTheoryResults = await dbGetAllSodTheoryResults();
+      allTheoryResults.sort((a, b) => b.dateTaken - a.dateTaken);
+      filteredTheoryResults = [];
+      document.getElementById('tFilterExam').innerHTML = '<option value="">All Theory Exams</option>';
+      populateTheoryExamFilter();
+      applyTheoryFilters();
+      renderTheoryStats();
+      renderTheoryLockSection();
+      document.getElementById('theoryResetModal').classList.add('hidden');
+      document.getElementById('theoryAnswerPanel').classList.add('hidden');
+    }
+
     // ---- Clear Theory ----
     function clearAllTheoryData() {
       document.getElementById('clearTheoryModal').classList.remove('hidden');
     }
 
     async function confirmClearAllTheory() {
-      await dbClearAllSodTheoryResults();
+      try {
+        await dbClearAllSodTheoryResults();
+      } catch (e) {
+        alert('Error deleting theory results. Please make sure the sod_theory_results table exists in Supabase.');
+        document.getElementById('clearTheoryModal').classList.add('hidden');
+        return;
+      }
       allTheoryResults      = [];
       filteredTheoryResults = [];
       document.getElementById('tFilterExam').innerHTML = '<option value="">All Theory Exams</option>';
