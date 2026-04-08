@@ -3,11 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RCTC Envoys — Exam Portal Login</title>
+  <title>RCTC Envoys — SOD Exam Portal Login</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
     .divider { display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--gray);font-size:0.82rem; }
     .divider::before,.divider::after { content:'';flex:1;height:1px;background:var(--border); }
+    .sod-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 <body class="login-body">
@@ -22,19 +34,22 @@
       </div>
       <h1>Redeemed Christian Theology College</h1>
       <h2>Envoys Campus</h2>
-      <p>Online Examination Portal</p>
+      <p>School of Discipleship — Examination Portal</p>
     </div>
 
-    <!-- Student Login Card -->
+    <!-- SOD Student Login Card -->
     <div class="login-card">
-      <h3>🎓 Student Login</h3>
+      <div style="text-align:center;margin-bottom:4px;">
+        <span class="sod-badge">School of Discipleship</span>
+      </div>
+      <h3>🎓 SOD Student Login</h3>
 
       <div class="form-group">
-        <label for="matricNo">Matric Number</label>
+        <label for="matricNo">SOD Matric Number</label>
         <input
           type="text"
           id="matricNo"
-          placeholder="e.g. 276379"
+          placeholder="e.g. SOD202670646"
           autocomplete="off"
           spellcheck="false"
         >
@@ -42,18 +57,14 @@
 
       <div id="loginError" class="error-msg hidden"></div>
 
-      <button onclick="doStudentLogin()" class="btn btn-primary btn-full btn-lg">
+      <button onclick="doSodLogin()" class="btn btn-primary btn-full btn-lg">
         Login &rarr;
       </button>
 
       <div class="divider">or</div>
 
-      <div class="admin-link" style="margin-bottom:10px;">
-        <a href="sod-login.html">📖 School of Discipleship (SOD) Portal</a>
-      </div>
-
       <div class="admin-link">
-        <a href="admin.html">🔒 Admin Dashboard Access</a>
+        <a href="index.html">&#8592; Back to Main Portal</a>
       </div>
     </div>
 
@@ -68,8 +79,8 @@
   <script src="js/app.js"></script>
   <script>
     // Auto-redirect if already logged in
-    if (store.sessionGet('rctc_student')) {
-      window.location.href = 'dashboard.html';
+    if (store.sessionGet('rctc_sod_student')) {
+      window.location.href = 'sod-dashboard.html';
     }
 
     const matricInput = document.getElementById('matricNo');
@@ -82,28 +93,29 @@
     });
 
     matricInput.addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') doStudentLogin();
+      if (e.key === 'Enter') doSodLogin();
     });
 
-    function doStudentLogin() {
+    function doSodLogin() {
       hideError('loginError');
       const matric = matricInput.value.trim().toUpperCase();
 
       if (!matric) {
-        showError('loginError', 'Please enter your matric number.');
+        showError('loginError', 'Please enter your SOD matric number.');
         matricInput.focus();
         return;
       }
 
-      if (!STUDENTS[matric]) {
+      if (!SOD_STUDENTS[matric]) {
         showError('loginError', 'Matric number not recognised. Please check and try again, or contact your administrator.');
         matricInput.select();
         return;
       }
 
-      store.sessionSet('rctc_student', matric);
-      window.location.href = 'dashboard.html';
+      store.sessionSet('rctc_sod_student', matric);
+      window.location.href = 'sod-dashboard.html';
     }
   </script>
+
 </body>
 </html>

@@ -166,3 +166,87 @@ function downloadCSV(filename, rows, headers) {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+// ============================================================
+// SCHOOL OF DISCIPLESHIP (SOD) — SHARED APPLICATION LOGIC
+// ============================================================
+
+// ---- SOD AUTH HELPERS ----
+function getCurrentSodStudent() {
+  return store.sessionGet('rctc_sod_student');
+}
+
+function requireSodStudentAuth() {
+  const matric = getCurrentSodStudent();
+  if (!matric || !SOD_STUDENTS[matric]) {
+    window.location.href = 'sod-login.html';
+    return null;
+  }
+  return matric;
+}
+
+function sodStudentLogout() {
+  store.sessionRemove('rctc_sod_student');
+  window.location.href = 'sod-login.html';
+}
+
+// ---- SOD RESULTS HELPERS ----
+function getAllSodResults() {
+  return store.get('rctc_sod_results') || [];
+}
+
+function saveSodResult(result) {
+  const results = getAllSodResults();
+  results.push(result);
+  store.set('rctc_sod_results', results);
+}
+
+function hasSodStudentTakenExam(matric, examId) {
+  const results = getAllSodResults();
+  return results.find(r => r.matric === matric && r.examId === examId) || null;
+}
+
+function getSodStudentResults(matric) {
+  return getAllSodResults().filter(r => r.matric === matric);
+}
+
+function countSodCompletedExams(matric) {
+  return getSodStudentResults(matric).length;
+}
+
+// ---- SOD EXAM STATE ----
+function saveSodExamProgress(examId, startTime, answers) {
+  store.set('rctc_sod_active_exam', { examId, startTime, answers });
+}
+
+function getSodExamProgress() {
+  return store.get('rctc_sod_active_exam');
+}
+
+function clearSodExamProgress() {
+  store.remove('rctc_sod_active_exam');
+}
+
+// ---- RENDER SOD HEADER ----
+function renderSodHeader(studentMatric) {
+  const name = studentMatric ? SOD_STUDENTS[studentMatric] : '';
+  const headerEl = document.getElementById('siteHeader');
+  if (!headerEl) return;
+  headerEl.innerHTML = `
+    <div class="header-top">
+      <div class="header-brand">
+        <div class="header-logos">
+          <img src="Media/rcbc logo.png" alt="RCTC Logo" class="header-logo">
+          <img src="Media/envoys logo.png" alt="Envoys Logo" class="header-logo">
+        </div>
+        <div class="header-text">
+          <h1>Redeemed Christian Theology College</h1>
+          <h2>Envoys Campus — School of Discipleship Portal</h2>
+        </div>
+      </div>
+      <div class="header-nav">
+        ${studentMatric ? `<div class="user-badge">👤 <span>${name}</span> &mdash; ${studentMatric}</div>` : ''}
+        ${studentMatric ? `<button onclick="sodStudentLogout()" class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);">Logout</button>` : ''}
+      </div>
+    </div>`;
+}

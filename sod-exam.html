@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RCTC SOD — Examination</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header" id="siteHeader"></header>
+
+  <!-- EXAM MAIN -->
+  <main class="exam-main" id="examMain">
+    <p style="text-align:center;padding:40px;color:var(--gray);">Loading exam...</p>
+  </main>
+
+  <!-- SUBMIT CONFIRMATION MODAL -->
+  <div class="modal-overlay hidden" id="submitModal">
+    <div class="modal">
+      <h3>⚠️ Submit Examination?</h3>
+      <p id="submitModalMsg">Are you sure you want to submit your answers? You cannot go back after submitting.</p>
+      <div class="modal-actions">
+        <button onclick="closeSubmitModal()" class="btn btn-outline">Cancel</button>
+        <button onclick="confirmSubmit()" class="btn btn-primary">Submit Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT MODAL -->
+  <div class="modal-overlay hidden" id="resultModal">
+    <div class="modal">
+      <h3>🎉 Examination Complete!</h3>
+      <div class="result-score-big" id="resultContent"></div>
+      <p id="resultSubTitle" style="text-align:center;font-size:0.85rem;color:var(--gray);margin-bottom:20px;"></p>
+      <div class="modal-actions" style="justify-content:center;">
+        <button onclick="goToDashboard()" class="btn btn-primary btn-lg">Back to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // ============================================================
+    // SOD EXAM PAGE LOGIC
+    // ============================================================
+
+    // ---- Auth ----
+    const matric = requireSodStudentAuth();
+    if (!matric) throw new Error('Not authenticated');
+    renderSodHeader(matric);
+
+    // ---- Load Exam from URL ----
+    const params = new URLSearchParams(window.location.search);
+    const examId = parseInt(params.get('id'), 10);
+    const exam   = SOD_EXAMS.find(e => e.id === examId);
+
+    if (!exam) {
+      document.getElementById('examMain').innerHTML =
+        '<p style="text-align:center;padding:60px;color:var(--danger);">Exam not found. <a href="sod-dashboard.html">Return to dashboard</a></p>';
+      throw new Error('Exam not found');
+    }
+
+    // ---- Check if this specific exam is locked ----
+    const examLocks = store.get('rctc_sod_exam_locks') || {};
+    if (examLocks[examId] === true) {
+      document.getElementById('examMain').innerHTML = `
+        <div style="text-align:center;padding:60px 20px;">
+          <div style="font-size:3.5rem;margin-bottom:16px;">&#128274;</div>
+          <h2 style="color:var(--navy);margin-bottom:8px;">This Exam is Currently Locked</h2>
+          <p style="color:var(--gray);margin-bottom:6px;"><strong>${exam.code} &mdash; ${exam.title}</strong></p>
+          <p style="color:var(--gray);margin-bottom:24px;">The administrator has not yet opened this exam. Please check the timetable and return at the scheduled time.</p>
+          <a href="sod-dashboard.html" class="btn btn-primary">&#8592; Back to Dashboard</a>
+        </div>`;
+      throw new Error('Exam locked');
+    }
+
+    // ---- Check if already taken ----
+    const alreadyTaken = hasSodStudentTakenExam(matric, examId);
+    if (alreadyTaken) {
+      window.location.href = 'sod-dashboard.html';
+      throw new Error('Already taken');
+    }
+
+    // ---- Restore or init exam state ----
+    const progress = getSodExamProgress();
+    let startTime, answers;
+
+    if (progress && progress.examId === examId) {
+      startTime = progress.startTime;
+      answers   = progress.answers || {};
+    } else {
+      startTime = Date.now();
+      answers   = {};
+      saveSodExamProgress(examId, startTime, answers);
+    }
+
+    const DURATION_SECS = exam.duration * 60;
+    const questions     = exam.questions;
+    const totalQ        = questions.length;
+    let currentQ        = 0;
+    let timerInterval   = null;
+    let submitted       = false;
+
+    // ---- Build Exam UI ----
+    document.getElementById('examMain').innerHTML = `
+      <!-- Top Bar -->
+      <div class="exam-topbar">
+        <div class="exam-info">
+          <h2>${exam.icon} ${exam.title}</h2>
+          <p>${exam.code} &mdash; ${totalQ} Questions &mdash; ${exam.duration} Minutes</p>
+        </div>
+        <div class="timer-box" id="timerBox">
+          <span class="timer-icon">⏱</span>
+          <span class="timer-display" id="timerDisplay">${String(exam.duration).padStart(2,'0')}:00</span>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="exam-progress">
+        <div class="progress-info">
+          <span id="progressLabel">Question 1 of ${totalQ}</span>
+          <span id="answeredLabel">0 Answered</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="question-container" id="questionCard"></div>
+
+      <!-- Navigation -->
+      <div class="exam-nav">
+        <button onclick="prevQ()" class="btn btn-outline" id="btnPrev" disabled>← Previous</button>
+        <div class="question-dots" id="dotNav"></div>
+        <button onclick="nextQ()" class="btn btn-navy" id="btnNext">Next →</button>
+      </div>
+
+      <!-- Submit Button -->
+      <div style="text-align:center;margin-top:24px;">
+        <button onclick="openSubmitModal()" class="btn btn-success btn-lg" id="btnSubmit">
+          ✅ Submit Examination
+        </button>
+      </div>`;
+
+    // ---- Render Question ----
+    function renderQuestion() {
+      const q   = questions[currentQ];
+      const sel = answers[currentQ];
+
+      document.getElementById('questionCard').innerHTML = `
+        <div class="question-number">Question ${currentQ + 1} of ${totalQ}</div>
+        <div class="question-text">${q.q}</div>
+        <div class="options-list">
+          ${q.options.map((opt, i) => `
+            <label class="option-item ${sel === i ? 'selected' : ''}">
+              <input
+                type="radio"
+                name="q${currentQ}"
+                value="${i}"
+                ${sel === i ? 'checked' : ''}
+                onchange="selectAnswer(${i})"
+              >
+              <span class="option-label">
+                <span class="option-letter">${['A','B','C','D'][i]}.</span> ${opt}
+              </span>
+            </label>`).join('')}
+        </div>`;
+
+      // Dots
+      const dots = document.getElementById('dotNav');
+      dots.innerHTML = questions.map((_, idx) => `
+        <div
+          class="q-dot ${answers[idx] !== undefined ? 'answered' : ''} ${idx === currentQ ? 'current' : ''}"
+          onclick="jumpQ(${idx})"
+          title="Question ${idx + 1}"
+        ></div>`).join('');
+
+      // Buttons
+      document.getElementById('btnPrev').disabled = (currentQ === 0);
+      document.getElementById('btnNext').textContent = currentQ === totalQ - 1 ? 'Last Question' : 'Next →';
+      document.getElementById('btnNext').disabled    = (currentQ === totalQ - 1);
+
+      // Progress
+      const answered = Object.keys(answers).length;
+      document.getElementById('progressLabel').textContent = `Question ${currentQ + 1} of ${totalQ}`;
+      document.getElementById('answeredLabel').textContent = `${answered} Answered`;
+      document.getElementById('progressFill').style.width  = `${Math.round((answered / totalQ) * 100)}%`;
+    }
+
+    function selectAnswer(optIdx) {
+      answers[currentQ] = optIdx;
+      saveSodExamProgress(examId, startTime, answers);
+      renderQuestion();
+    }
+
+    function prevQ() { if (currentQ > 0) { currentQ--; renderQuestion(); } }
+    function nextQ() { if (currentQ < totalQ - 1) { currentQ++; renderQuestion(); } }
+    function jumpQ(idx) { currentQ = idx; renderQuestion(); }
+
+    // ---- Timer ----
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        const elapsed   = Math.floor((Date.now() - startTime) / 1000);
+        const remaining = DURATION_SECS - elapsed;
+
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('timerDisplay').textContent = '00:00';
+          if (!submitted) {
+            submitted = true;
+            autoSubmit();
+          }
+          return;
+        }
+
+        document.getElementById('timerDisplay').textContent = formatCountdown(remaining);
+        const timerBox = document.getElementById('timerBox');
+        if (remaining <= 300) {
+          timerBox.className = 'timer-box danger';
+        } else if (remaining <= 600) {
+          timerBox.className = 'timer-box warning';
+        }
+      }, 500);
+    }
+
+    function autoSubmit() {
+      closeSubmitModal();
+      submitExam(true);
+    }
+
+    // ---- Submit Flow ----
+    function openSubmitModal() {
+      const answered   = Object.keys(answers).length;
+      const unanswered = totalQ - answered;
+      document.getElementById('submitModalMsg').textContent =
+        unanswered > 0
+          ? `You have ${unanswered} unanswered question(s). Unanswered questions will be marked incorrect. Are you sure you want to submit?`
+          : 'You have answered all questions. Are you sure you want to submit?';
+      document.getElementById('submitModal').classList.remove('hidden');
+    }
+
+    function closeSubmitModal() {
+      document.getElementById('submitModal').classList.add('hidden');
+    }
+
+    function confirmSubmit() {
+      closeSubmitModal();
+      submitted = true;
+      clearInterval(timerInterval);
+      submitExam(false);
+    }
+
+    function submitExam(timedOut) {
+      let score = 0;
+      questions.forEach((q, idx) => {
+        if (answers[idx] === q.answer) score++;
+      });
+
+      const total = totalQ;
+      const pct   = Math.round((score / total) * 100);
+      const grade = getGrade(pct);
+      const now   = Date.now();
+
+      saveSodResult({
+        matric,
+        name:      SOD_STUDENTS[matric],
+        examId:    exam.id,
+        examCode:  exam.code,
+        examTitle: exam.title,
+        score,
+        total,
+        percentage: pct,
+        dateTaken: now
+      });
+
+      clearSodExamProgress();
+
+      document.getElementById('resultContent').innerHTML = `
+        <div class="big-pct">${pct}%</div>
+        <div class="big-raw">${score} out of ${total} correct</div>
+        <div class="grade-tag ${grade.cls}">${grade.label}</div>`;
+
+      document.getElementById('resultSubTitle').textContent =
+        timedOut
+          ? 'Time expired — your answers have been automatically submitted.'
+          : `${exam.title} — submitted successfully.`;
+
+      document.getElementById('resultModal').classList.remove('hidden');
+      document.getElementById('btnSubmit').disabled = true;
+    }
+
+    function goToDashboard() {
+      window.location.href = 'sod-dashboard.html';
+    }
+
+    // ---- Init ----
+    renderQuestion();
+    startTimer();
+  </script>
+
+</body>
+</html>

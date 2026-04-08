@@ -571,4 +571,41 @@ const EXAMS = [
     ]
   }
 
+]; // END OF EXAMS ARRAY
+
+// ============================================================
+// SCHOOL OF DISCIPLESHIP (SOD) — EXAM PORTAL DATA
+// ============================================================
+
+// ---- SOD STUDENT MATRIC NUMBERS ----
+// Format: "SOD_MATRIC_NUMBER": "Full Student Name"
+// Example: "SOD202670646": "Olaiya Flourish Boluwatife"
+const SOD_STUDENTS = {
+  "SOD202670646": "Olaiya Flourish Boluwatife",
+  // ---- ADD MORE SOD STUDENTS BELOW THIS LINE ----
+
+  // ---- END OF SOD STUDENT LIST ----
+};
+
+// ---- SOD EXAM DATA ----
+// Add SOD exams here following the same format as EXAMS above.
+// Example:
+// {
+//   id: 1,
+//   code: "SOD 101",
+//   title: "Introduction to Discipleship",
+//   icon: "📖",
+//   duration: 60,
+//   questions: [
+//     { q: "Question text?", options: ["A", "B", "C", "D"], answer: 0 }
+//   ]
+// },
+const SOD_EXAMS = [
+
+  // ---- ADD SOD EXAMS BELOW THIS LINE ----
+
+  // ---- END OF SOD EXAM LIST ----
+
+];
+
 ]; // end EXAMS
