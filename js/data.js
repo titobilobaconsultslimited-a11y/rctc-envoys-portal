@@ -607,5 +607,3 @@ const SOD_EXAMS = [
   // ---- END OF SOD EXAM LIST ----
 
 ];
-
-]; // end EXAMS
