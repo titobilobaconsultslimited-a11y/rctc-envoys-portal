@@ -23,7 +23,9 @@
 
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/data.js"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/app.js"></script>
   <script>
     // ---- AUTH CHECK ----
@@ -31,32 +33,36 @@
     if (!matric) throw new Error('Not authenticated');
 
     const studentName = STUDENTS[matric];
-    const completedCount = countCompletedExams(matric);
-    const totalExams = EXAMS.length;
-    const pendingCount = totalExams - completedCount;
-
-    // ---- HEADER ----
     renderHeader(matric);
 
-    // ---- WELCOME BANNER ----
-    document.getElementById('welcomeBanner').innerHTML = `
-      <div class="welcome-text">
-        <h2>Welcome back, ${studentName}!</h2>
-        <p>Select an exam below to begin. Each exam is timed at 60 minutes.</p>
-      </div>
-      <div class="welcome-stats">
-        <div class="stat-pill"><strong>${totalExams}</strong>Total Exams</div>
-        <div class="stat-pill"><strong>${completedCount}</strong>Completed</div>
-        <div class="stat-pill"><strong>${pendingCount}</strong>Remaining</div>
-      </div>`;
+    // ---- ASYNC INIT ----
+    (async () => {
+      const [studentResults, locks] = await Promise.all([
+        dbGetStudentResults(matric),
+        dbGetLocks()
+      ]);
 
-    // ---- BUILD EXAM CARDS ----
-    const grid  = document.getElementById('examGrid');
-    const locks = store.get('rctc_exam_locks') || {};
+      const completedCount = studentResults.length;
+      const totalExams     = EXAMS.length;
+      const pendingCount   = totalExams - completedCount;
 
-    EXAMS.forEach(exam => {
-      const taken      = hasStudentTakenExam(matric, exam.id);
-      const examLocked = locks[exam.id] === true;
+      document.getElementById('welcomeBanner').innerHTML = `
+        <div class="welcome-text">
+          <h2>Welcome back, ${studentName}!</h2>
+          <p>Select an exam below to begin. Each exam is timed at 60 minutes.</p>
+        </div>
+        <div class="welcome-stats">
+          <div class="stat-pill"><strong>${totalExams}</strong>Total Exams</div>
+          <div class="stat-pill"><strong>${completedCount}</strong>Completed</div>
+          <div class="stat-pill"><strong>${pendingCount}</strong>Remaining</div>
+        </div>`;
+
+      // ---- BUILD EXAM CARDS ----
+      const grid = document.getElementById('examGrid');
+
+      EXAMS.forEach(exam => {
+        const taken      = studentResults.find(r => r.examId === exam.id) || null;
+        const examLocked = locks[exam.id] === true;
       const card = document.createElement('div');
       card.className = 'exam-card' + (taken ? ' completed' : '');
 
@@ -103,16 +109,17 @@
       grid.appendChild(card);
     });
 
-    // ---- START EXAM ----
-    function startExam(examId) {
-      const currentLocks = store.get('rctc_exam_locks') || {};
+    })(); // end async IIFE
+
+    // ---- START EXAM — global scope so onclick works ----
+    async function startExam(examId) {
+      const currentLocks = await dbGetLocks();
       if (currentLocks[examId] === true) {
         alert('This exam is currently locked by the administrator. Please check the timetable and try again at the scheduled time.');
         return;
       }
       clearExamProgress();
-      const startTime = Date.now();
-      saveExamProgress(examId, startTime, {});
+      saveExamProgress(examId, Date.now(), {});
       window.location.href = `exam.html?id=${examId}`;
     }
   </script>

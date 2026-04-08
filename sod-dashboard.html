@@ -23,48 +23,54 @@
 
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/data.js"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/app.js"></script>
   <script>
     // ---- AUTH CHECK ----
     const matric = requireSodStudentAuth();
     if (!matric) throw new Error('Not authenticated');
 
-    const studentName   = SOD_STUDENTS[matric];
-    const completedCount = countSodCompletedExams(matric);
-    const totalExams    = SOD_EXAMS.length;
-    const pendingCount  = totalExams - completedCount;
-
-    // ---- HEADER ----
+    const studentName = SOD_STUDENTS[matric];
     renderSodHeader(matric);
 
-    // ---- WELCOME BANNER ----
-    document.getElementById('welcomeBanner').innerHTML = `
-      <div class="welcome-text">
-        <h2>Welcome back, ${studentName}!</h2>
-        <p>Select an exam below to begin. Each exam is timed once started.</p>
-      </div>
-      <div class="welcome-stats">
-        <div class="stat-pill"><strong>${totalExams}</strong>Total Exams</div>
-        <div class="stat-pill"><strong>${completedCount}</strong>Completed</div>
-        <div class="stat-pill"><strong>${pendingCount}</strong>Remaining</div>
-      </div>`;
+    // ---- ASYNC INIT ----
+    (async () => {
+      const [studentResults, locks] = await Promise.all([
+        dbGetSodStudentResults(matric),
+        dbGetSodLocks()
+      ]);
 
-    // ---- BUILD EXAM CARDS ----
-    const grid  = document.getElementById('examGrid');
-    const locks = store.get('rctc_sod_exam_locks') || {};
+      const completedCount = studentResults.length;
+      const totalExams     = SOD_EXAMS.length;
+      const pendingCount   = totalExams - completedCount;
 
-    if (SOD_EXAMS.length === 0) {
-      grid.innerHTML = `
-        <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray);">
-          <div style="font-size:3rem;margin-bottom:16px;">📋</div>
-          <h3 style="color:var(--navy);margin-bottom:8px;">No Exams Available Yet</h3>
-          <p>Your exams will appear here once the administrator has added them.</p>
+      document.getElementById('welcomeBanner').innerHTML = `
+        <div class="welcome-text">
+          <h2>Welcome back, ${studentName}!</h2>
+          <p>Select an exam below to begin. Each exam is timed once started.</p>
+        </div>
+        <div class="welcome-stats">
+          <div class="stat-pill"><strong>${totalExams}</strong>Total Exams</div>
+          <div class="stat-pill"><strong>${completedCount}</strong>Completed</div>
+          <div class="stat-pill"><strong>${pendingCount}</strong>Remaining</div>
         </div>`;
-    } else {
-      SOD_EXAMS.forEach(exam => {
-        const taken      = hasSodStudentTakenExam(matric, exam.id);
-        const examLocked = locks[exam.id] === true;
+
+      // ---- BUILD EXAM CARDS ----
+      const grid = document.getElementById('examGrid');
+
+      if (SOD_EXAMS.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray);">
+            <div style="font-size:3rem;margin-bottom:16px;">📋</div>
+            <h3 style="color:var(--navy);margin-bottom:8px;">No Exams Available Yet</h3>
+            <p>Your exams will appear here once the administrator has added them.</p>
+          </div>`;
+      } else {
+        SOD_EXAMS.forEach(exam => {
+          const taken      = studentResults.find(r => r.examId === exam.id) || null;
+          const examLocked = locks[exam.id] === true;
         const card = document.createElement('div');
         card.className = 'exam-card' + (taken ? ' completed' : '');
 
@@ -112,16 +118,17 @@
       });
     }
 
-    // ---- START EXAM ----
-    function startExam(examId) {
-      const currentLocks = store.get('rctc_sod_exam_locks') || {};
+    })(); // end async IIFE
+
+    // ---- START EXAM — global scope so onclick works ----
+    async function startExam(examId) {
+      const currentLocks = await dbGetSodLocks();
       if (currentLocks[examId] === true) {
         alert('This exam is currently locked by the administrator. Please check the timetable and try again at the scheduled time.');
         return;
       }
       clearSodExamProgress();
-      const startTime = Date.now();
-      saveSodExamProgress(examId, startTime, {});
+      saveSodExamProgress(examId, Date.now(), {});
       window.location.href = `sod-exam.html?id=${examId}`;
     }
   </script>

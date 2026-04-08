@@ -297,7 +297,9 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/data.js"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/app.js"></script>
   <script>
     // ============================================================
@@ -369,22 +371,19 @@
       return store.get(SOD_LOCKS_KEY) || {};
     }
 
-    function toggleSingleExamLock(examId) {
-      const locks = getSodExamLocks();
-      locks[examId] = !locks[examId];
-      store.set(SOD_LOCKS_KEY, locks);
+    async function toggleSingleExamLock(examId) {
+      const locks = await dbGetSodLocks();
+      await dbSetSodLock(examId, !locks[examId]);
       renderExamLockSection();
     }
 
-    function lockAllExams() {
-      const locks = {};
-      SOD_EXAMS.forEach(e => { locks[e.id] = true; });
-      store.set(SOD_LOCKS_KEY, locks);
+    async function lockAllExams() {
+      await dbSetAllSodLocks(SOD_EXAMS.map(e => e.id), true);
       renderExamLockSection();
     }
 
-    function unlockAllExams() {
-      store.set(SOD_LOCKS_KEY, {});
+    async function unlockAllExams() {
+      await dbSetAllSodLocks(SOD_EXAMS.map(e => e.id), false);
       renderExamLockSection();
     }
 
@@ -395,8 +394,8 @@
       chevron.innerHTML = hiding ? '&#9660;' : '&#9650;';
     }
 
-    function renderExamLockSection() {
-      const locks       = getSodExamLocks();
+    async function renderExamLockSection() {
+      const locks       = await dbGetSodLocks();
       const lockedCount = SOD_EXAMS.filter(e => locks[e.id] === true).length;
       const openCount   = SOD_EXAMS.length - lockedCount;
       document.getElementById('lockSummary').textContent =
@@ -425,8 +424,9 @@
       }).join('');
     }
 
-    function initDashboard() {
-      allResults = getAllSodResults().sort((a, b) => b.dateTaken - a.dateTaken);
+    async function initDashboard() {
+      allResults = await dbGetAllSodResults();
+      allResults.sort((a, b) => b.dateTaken - a.dateTaken);
       populateExamFilter();
       applyFilters();
       renderStats();
@@ -586,20 +586,19 @@
       document.getElementById('resetModal').classList.remove('hidden');
     }
 
-    function confirmResetExam() {
+    async function confirmResetExam() {
       const sel    = document.getElementById('resetStudentSelect');
       const target = sel.value;
       if (!target) return;
 
-      let results = getAllSodResults();
       if (target === '__all__') {
-        results = results.filter(r => r.examId !== resetTargetExamId);
+        await dbDeleteSodResults(resetTargetExamId, null);
       } else {
-        results = results.filter(r => !(r.examId === resetTargetExamId && r.matric === target));
+        await dbDeleteSodResults(resetTargetExamId, target);
       }
-      store.set('rctc_sod_results', results);
 
-      allResults      = results.sort((a, b) => b.dateTaken - a.dateTaken);
+      allResults = await dbGetAllSodResults();
+      allResults.sort((a, b) => b.dateTaken - a.dateTaken);
       filteredResults = [];
       document.getElementById('filterExam').innerHTML = '<option value="">All Exams</option>';
       populateExamFilter();
@@ -614,8 +613,8 @@
       document.getElementById('clearModal').classList.remove('hidden');
     }
 
-    function confirmClearAll() {
-      store.remove('rctc_sod_results');
+    async function confirmClearAll() {
+      await dbClearAllSodResults();
       allResults      = [];
       filteredResults = [];
       document.getElementById('filterExam').innerHTML = '<option value="">All Exams</option>';

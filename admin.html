@@ -295,7 +295,9 @@
       </div>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/data.js"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/app.js"></script>
   <script>
     // ============================================================
@@ -364,28 +366,20 @@
     let filteredResults = [];
 
     // ---- Per-Exam Timetable Lock ----
-    const LOCKS_KEY = 'rctc_exam_locks';
 
-    function getExamLocks() {
-      return store.get(LOCKS_KEY) || {};
-    }
-
-    function toggleSingleExamLock(examId) {
-      const locks = getExamLocks();
-      locks[examId] = !locks[examId];
-      store.set(LOCKS_KEY, locks);
+    async function toggleSingleExamLock(examId) {
+      const locks = await dbGetLocks();
+      await dbSetLock(examId, !locks[examId]);
       renderExamLockSection();
     }
 
-    function lockAllExams() {
-      const locks = {};
-      EXAMS.forEach(e => { locks[e.id] = true; });
-      store.set(LOCKS_KEY, locks);
+    async function lockAllExams() {
+      await dbSetAllLocks(EXAMS.map(e => e.id), true);
       renderExamLockSection();
     }
 
-    function unlockAllExams() {
-      store.set(LOCKS_KEY, {});
+    async function unlockAllExams() {
+      await dbSetAllLocks(EXAMS.map(e => e.id), false);
       renderExamLockSection();
     }
 
@@ -396,8 +390,8 @@
       chevron.innerHTML = hiding ? '&#9660;' : '&#9650;';
     }
 
-    function renderExamLockSection() {
-      const locks       = getExamLocks();
+    async function renderExamLockSection() {
+      const locks       = await dbGetLocks();
       const lockedCount = EXAMS.filter(e => locks[e.id] === true).length;
       const openCount   = EXAMS.length - lockedCount;
       document.getElementById('lockSummary').textContent =
@@ -419,8 +413,9 @@
       }).join('');
     }
 
-    function initDashboard() {
-      allResults = getAllResults().sort((a, b) => b.dateTaken - a.dateTaken);
+    async function initDashboard() {
+      allResults = await dbGetAllResults();
+      allResults.sort((a, b) => b.dateTaken - a.dateTaken);
       populateExamFilter();
       applyFilters();
       renderStats();
@@ -583,21 +578,19 @@
       document.getElementById('resetModal').classList.remove('hidden');
     }
 
-    function confirmResetExam() {
+    async function confirmResetExam() {
       const sel    = document.getElementById('resetStudentSelect');
       const target = sel.value;
       if (!target) return;
 
-      let results = getAllResults();
       if (target === '__all__') {
-        results = results.filter(r => r.examId !== resetTargetExamId);
+        await dbDeleteResults(resetTargetExamId, null);
       } else {
-        results = results.filter(r => !(r.examId === resetTargetExamId && r.matric === target));
+        await dbDeleteResults(resetTargetExamId, target);
       }
-      store.set('rctc_results', results);
 
-      // Refresh dashboard
-      allResults      = results.sort((a, b) => b.dateTaken - a.dateTaken);
+      allResults = await dbGetAllResults();
+      allResults.sort((a, b) => b.dateTaken - a.dateTaken);
       filteredResults = [];
       document.getElementById('filterExam').innerHTML = '<option value="">All Exams</option>';
       populateExamFilter();
@@ -612,9 +605,9 @@
       document.getElementById('clearModal').classList.remove('hidden');
     }
 
-    function confirmClearAll() {
-      store.remove('rctc_results');
-      allResults = [];
+    async function confirmClearAll() {
+      await dbClearAllResults();
+      allResults      = [];
       filteredResults = [];
       document.getElementById('filterExam').innerHTML = '<option value="">All Exams</option>';
       renderTable([]);
