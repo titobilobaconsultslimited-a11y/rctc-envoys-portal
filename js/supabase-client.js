@@ -4,8 +4,8 @@
 // below with your project credentials.
 // Found at: Supabase Dashboard → Project Settings → API
 // ============================================================
-const SUPABASE_URL      = 'YOUR_SUPABASE_URL';       // e.g. https://abcxyz.supabase.co
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';  // your project's anon/public key
+const SUPABASE_URL      = 'https://iwzwpguoorxpntrjayee.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_D4PztKk4NV2VXWKWMecIEg_ojsJ7YD6';
 
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
