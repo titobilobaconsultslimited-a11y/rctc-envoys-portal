@@ -602,8 +602,124 @@ const SOD_STUDENTS = {
 // },
 const SOD_EXAMS = [
 
-  // ---- ADD SOD EXAMS BELOW THIS LINE ----
+  // 1. YEAR 1
+  {
+    id: 1,
+    code: "SOD YEAR 1",
+    title: "Year 1",
+    icon: "📖",
+    duration: 60,
+    questions: [
+      { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ]
+  },
 
-  // ---- END OF SOD EXAM LIST ----
+  // 2. YEAR 2
+  {
+    id: 2,
+    code: "SOD YEAR 2",
+    title: "Year 2",
+    icon: "📖",
+    duration: 60,
+    questions: [
+      { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ]
+  },
+
+  // 3. YEAR 3
+  {
+    id: 3,
+    code: "SOD YEAR 3",
+    title: "Year 3",
+    icon: "📖",
+    duration: 60,
+    questions: [
+      { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ]
+  },
+
+  // 4. YEAR 4
+  {
+    id: 4,
+    code: "SOD YEAR 4",
+    title: "Year 4",
+    icon: "📖",
+    duration: 60,
+    questions: [
+      { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ]
+  },
+
+  // 5. YEAR 5
+  {
+    id: 5,
+    code: "SOD YEAR 5",
+    title: "Year 5",
+    icon: "📖",
+    duration: 60,
+    questions: [
+      { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ]
+  },
+
+  // 6. YEAR 6
+  {
+    id: 6,
+    code: "SOD YEAR 6",
+    title: "Year 6",
+    icon: "📖",
+    duration: 60,
+    questions: [
+      { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ]
+  },
+
+  // 7. YEAR 7
+  {
+    id: 7,
+    code: "SOD YEAR 7",
+    title: "Year 7",
+    icon: "📖",
+    duration: 60,
+    questions: [
+      { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ]
+  },
+
+  // 8. YEAR 8
+  {
+    id: 8,
+    code: "SOD YEAR 8",
+    title: "Year 8",
+    icon: "📖",
+    duration: 60,
+    questions: [
+      { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ]
+  },
+
+  // 9. YEAR 9
+  {
+    id: 9,
+    code: "SOD YEAR 9",
+    title: "Year 9",
+    icon: "📖",
+    duration: 60,
+    questions: [
+      { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ]
+  },
+
+  // 10. YEAR 10
+  {
+    id: 10,
+    code: "SOD YEAR 10",
+    title: "Year 10",
+    icon: "📖",
+    duration: 60,
+    questions: [
+      { q: "Placeholder question 1", options: ["Option A", "Option B", "Option C", "Option D"], answer: 0 }
+    ]
+  },
 
 ];
