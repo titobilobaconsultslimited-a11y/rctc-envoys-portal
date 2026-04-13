@@ -944,153 +944,56 @@ const SOD_THEORY_EXAMS = [
     duration: 90,
     theoryQuestions: [
 
-      // ---- SECTION A (3 marks each) ----
-      {
-        id: 1,
-        question: "SECTION A — Q1 (3 marks): What is the first thing you need to know about yourself?",
-        marks: 3,
-        keywords: ["important", "god"]
-      },
-      {
-        id: 2,
-        question: "SECTION A — Q2 (3 marks): Five will chase how many?",
-        marks: 3,
-        keywords: ["ten million", "10,000,000"]
-      },
-      {
-        id: 3,
-        question: "SECTION A — Q3 (3 marks): What is the one condition for certain victory?",
-        marks: 3,
-        keywords: ["obedience"]
-      },
-      {
-        id: 4,
-        question: "SECTION A — Q4 (3 marks): What weapon does Satan use to weigh us down?",
-        marks: 3,
-        keywords: ["fear"]
-      },
-      {
-        id: 5,
-        question: "SECTION A — Q5 (3 marks): Who is a disciple?",
-        marks: 3,
-        keywords: ["disciplined", "follower", "imitator"]
-      },
-      {
-        id: 6,
-        question: "SECTION A — Q6 (3 marks): Why has God chosen you?",
-        marks: 3,
-        keywords: ["praise", "glorify", "praises"]
-      },
-      {
-        id: 7,
-        question: "SECTION A — Q7 (3 marks): What is the only condition to sit on the same throne as Jesus?",
-        marks: 3,
-        keywords: ["overcomer", "overcome"]
-      },
-      {
-        id: 8,
-        question: "SECTION A — Q8 (3 marks): What is the first thing Satan wants to set against you?",
-        marks: 3,
-        keywords: ["body", "flesh"]
-      },
-      {
-        id: 9,
-        question: "SECTION A — Q9 (3 marks): Why must God chasten us?",
-        marks: 3,
-        keywords: ["holiness", "justice"]
-      },
-      {
-        id: 10,
-        question: "SECTION A — Q10 (3 marks): Why must we be like Christ in humility?",
-        marks: 3,
-        keywords: ["stoop", "down", "humble", "proud"]
-      },
-      {
-        id: 11,
-        question: "SECTION A — Q11 (3 marks): How can one become humble?",
-        marks: 3,
-        keywords: ["voluntarily", "force"]
-      },
-      {
-        id: 12,
-        question: "SECTION A — Q12 (3 marks): What is Zeal?",
-        marks: 3,
-        keywords: ["burning desire", "fuel"]
-      },
-      {
-        id: 13,
-        question: "SECTION A — Q13 (3 marks): Why is a disciple a pilgrim?",
-        marks: 3,
-        keywords: ["heaven", "stranger", "home"]
-      },
-      {
-        id: 14,
-        question: "SECTION A — Q14 (3 marks): What is the first pillar of the disciple\u2019s victory?",
-        marks: 3,
-        keywords: ["faith"]
-      },
-      {
-        id: 15,
-        question: "SECTION A — Q15 (3 marks): What are the conditions for the free flow of anointing?",
-        marks: 3,
-        keywords: ["pure", "holiness", "prayer"]
-      },
-      {
-        id: 16,
-        question: "SECTION A — Q16 (3 marks): What does examination signify for a disciple?",
-        marks: 3,
-        keywords: ["promotion"]
-      },
-      {
-        id: 17,
-        question: "SECTION A — Q17 (3 marks): How long is the disciple\u2019s examination?",
-        marks: 3,
-        keywords: ["temporary", "forever"]
-      },
-      {
-        id: 18,
-        question: "SECTION A — Q18 (3 marks): What are the ways anointing can be transferred?",
-        marks: 3,
-        keywords: ["conduction", "convection", "radiation"]
-      },
-      {
-        id: 19,
-        question: "SECTION A — Q19 (3 marks): What is the victory every disciple has?",
-        marks: 3,
-        keywords: ["faith", "greater", "overcomes"]
-      },
-      {
-        id: 20,
-        question: "SECTION A — Q20 (3 marks): What is the seventh pillar of the disciple\u2019s victory?",
-        marks: 3,
-        keywords: ["obedience"]
-      },
+      // ---- SECTION A — 3 marks each (Q1-Q20) ----
+      { id:  1, marks: 3, question: "What is the first thing you need to know about yourself?",                                                                     options: ["You are loved by your family", "You are very important to the Almighty God", "You are known by the president", "You are a sinner saved by grace"], answer: 1 },
+      { id:  2, marks: 3, question: "God said one will chase 1,000 and two will chase 10,000. Five will chase how many?",                                           options: ["1,000,000", "5,000,000", "10,000,000", "100,000,000"], answer: 2 },
+      { id:  3, marks: 3, question: "Your victory is certain subject to one condition. What is that condition?",                                                    options: ["Fasting", "Obedience", "Prayer", "Church attendance"], answer: 1 },
+      { id:  4, marks: 3, question: "What is the weapon that Satan uses to weigh believers down?",                                                                  options: ["Sickness", "Poverty", "Fear", "Confusion"], answer: 2 },
+      { id:  5, marks: 3, question: "Who is a disciple?",                                                                                                          options: ["A church member and a tithe payer", "A disciplined follower and imitator of a leader", "A pastor and a preacher", "A baptised and confirmed believer"], answer: 1 },
+      { id:  6, marks: 3, question: "Why has God chosen you?",                                                                                                     options: ["To build churches and cathedrals", "To be rich and prosperous", "To show forth His praises and glorify Him", "To lead a political movement"], answer: 2 },
+      { id:  7, marks: 3, question: "What is the only condition to sit on the same throne as Jesus Christ?",                                                       options: ["You must be a pastor", "You must be an overcomer", "You must be a tither", "You must be a prayer warrior"], answer: 1 },
+      { id:  8, marks: 3, question: "What is the first thing Satan wants to set against you?",                                                                     options: ["Your finances", "Your family", "Your body / the flesh", "Your ministry"], answer: 2 },
+      { id:  9, marks: 3, question: "Why must God chasten us? Which of the following is NOT a correct reason?",                                                    options: ["Like father like son — to partake of His holiness", "The justice of God — no man suffers twice for the same offence", "Because God enjoys punishing His children", "So that the spiritual leader can intercede on our behalf"], answer: 2 },
+      { id: 10, marks: 3, question: "Why must we be like Our Lord Jesus Christ in humility?",                                                                      options: ["Because humility makes us popular among men", "Because the way to conquer is the way to stoop — the way up is the way down", "Because humble people never face persecution", "Because humility guarantees financial blessings only"], answer: 1 },
+      { id: 11, marks: 3, question: "How can one become humble? Which answer is CORRECT?",                                                                         options: ["By fasting only", "Voluntarily by personal decision or by force through God's dealings", "By attending church regularly", "By reading the Bible daily only"], answer: 1 },
+      { id: 12, marks: 3, question: "What is zeal?",                                                                                                              options: ["A quiet and patient waiting on God", "A burning desire to get things done with determination that every obstacle becomes fuel", "An emotional feeling during worship", "A gift of the Holy Spirit reserved for pastors"], answer: 1 },
+      { id: 13, marks: 3, question: "Why is a disciple a pilgrim?",                                                                                               options: ["Because he travels to Jerusalem every year", "Because this world is not his home — his citizenship is in heaven", "Because he has no permanent job or house", "Because he moves from church to church"], answer: 1 },
+      { id: 14, marks: 3, question: "What is the first pillar of the disciple's victory?",                                                                        options: ["Prayer", "Holiness", "Faith", "Fasting"], answer: 2 },
+      { id: 15, marks: 3, question: "What are the conditions for the free flow of anointing?",                                                                    options: ["Fasting and tithing", "Pure vessel and constant prayer in the Spirit", "Church membership and regular attendance", "Speaking in tongues and prophecy only"], answer: 1 },
+      { id: 16, marks: 3, question: "What does examination signify for a disciple?",                                                                              options: ["Punishment from God", "That God is angry with the disciple", "That promotion is near", "That the disciple has sinned greatly"], answer: 2 },
+      { id: 17, marks: 3, question: "How long is the disciple's examination?",                                                                                    options: ["It lasts a lifetime", "It is permanent and never ends", "It is temporary and does not last forever", "It lasts exactly forty days"], answer: 2 },
+      { id: 18, marks: 3, question: "What are the three ways anointing can be transferred?",                                                                      options: ["Fasting, prayer and worship", "Preaching, teaching and prophecy", "Conduction, convection and radiation", "Laying of hands, anointing oil and holy water"], answer: 2 },
+      { id: 19, marks: 3, question: "What is the victory every disciple has?",                                                                                    options: ["Victory through wealth and prosperity", "Victory through faith in Jesus Christ", "Victory through church membership", "Victory through political influence"], answer: 1 },
+      { id: 20, marks: 3, question: "What is the seventh pillar of the disciple's victory?",                                                                      options: ["Prayer", "Holiness", "Faith", "Obedience"], answer: 3 },
 
-      // ---- SECTION B (10 marks each) ----
-      {
-        id: 21,
-        question: "SECTION B — Q1 (10 marks): Mention five reasons you are important to God. (2 marks per point)",
-        marks: 10,
-        keywords: ["mindful", "visits", "magnifies", "crowned", "glory", "honour", "dominion", "recognise", "account", "needs"]
-      },
-      {
-        id: 22,
-        question: "SECTION B — Q2 (10 marks): Explain the ways anointing can be transferred with biblical examples. (3\u20134 marks per method)",
-        marks: 10,
-        keywords: ["conduction", "contact", "convection", "object", "radiation", "words", "distance"]
-      },
-      {
-        id: 23,
-        question: "SECTION B — Q3 (10 marks): Mention two things that might make disciples not be chastised. (5 marks per point)",
-        marks: 10,
-        keywords: ["young", "babe", "bastard", "given up", "ephraim"]
-      },
-      {
-        id: 24,
-        question: "SECTION B — Q4 (10 marks): Mention five things that happen when you shout. (2 marks per point)",
-        marks: 10,
-        keywords: ["offering", "accepted", "present", "faith", "enemy", "victory", "frightens"]
-      }
+      // ---- SECTION B — 2 marks each (Q21-Q35) ----
+      { id: 21, marks: 2, question: "Which of the following is NOT a reason you are important to God?",                                                            options: ["God is mindful of you", "God visits you every morning", "God needs your money, time and talents for His work", "God depends on you to sustain His throne in heaven"], answer: 3 },
+      { id: 22, marks: 2, question: "Which of the following correctly states a reason you are important to God?",                                                  options: ["God magnifies you even before Satan", "God needs you to run His heavenly administration", "God chose you because you are more righteous than others", "God visits you only when you pray"], answer: 0 },
+      { id: 23, marks: 2, question: "Which of the following is a correct reason you are important to God?",                                                        options: ["God has crowned you with wealth and fame", "God has crowned you with glory and honour", "God has given you dominion over other human beings", "God takes account of you only after you are born again"], answer: 1 },
+      { id: 24, marks: 2, question: "From the lesson on transferring the anointing, which of the following is an example of CONDUCTION?",                          options: ["Paul's handkerchiefs being taken to the sick", "Peter's shadow falling on the sick", "Philip casting out demons by speaking", "Elijah lying upon the widow's dead son"], answer: 3 },
+      { id: 25, marks: 2, question: "Which of the following is a correct example of CONVECTION in the transfer of anointing?",                                     options: ["Moses laying hands on Joshua", "Paul commanding blindness on Elymas", "Paul's aprons and handkerchiefs carried to the sick", "Peter taking the lame man by the hand"], answer: 2 },
+      { id: 26, marks: 2, question: "Which of the following is a correct example of RADIATION in the transfer of anointing?",                                     options: ["Elisha lying upon the Shunammite's dead son", "Paul laying on Eutychus who had fallen and died", "Moses laying hands on Joshua", "Peter saying \u201cGod has healed you\u201d to Aeneas who rose immediately"], answer: 3 },
+      { id: 27, marks: 2, question: "Which of the following might make a disciple NOT be chastised?",                                                              options: ["They are too holy to need correction", "They are too young in faith / spiritual babes", "They pray too much to need discipline", "They give too many offerings to be corrected"], answer: 1 },
+      { id: 28, marks: 2, question: "What is the second reason a disciple might not be chastised?",                                                                options: ["They are already living perfectly holy", "They are senior pastors above correction", "They are bastards — God has given up on them", "They have been exempted by a man of God"], answer: 2 },
+      { id: 29, marks: 2, question: "When you shout as a weapon of warfare, what is the FIRST thing that happens?",                                                options: ["The enemy immediately flees", "It signals that God has accepted your offering", "Angels begin to fight on your behalf", "Your prayers are automatically answered"], answer: 1 },
+      { id: 30, marks: 2, question: "When Israel brought the Ark into the camp and shouted, what was the Philistines' immediate reaction?",                        options: ["They prepared to attack harder", "They laughed and mocked Israel", "They were filled with dread and fear", "They surrendered immediately"], answer: 2 },
+      { id: 31, marks: 2, question: "Which scripture confirms that shouting demonstrates God is present in the midst of His people?",                              options: ["Psalm 23:1", "Isaiah 12:6", "Romans 8:37", "Hebrews 11:6"], answer: 1 },
+      { id: 32, marks: 2, question: "At Jericho, when did the walls fall?",                                                                                       options: ["After seven days of marching silently", "When Joshua prayed alone", "The moment the people shouted", "When the priests blew the trumpets only"], answer: 2 },
+      { id: 33, marks: 2, question: "Which of the following correctly describes what happens when a disciple shouts?",                                             options: ["It is merely an emotional expression with no spiritual effect", "It prophesies imminent victory and releases the miracle", "It only works when a pastor leads the shout", "It replaces the need for prayer and fasting"], answer: 1 },
+      { id: 34, marks: 2, question: "Which of the following is TRUE about the disciple's examination?",                                                           options: ["It is sent by the devil alone with no divine purpose", "God uses Satan as an examiner to test and promote His children", "Only sinful disciples go through examinations", "Examinations only come to new converts"], answer: 1 },
+      { id: 35, marks: 2, question: "Which of the following is NOT one of the ways anointing can be transferred?",                                                options: ["Conduction — through direct physical contact", "Convection — through an anointed object", "Radiation — through spoken words across a distance", "Evaporation — through the disciple's sweat and tears"], answer: 3 },
+
+      // ---- BONUS / REVISION — 2 marks each (Q36-Q45) ----
+      { id: 36, marks: 2, question: "According to the School of Disciples, Satan wants to do three things to you. Which option is CORRECT?",                       options: ["Confuse, mislead and distract", "Steal, kill and destroy", "Tempt, accuse and discourage", "Oppress, depress and suppress"], answer: 1 },
+      { id: 37, marks: 2, question: "Which of the following is NOT one of Satan's characteristics as taught in the manual?",                                      options: ["He is wise and cunning", "He was formerly the choirmaster of heaven", "He is totally good and redeemable", "He is full of pride"], answer: 2 },
+      { id: 38, marks: 2, question: "According to the lesson on knowing your enemy, Satan loves which of the following?",                                          options: ["Humility and simplicity", "Jewellery and stones of fire", "Prayer and fasting", "Worship and praise"], answer: 1 },
+      { id: 39, marks: 2, question: "The only language Satan understands is:",                                                                                    options: ["The language of prayer alone", "The language of fasting alone", "The language of violence / resistance", "The language of tears and weeping"], answer: 2 },
+      { id: 40, marks: 2, question: "According to the manual, demons prefer to inhabit which of the following?",                                                   options: ["Trees and rivers", "Churches and altars", "Human beings", "Holy objects and Bibles"], answer: 2 },
+      { id: 41, marks: 2, question: "When Paul and Silas praised God in prison, what happened?",                                                                   options: ["The jailer brought them food", "They were given early release", "There was an earthquake and every yoke was broken", "The other prisoners joined them in worship"], answer: 2 },
+      { id: 42, marks: 2, question: "According to the manual, the condition for permanent victory is:",                                                            options: ["Fasting three times a week", "Paying your tithes faithfully", "Obedience to the commandments of God", "Attending every church programme"], answer: 2 },
+      { id: 43, marks: 2, question: "According to Lesson C6, joy is a weapon of warfare. What does joy give the disciple?",                                        options: ["Wealth and prosperity", "Strength", "Immunity from all sickness", "Freedom from all trials"], answer: 1 },
+      { id: 44, marks: 2, question: "Which of the following is NOT one of the ingredients of devastating prayer?",                                                 options: ["Total surrender", "Privacy", "Heart cry", "Shouting loudly in public"], answer: 3 },
+      { id: 45, marks: 2, question: "According to the manual, which of the following is TRUE about demons?",                                                       options: ["Demons can repent and be saved", "Demons have no intelligence or organisation", "Demons are incurably evil and can never repent", "Demons are only active in non-Christian nations"], answer: 2 }
 
     ]
   },

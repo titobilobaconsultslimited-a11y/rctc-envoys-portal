@@ -913,15 +913,29 @@
       document.getElementById('answerPanelTitle').textContent =
         r.matric + (r.name ? '  \u2014  ' + r.name : '') + '  |  ' + r.examTitle;
       document.getElementById('answerPanelBody').innerHTML = answers.length
-        ? answers.map((a, i) => `
-          <div style="margin-bottom:20px;padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);">
-            <div style="font-weight:700;color:var(--navy);margin-bottom:8px;">Q${i+1}. ${a.question}</div>
-            <div style="background:#f8f9fa;border-radius:6px;padding:10px 14px;font-size:0.88rem;line-height:1.6;white-space:pre-wrap;">${a.studentAnswer || '<em style="color:var(--gray);">No answer provided</em>'}</div>
-            <div style="margin-top:8px;font-size:0.78rem;color:var(--gray);">
-              Marks: <strong>${a.marksEarned}/${a.totalMarks}</strong>
-              &nbsp;&nbsp;Keywords matched: <strong>${(a.matchedKeywords || []).join(', ') || 'none'}</strong>
-            </div>
-          </div>`).join('')
+        ? answers.map((a, i) => {
+            if (a.selectedAnswer !== undefined) {
+              return `
+                <div style="margin-bottom:16px;padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);">
+                  <div style="font-weight:700;color:var(--navy);margin-bottom:8px;">Q${i+1}. ${a.question}</div>
+                  <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:0.88rem;margin-bottom:6px;align-items:center;">
+                    <span>Selected: <strong>${a.selectedAnswer || 'Not answered'}</strong></span>
+                    <span style="font-weight:700;color:${a.isCorrect ? 'var(--success)' : 'var(--danger)'};">${a.isCorrect ? '✅ Correct' : '❌ Incorrect'}</span>
+                  </div>
+                  <div style="font-size:0.78rem;color:var(--gray);">Correct answer: <strong>${a.correctAnswer}</strong> &nbsp;&nbsp; Marks: <strong>${a.marksEarned}/${a.totalMarks}</strong></div>
+                </div>`;
+            } else {
+              return `
+                <div style="margin-bottom:16px;padding:14px;border:1px solid var(--border);border-radius:var(--radius-sm);">
+                  <div style="font-weight:700;color:var(--navy);margin-bottom:8px;">Q${i+1}. ${a.question}</div>
+                  <div style="background:#f8f9fa;border-radius:6px;padding:10px 14px;font-size:0.88rem;line-height:1.6;white-space:pre-wrap;">${a.studentAnswer || '<em style="color:var(--gray);">No answer provided</em>'}</div>
+                  <div style="margin-top:8px;font-size:0.78rem;color:var(--gray);">
+                    Marks: <strong>${a.marksEarned}/${a.totalMarks}</strong>
+                    &nbsp;&nbsp;Keywords matched: <strong>${(a.matchedKeywords || []).join(', ') || 'none'}</strong>
+                  </div>
+                </div>`;
+            }
+          }).join('')
         : '<p style="color:var(--gray);">No answer data available.</p>';
       document.getElementById('theoryAnswerPanel').classList.remove('hidden');
       document.getElementById('theoryAnswerPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
