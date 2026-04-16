@@ -16,6 +16,7 @@
 
 // ---- STUDENT MATRIC NUMBERS ----
 const STUDENTS = {
+  "123456": "Admin Test Student",
   "276379": "Demilade Adelanke",
   "270178": "Ayomide Lasore",
   "270288": "Akanji Azeez Olawale",

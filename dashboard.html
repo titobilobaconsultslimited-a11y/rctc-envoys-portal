@@ -84,8 +84,8 @@
       } else {
         footerHTML = `
           <button
-            class="btn btn-primary btn-full"
-            onclick="startExam(${exam.id})"
+    class="btn btn-primary btn-full start-exam-btn"
+    data-exam-id="${exam.id}"
           >&#9654; Start Exam</button>`;
       }
 
@@ -110,9 +110,6 @@
     });
 
     })(); // end async IIFE
-
-    // ---- START EXAM — global scope so onclick works ----
-    async function startExam(examId) {
       const currentLocks = await dbGetLocks();
       if (currentLocks[examId] === true) {
         alert('This exam is currently locked by the administrator. Please check the timetable and try again at the scheduled time.');
