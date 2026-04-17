@@ -388,22 +388,46 @@
         </div>
       </div>
 
-      <!-- Exam-level summary -->
-      <p class="section-title" style="margin-bottom:12px;">📋 Per-Exam Participation</p>
-      <div id="analyticsExamTable" style="overflow-x:auto;margin-bottom:32px;"></div>
-
-      <!-- Per-student completion -->
-      <p class="section-title" style="margin-bottom:12px;">👤 Per-Student Completion</p>
-      <div style="margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <input type="text" id="analyticsStudentFilter" placeholder="Filter by name or matric…"
-          oninput="renderStudentCompletion()"
-          style="padding:7px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.85rem;min-width:220px;">
-        <label style="font-size:0.82rem;display:flex;align-items:center;gap:6px;cursor:pointer;">
-          <input type="checkbox" id="analyticsShowPending" onchange="renderStudentCompletion()" style="cursor:pointer;">
-          Show only students with pending exams
-        </label>
+      <!-- Tabs -->
+      <div style="display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--border);">
+        <button id="tabMcqBtn" onclick="switchAnalyticsTab('mcq')" style="padding:9px 22px;font-weight:700;font-size:0.88rem;border:none;background:var(--navy);color:#fff;border-radius:6px 6px 0 0;cursor:pointer;">📋 MCQ Exams</button>
+        <button id="tabTheoryBtn" onclick="switchAnalyticsTab('theory')" style="padding:9px 22px;font-weight:700;font-size:0.88rem;border:none;background:#e9ecef;color:var(--navy);border-radius:6px 6px 0 0;cursor:pointer;margin-left:4px;">✍️ Theory Exams</button>
       </div>
-      <div id="analyticsStudentTable" style="overflow-x:auto;"></div>
+
+      <!-- MCQ Tab -->
+      <div id="analyticsTabMcq">
+        <p class="section-title" style="margin-bottom:12px;">📋 Per-Exam Participation (MCQ)</p>
+        <div id="analyticsExamTable" style="overflow-x:auto;margin-bottom:32px;"></div>
+        <p class="section-title" style="margin-bottom:12px;">👤 Per-Student Completion (MCQ)</p>
+        <div style="margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="analyticsStudentFilter" placeholder="Filter by name or matric…"
+            oninput="renderStudentCompletion()"
+            style="padding:7px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.85rem;min-width:220px;">
+          <label style="font-size:0.82rem;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="analyticsShowPending" onchange="renderStudentCompletion()" style="cursor:pointer;">
+            Show only students with pending exams
+          </label>
+        </div>
+        <div id="analyticsStudentTable" style="overflow-x:auto;"></div>
+      </div>
+
+      <!-- Theory Tab -->
+      <div id="analyticsTabTheory" class="hidden">
+        <p class="section-title" style="margin-bottom:12px;">📋 Per-Exam Participation (Theory)</p>
+        <div id="analyticsTheoryExamTable" style="overflow-x:auto;margin-bottom:32px;"></div>
+        <p class="section-title" style="margin-bottom:12px;">👤 Per-Student Completion (Theory)</p>
+        <div style="margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="analyticsTheoryStudentFilter" placeholder="Filter by name or matric…"
+            oninput="renderTheoryStudentCompletion()"
+            style="padding:7px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.85rem;min-width:220px;">
+          <label style="font-size:0.82rem;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="analyticsTheoryShowPending" onchange="renderTheoryStudentCompletion()" style="cursor:pointer;">
+            Show only students with pending exams
+          </label>
+        </div>
+        <div id="analyticsTheoryStudentTable" style="overflow-x:auto;"></div>
+      </div>
+
     </main>
   </div>
 
@@ -1076,7 +1100,28 @@
       if (which === 'analytics') renderAnalytics();
     }
 
-    function renderAnalytics() {
+    let _analyticsTab = 'mcq';
+
+    function switchAnalyticsTab(tab) {
+      _analyticsTab = tab;
+      document.getElementById('analyticsTabMcq').classList.toggle('hidden', tab !== 'mcq');
+      document.getElementById('analyticsTabTheory').classList.toggle('hidden', tab !== 'theory');
+      document.getElementById('tabMcqBtn').style.background    = tab === 'mcq'    ? 'var(--navy)' : '#e9ecef';
+      document.getElementById('tabMcqBtn').style.color         = tab === 'mcq'    ? '#fff'        : 'var(--navy)';
+      document.getElementById('tabTheoryBtn').style.background = tab === 'theory' ? 'var(--navy)' : '#e9ecef';
+      document.getElementById('tabTheoryBtn').style.color      = tab === 'theory' ? '#fff'        : 'var(--navy)';
+      if (tab === 'theory') {
+        renderTheoryExamParticipation();
+        renderTheoryStudentCompletion();
+      }
+    }
+
+    async function renderAnalytics() {
+      // Ensure theory results are loaded
+      if (!allTheoryResults.length) {
+        allTheoryResults = await dbGetAllSodTheoryResults();
+        allTheoryResults.sort((a, b) => b.dateTaken - a.dateTaken);
+      }
       renderExamParticipation();
       renderStudentCompletion();
     }
@@ -1164,6 +1209,124 @@
       }
 
       document.getElementById('analyticsStudentTable').innerHTML = `
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Matric No.</th>
+              <th>Student Name</th>
+              <th style="text-align:center">✅ Written</th>
+              <th style="text-align:center">⏳ Pending</th>
+              <th style="min-width:160px">Completion</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((r, i) => {
+              const pct = totalExams ? Math.round((r.written / totalExams) * 100) : 0;
+              const barColor = pct === 100 ? 'var(--success)' : pct >= 50 ? '#f39c12' : 'var(--danger)';
+              return `
+                <tr>
+                  <td><span class="rank-num">${i + 1}</span></td>
+                  <td><code style="font-size:0.8rem;font-weight:600;">${r.matric}</code></td>
+                  <td>${r.name}</td>
+                  <td style="text-align:center;font-weight:700;color:var(--success)">${r.written}</td>
+                  <td style="text-align:center;font-weight:700;color:${r.pending > 0 ? '#e67e22' : 'var(--success)'}">${r.pending}</td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <div style="flex:1;background:#e9ecef;border-radius:20px;height:8px;overflow:hidden;">
+                        <div style="width:${pct}%;background:${barColor};height:100%;border-radius:20px;transition:width 0.4s;"></div>
+                      </div>
+                      <span style="font-size:0.75rem;font-weight:700;color:var(--navy);min-width:36px;">${r.written}/${totalExams}</span>
+                    </div>
+                  </td>
+                </tr>`;
+            }).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    // ---- Theory Analytics ----
+    function renderTheoryExamParticipation() {
+      const totalStudents = Object.keys(SOD_STUDENTS).filter(m => m !== 'SOD202612345').length;
+      const rows = SOD_THEORY_EXAMS.map(exam => {
+        const takers  = new Set(allTheoryResults.filter(r => r.examId === exam.id).map(r => r.matric));
+        const written = takers.size;
+        const pending = totalStudents - written;
+        const pct     = totalStudents ? Math.round((written / totalStudents) * 100) : 0;
+        return { exam, written, pending, pct };
+      });
+
+      if (!rows.length) {
+        document.getElementById('analyticsTheoryExamTable').innerHTML =
+          '<p style="color:var(--gray);font-size:0.85rem;">No SOD theory exams configured yet.</p>';
+        return;
+      }
+
+      document.getElementById('analyticsTheoryExamTable').innerHTML = `
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Code</th>
+              <th>Exam Title</th>
+              <th style="text-align:center">✅ Written</th>
+              <th style="text-align:center">⏳ Pending</th>
+              <th style="text-align:center">Total Students</th>
+              <th style="min-width:160px">Progress</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((row, i) => `
+              <tr>
+                <td><span class="rank-num">${i + 1}</span></td>
+                <td><span class="badge badge-navy">${row.exam.code}</span></td>
+                <td>${row.exam.title}</td>
+                <td style="text-align:center;font-weight:700;color:var(--success)">${row.written}</td>
+                <td style="text-align:center;font-weight:700;color:${row.pending > 0 ? '#e67e22' : 'var(--success)'}">${row.pending}</td>
+                <td style="text-align:center">${totalStudents}</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="flex:1;background:#e9ecef;border-radius:20px;height:8px;overflow:hidden;">
+                      <div style="width:${row.pct}%;background:var(--success);height:100%;border-radius:20px;transition:width 0.4s;"></div>
+                    </div>
+                    <span style="font-size:0.75rem;font-weight:700;color:var(--navy);min-width:32px;">${row.pct}%</span>
+                  </div>
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    function renderTheoryStudentCompletion() {
+      const filterText  = (document.getElementById('analyticsTheoryStudentFilter').value || '').trim().toUpperCase();
+      const pendingOnly = document.getElementById('analyticsTheoryShowPending').checked;
+      const totalExams  = SOD_THEORY_EXAMS.length;
+
+      const studentEntries = Object.entries(SOD_STUDENTS).filter(([m]) => m !== 'SOD202612345');
+
+      let rows = studentEntries.map(([matric, name]) => {
+        const taken   = new Set(allTheoryResults.filter(r => r.matric === matric).map(r => r.examId));
+        const written = taken.size;
+        const pending = totalExams - written;
+        return { matric, name, written, pending, totalExams };
+      });
+
+      if (filterText) {
+        rows = rows.filter(r => r.matric.includes(filterText) || r.name.toUpperCase().includes(filterText));
+      }
+      if (pendingOnly) {
+        rows = rows.filter(r => r.pending > 0);
+      }
+
+      rows.sort((a, b) => b.pending - a.pending || a.name.localeCompare(b.name));
+
+      if (!rows.length) {
+        document.getElementById('analyticsTheoryStudentTable').innerHTML =
+          '<p style="color:var(--gray);font-size:0.85rem;padding:12px 0;">No students match your filter.</p>';
+        return;
+      }
+
+      document.getElementById('analyticsTheoryStudentTable').innerHTML = `
         <table class="results-table">
           <thead>
             <tr>
