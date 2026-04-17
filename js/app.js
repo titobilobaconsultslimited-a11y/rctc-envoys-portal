@@ -136,6 +136,7 @@ function renderHeader(studentMatric) {
         <div class="header-logos">
           <img src="Media/rcbc logo.png" alt="RCTC Logo" class="header-logo">
           <img src="Media/envoys logo.png" alt="Envoys Logo" class="header-logo">
+          <img src="Media/YP20.jpg" alt="YP20 Logo" class="header-logo">
         </div>
         <div class="header-text">
           <h1>Redeemed Christian Theology College</h1>
@@ -238,6 +239,7 @@ function renderSodHeader(studentMatric) {
         <div class="header-logos">
           <img src="Media/rcbc logo.png" alt="RCTC Logo" class="header-logo">
           <img src="Media/envoys logo.png" alt="Envoys Logo" class="header-logo">
+          <img src="Media/YP20.jpg" alt="YP20 Logo" class="header-logo">
         </div>
         <div class="header-text">
           <h1>Redeemed Christian Theology College</h1>
