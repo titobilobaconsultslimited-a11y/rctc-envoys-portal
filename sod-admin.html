@@ -236,20 +236,7 @@
 
         <div style="overflow-x:auto;">
           <table class="results-table" id="resultsTable">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Matric No.</th>
-                <th>Student Name</th>
-                <th>Exam Code</th>
-                <th>Exam Title</th>
-                <th>Score</th>
-                <th>%</th>
-                <th>Result</th>
-                <th>Date</th>
-                <th>Time</th>
-              </tr>
-            </thead>
+            <thead id="resultsHead"></thead>
             <tbody id="resultsBody"></tbody>
           </table>
         </div>
@@ -671,49 +658,87 @@
     }
 
     function applyFilters() {
+      renderTable();
+    }
+
+    function renderTable() {
       const examFilter   = document.getElementById('filterExam').value;
       const matricFilter = document.getElementById('filterMatric').value.trim().toUpperCase();
       const gradeFilter  = document.getElementById('filterGrade').value;
 
-      filteredResults = allResults.filter(r => {
-        if (examFilter   && r.examId !== parseInt(examFilter, 10)) return false;
-        if (matricFilter && !r.matric.includes(matricFilter))      return false;
-        if (gradeFilter === 'pass' && r.percentage < 50)           return false;
-        if (gradeFilter === 'fail' && r.percentage >= 50)          return false;
-        return true;
+      // Build pivot: matric → examId → latest result (allResults sorted desc)
+      const pivot = {};
+      allResults.forEach(r => {
+        if (!pivot[r.matric]) pivot[r.matric] = { name: r.name || '', years: {} };
+        if (!pivot[r.matric].years[r.examId]) pivot[r.matric].years[r.examId] = r;
       });
 
-      renderTable(filteredResults);
-      document.getElementById('tableCount').textContent =
-        `${filteredResults.length} record${filteredResults.length !== 1 ? 's' : ''}`;
-    }
+      // Start with all real students (including those with no results yet)
+      let students = Object.entries(SOD_STUDENTS)
+        .filter(([m]) => m !== 'SOD202612345')
+        .map(([matric, name]) => ({
+          matric,
+          name,
+          years: pivot[matric]?.years || {}
+        }));
 
-    function renderTable(rows) {
+      // Apply matric filter
+      if (matricFilter) {
+        students = students.filter(s =>
+          s.matric.includes(matricFilter) || s.name.toUpperCase().includes(matricFilter)
+        );
+      }
+      // Apply exam filter — show only students who took that exam
+      if (examFilter) {
+        const eid = parseInt(examFilter, 10);
+        students = students.filter(s => s.years[eid]);
+      }
+      // Apply grade filter — based on average across all taken exams
+      if (gradeFilter) {
+        students = students.filter(s => {
+          const taken = Object.values(s.years);
+          if (!taken.length) return false;
+          const avg = taken.reduce((sum, r) => sum + r.percentage, 0) / taken.length;
+          return gradeFilter === 'pass' ? avg >= 50 : avg < 50;
+        });
+      }
+
+      document.getElementById('tableCount').textContent =
+        `${students.length} student${students.length !== 1 ? 's' : ''}`;
+
       const tbody = document.getElementById('resultsBody');
       const noEl  = document.getElementById('noResults');
 
-      if (!rows.length) {
+      if (!students.length) {
         tbody.innerHTML = '';
         noEl.classList.remove('hidden');
+        document.getElementById('resultsHead').innerHTML = '';
         return;
       }
-
       noEl.classList.add('hidden');
-      tbody.innerHTML = rows.map((r, idx) => {
-        const grade = getGrade(r.percentage);
-        const scCls = getScoreClass(r.percentage);
+
+      // Build header dynamically
+      document.getElementById('resultsHead').innerHTML = `
+        <tr>
+          <th>#</th>
+          <th>Matric No.</th>
+          <th>Student Name</th>
+          ${SOD_EXAMS.map(e => `<th style="text-align:center;white-space:nowrap;">${e.title}</th>`).join('')}
+        </tr>`;
+
+      tbody.innerHTML = students.map((s, idx) => {
+        const yearCells = SOD_EXAMS.map(exam => {
+          const r = s.years[exam.id];
+          if (!r) return `<td style="text-align:center;color:#bbb;">0</td>`;
+          const cls = r.percentage >= 50 ? 'score-pass' : 'score-fail';
+          return `<td style="text-align:center;"><span class="score-cell ${cls}" title="${r.score}/${r.total} on ${formatDate(r.dateTaken)}">${r.percentage}%</span></td>`;
+        }).join('');
         return `
           <tr>
             <td><span class="rank-num">${idx + 1}</span></td>
-            <td><code style="font-size:0.8rem;font-weight:600;">${r.matric}</code></td>
-            <td>${r.name || '—'}</td>
-            <td><span class="badge badge-navy">${r.examCode}</span></td>
-            <td>${r.examTitle}</td>
-            <td style="font-weight:700;">${r.score}/${r.total}</td>
-            <td><span class="score-cell ${scCls}">${r.percentage}%</span></td>
-            <td><span class="badge ${grade.cls}">${grade.label}</span></td>
-            <td style="white-space:nowrap;font-size:0.8rem;">${formatDate(r.dateTaken)}</td>
-            <td style="white-space:nowrap;font-size:0.8rem;">${formatTime(r.dateTaken)}</td>
+            <td><code style="font-size:0.8rem;font-weight:600;">${s.matric}</code></td>
+            <td>${s.name}</td>
+            ${yearCells}
           </tr>`;
       }).join('');
     }
@@ -726,36 +751,50 @@
     }
 
     // ---- CSV Downloads ----
-    const CSV_HEADERS = ['matric', 'name', 'examCode', 'examTitle', 'score', 'total', 'percentage', 'dateTaken'];
+    function buildPivotCSVData(visibleMatrics) {
+      // visibleMatrics: Set of matric strings to include; null = all real students
+      const pivot = {};
+      allResults.forEach(r => {
+        if (!pivot[r.matric]) pivot[r.matric] = { years: {} };
+        if (!pivot[r.matric].years[r.examId]) pivot[r.matric].years[r.examId] = r;
+      });
 
-    function prepareCSVRows(rows) {
-      return rows.map(r => ({
-        matric:     r.matric,
-        name:       r.name || '',
-        examCode:   r.examCode,
-        examTitle:  r.examTitle,
-        score:      r.score,
-        total:      r.total,
-        percentage: r.percentage + '%',
-        dateTaken:  `${formatDate(r.dateTaken)} ${formatTime(r.dateTaken)}`
-      }));
+      const students = Object.entries(SOD_STUDENTS)
+        .filter(([m]) => m !== 'SOD202612345')
+        .filter(([m]) => !visibleMatrics || visibleMatrics.has(m));
+
+      const yearTitles = SOD_EXAMS.map(e => e.title);
+      const headers    = ['Matric No.', 'Student Name', ...yearTitles];
+
+      const rows = students.map(([matric, name]) => {
+        const years = pivot[matric]?.years || {};
+        const obj   = { 'Matric No.': matric, 'Student Name': name };
+        SOD_EXAMS.forEach(exam => {
+          obj[exam.title] = years[exam.id] ? years[exam.id].percentage + '%' : '0';
+        });
+        return obj;
+      });
+
+      return { headers, rows };
     }
 
     function downloadAllCSV() {
       if (!allResults.length) { alert('No SOD results to export.'); return; }
+      const { headers, rows } = buildPivotCSVData(null);
       downloadCSV(
         `RCTC_SOD_All_Results_${new Date().toISOString().slice(0,10)}.csv`,
-        prepareCSVRows(allResults),
-        CSV_HEADERS
+        rows, headers
       );
     }
 
     function downloadFilteredCSV() {
-      if (!filteredResults.length) { alert('No results to export.'); return; }
+      const codeCells = document.querySelectorAll('#resultsBody tr td:nth-child(2) code');
+      if (!codeCells.length) { alert('No results visible to export.'); return; }
+      const visibleMatrics = new Set([...codeCells].map(c => c.textContent));
+      const { headers, rows } = buildPivotCSVData(visibleMatrics);
       downloadCSV(
         `RCTC_SOD_Results_Filtered_${new Date().toISOString().slice(0,10)}.csv`,
-        prepareCSVRows(filteredResults),
-        CSV_HEADERS
+        rows, headers
       );
     }
 
