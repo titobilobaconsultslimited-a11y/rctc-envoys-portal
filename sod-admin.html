@@ -320,21 +320,7 @@
         </div>
         <div style="overflow-x:auto;">
           <table class="results-table" id="theoryResultsTable">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Matric No.</th>
-                <th>Student Name</th>
-                <th>Exam</th>
-                <th>Score</th>
-                <th>%</th>
-                <th>Result</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>View</th>
-                <th>Reset</th>
-              </tr>
-            </thead>
+            <thead id="theoryResultsHead"></thead>
             <tbody id="theoryResultsBody"></tbody>
           </table>
         </div>
@@ -950,52 +936,94 @@
     }
 
     function applyTheoryFilters() {
-      const examFilter   = document.getElementById('tFilterExam').value;
-      const matricFilter = document.getElementById('tFilterMatric').value.trim().toUpperCase();
-      filteredTheoryResults = allTheoryResults.filter(r => {
-        if (examFilter   && r.examId !== parseInt(examFilter, 10)) return false;
-        if (matricFilter && !r.matric.includes(matricFilter))      return false;
-        return true;
-      });
-      renderTheoryTable(filteredTheoryResults);
-      document.getElementById('theoryTableCount').textContent =
-        filteredTheoryResults.length + ' record' + (filteredTheoryResults.length !== 1 ? 's' : '');
+      renderTheoryTable();
     }
 
     function clearTheoryFilters() {
       document.getElementById('tFilterExam').value   = '';
       document.getElementById('tFilterMatric').value = '';
-      applyTheoryFilters();
+      renderTheoryTable();
     }
 
-    // ---- Theory Table ----
-    function renderTheoryTable(rows) {
+    // ---- Theory Table (pivot: one row per student) ----
+    function renderTheoryTable() {
+      const examFilter   = document.getElementById('tFilterExam').value;
+      const matricFilter = document.getElementById('tFilterMatric').value.trim().toUpperCase();
+
+      // Build pivot: matric → examId → latest result
+      const pivot = {};
+      allTheoryResults.forEach(r => {
+        if (!pivot[r.matric]) pivot[r.matric] = { name: r.name || '', years: {} };
+        if (!pivot[r.matric].years[r.examId]) pivot[r.matric].years[r.examId] = r;
+      });
+
+      let students = Object.entries(SOD_STUDENTS)
+        .filter(([m]) => m !== 'SOD202612345')
+        .map(([matric, name]) => ({
+          matric, name,
+          years: pivot[matric]?.years || {}
+        }));
+
+      if (matricFilter) {
+        students = students.filter(s =>
+          s.matric.includes(matricFilter) || s.name.toUpperCase().includes(matricFilter)
+        );
+      }
+      if (examFilter) {
+        const eid = parseInt(examFilter, 10);
+        students = students.filter(s => s.years[eid]);
+      }
+
+      document.getElementById('theoryTableCount').textContent =
+        students.length + ' student' + (students.length !== 1 ? 's' : '');
+
       const tbody = document.getElementById('theoryResultsBody');
       const noEl  = document.getElementById('theoryNoResults');
-      if (!rows.length) {
+
+      if (!students.length) {
         tbody.innerHTML = '';
         noEl.classList.remove('hidden');
+        document.getElementById('theoryResultsHead').innerHTML = '';
         return;
       }
       noEl.classList.add('hidden');
-      tbody.innerHTML = rows.map((r, idx) => {
-        const grade = getGrade(r.percentage);
-        const scCls = getScoreClass(r.percentage);
+
+      document.getElementById('theoryResultsHead').innerHTML = `
+        <tr>
+          <th>#</th>
+          <th>Matric No.</th>
+          <th>Student Name</th>
+          ${SOD_THEORY_EXAMS.map(e => `<th style="text-align:center;white-space:nowrap;">${e.title}</th>`).join('')}
+        </tr>`;
+
+      tbody.innerHTML = students.map((s, idx) => {
+        const yearCells = SOD_THEORY_EXAMS.map(exam => {
+          const r = s.years[exam.id];
+          if (!r) return `<td style="text-align:center;color:#bbb;">0</td>`;
+          const cls = r.percentage >= 50 ? 'score-pass' : 'score-fail';
+          return `
+            <td style="text-align:center;">
+              <span class="score-cell ${cls}" title="${r.score}/${r.total} on ${formatDate(r.dateTaken)}">${r.percentage}%</span><br>
+              <button class="btn btn-outline btn-sm" style="margin-top:4px;font-size:0.7rem;padding:2px 7px;"
+                onclick="viewAnswersDirect('${s.matric}',${exam.id})">View</button>
+            </td>`;
+        }).join('');
         return `
           <tr>
             <td><span class="rank-num">${idx + 1}</span></td>
-            <td><code style="font-size:0.8rem;font-weight:600;">${r.matric}</code></td>
-            <td>${r.name || '\u2014'}</td>
-            <td><span class="badge badge-navy">${r.examCode}</span></td>
-            <td style="font-weight:700;">${r.score}/${r.total}</td>
-            <td><span class="score-cell ${scCls}">${r.percentage}%</span></td>
-            <td><span class="badge ${grade.cls}">${grade.label}</span></td>
-            <td style="white-space:nowrap;font-size:0.8rem;">${formatDate(r.dateTaken)}</td>
-            <td style="white-space:nowrap;font-size:0.8rem;">${formatTime(r.dateTaken)}</td>
-            <td><button class="btn btn-outline btn-sm" onclick="viewAnswers(${idx})">View</button></td>
-            <td><button class="btn-exam-reset" onclick="openTheoryResetModal(${r.examId})">&#128260; Reset</button></td>
+            <td><code style="font-size:0.8rem;font-weight:600;">${s.matric}</code></td>
+            <td>${s.name}</td>
+            ${yearCells}
           </tr>`;
       }).join('');
+    }
+
+    function viewAnswersDirect(matric, examId) {
+      const r = allTheoryResults.find(x => x.matric === matric && x.examId === examId);
+      if (!r) return;
+      // Reuse filteredTheoryResults slot for viewAnswers(0) compatibility
+      filteredTheoryResults = [r];
+      viewAnswers(0);
     }
 
     function viewAnswers(rowIdx) {
@@ -1032,31 +1060,45 @@
       document.getElementById('theoryAnswerPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // ---- Theory CSV ----
+    // ---- Theory CSV (pivot) ----
+    function buildTheoryPivotCSV(visibleMatrics) {
+      const pivot = {};
+      allTheoryResults.forEach(r => {
+        if (!pivot[r.matric]) pivot[r.matric] = { years: {} };
+        if (!pivot[r.matric].years[r.examId]) pivot[r.matric].years[r.examId] = r;
+      });
+
+      const students = Object.entries(SOD_STUDENTS)
+        .filter(([m]) => m !== 'SOD202612345')
+        .filter(([m]) => !visibleMatrics || visibleMatrics.has(m));
+
+      const examTitles = SOD_THEORY_EXAMS.map(e => e.title);
+      const headers    = ['Matric No.', 'Student Name', ...examTitles];
+
+      const rows = students.map(([matric, name]) => {
+        const years = pivot[matric]?.years || {};
+        const obj   = { 'Matric No.': matric, 'Student Name': name };
+        SOD_THEORY_EXAMS.forEach(exam => {
+          obj[exam.title] = years[exam.id] ? years[exam.id].percentage + '%' : '0';
+        });
+        return obj;
+      });
+
+      return { headers, rows };
+    }
+
     function downloadAllTheoryCSV() {
       if (!allTheoryResults.length) { alert('No theory results to export.'); return; }
-      downloadCSV(
-        'RCTC_SOD_Theory_All_' + new Date().toISOString().slice(0,10) + '.csv',
-        allTheoryResults.map(r => ({
-          matric: r.matric, name: r.name || '', examCode: r.examCode, examTitle: r.examTitle,
-          score: r.score, total: r.total, percentage: r.percentage + '%',
-          dateTaken: formatDate(r.dateTaken) + ' ' + formatTime(r.dateTaken)
-        })),
-        ['matric','name','examCode','examTitle','score','total','percentage','dateTaken']
-      );
+      const { headers, rows } = buildTheoryPivotCSV(null);
+      downloadCSV('RCTC_SOD_Theory_All_' + new Date().toISOString().slice(0,10) + '.csv', rows, headers);
     }
 
     function downloadFilteredTheoryCSV() {
-      if (!filteredTheoryResults.length) { alert('No results to export.'); return; }
-      downloadCSV(
-        'RCTC_SOD_Theory_Filtered_' + new Date().toISOString().slice(0,10) + '.csv',
-        filteredTheoryResults.map(r => ({
-          matric: r.matric, name: r.name || '', examCode: r.examCode, examTitle: r.examTitle,
-          score: r.score, total: r.total, percentage: r.percentage + '%',
-          dateTaken: formatDate(r.dateTaken) + ' ' + formatTime(r.dateTaken)
-        })),
-        ['matric','name','examCode','examTitle','score','total','percentage','dateTaken']
-      );
+      const codeCells = document.querySelectorAll('#theoryResultsBody tr td:nth-child(2) code');
+      if (!codeCells.length) { alert('No results visible to export.'); return; }
+      const visibleMatrics = new Set([...codeCells].map(c => c.textContent));
+      const { headers, rows } = buildTheoryPivotCSV(visibleMatrics);
+      downloadCSV('RCTC_SOD_Theory_Filtered_' + new Date().toISOString().slice(0,10) + '.csv', rows, headers);
     }
 
     // ---- Theory Reset ----
@@ -1121,7 +1163,7 @@
       allTheoryResults      = [];
       filteredTheoryResults = [];
       document.getElementById('tFilterExam').innerHTML = '<option value="">All Theory Exams</option>';
-      renderTheoryTable([]);
+      renderTheoryTable();
       renderTheoryStats();
       document.getElementById('clearTheoryModal').classList.add('hidden');
       document.getElementById('theoryTableCount').textContent = '0 records';
