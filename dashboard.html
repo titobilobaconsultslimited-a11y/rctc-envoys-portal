@@ -109,7 +109,12 @@
       grid.appendChild(card);
     });
 
-    })(); // end async IIFE
+    // ---- START EXAM CLICK HANDLER ----
+    grid.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.start-exam-btn');
+      if (!btn) return;
+      const examId = Number(btn.dataset.examId);
+
       const currentLocks = await dbGetLocks();
       if (currentLocks[examId] === true) {
         alert('This exam is currently locked by the administrator. Please check the timetable and try again at the scheduled time.');
@@ -118,7 +123,9 @@
       clearExamProgress();
       saveExamProgress(examId, Date.now(), {});
       window.location.href = `exam.html?id=${examId}`;
-    }
+    });
+
+    })(); // end async IIFE
   </script>
 </body>
 </html>
