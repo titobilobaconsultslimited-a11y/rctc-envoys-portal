@@ -96,11 +96,12 @@
   <!-- SUBMIT CONFIRMATION MODAL -->
   <div class="modal-overlay hidden" id="submitModal">
     <div class="modal">
-      <h3>⚠️ Submit Theory Answers?</h3>
+      <h3>&#9888;&#65039; Submit Theory Answers?</h3>
       <p id="submitModalMsg">Are you sure you want to submit? You cannot go back after submitting.</p>
-      <div class="modal-actions">
-        <button onclick="closeSubmitModal()" class="btn btn-outline">Cancel</button>
-        <button onclick="confirmSubmit()" class="btn btn-primary">Submit Now</button>
+      <p style="font-size:0.82rem;color:#e74c3c;margin-top:8px;font-weight:600;">&#128274; Once submitted, your answers are final and cannot be changed.</p>
+      <div class="modal-actions" style="flex-direction:column;gap:10px;">
+        <button onclick="closeSubmitModal()" class="btn btn-success btn-full" style="font-size:1rem;padding:12px;">&#9654; No — Continue My Exam</button>
+        <button onclick="confirmSubmit()" class="btn btn-danger btn-full" style="font-size:0.9rem;">&#10003; Yes, Submit Now</button>
       </div>
     </div>
   </div>

@@ -1007,13 +1007,17 @@
       tbody.innerHTML = students.map((s, idx) => {
         const yearCells = SOD_THEORY_EXAMS.map(exam => {
           const r = s.years[exam.id];
-          if (!r) return `<td style="text-align:center;color:#bbb;">0</td>`;
+          if (!r) return `<td style="text-align:center;color:#bbb;">—</td>`;
           const cls = r.percentage >= 50 ? 'score-pass' : 'score-fail';
           return `
             <td style="text-align:center;">
               <span class="score-cell ${cls}" title="${r.score}/${r.total} on ${formatDate(r.dateTaken)}">${r.percentage}%</span><br>
-              <button class="btn btn-outline btn-sm" style="margin-top:4px;font-size:0.7rem;padding:2px 7px;"
-                onclick="viewAnswersDirect('${s.matric}',${exam.id})">View</button>
+              <div style="display:flex;gap:4px;justify-content:center;margin-top:4px;">
+                <button class="btn btn-outline btn-sm" style="font-size:0.7rem;padding:2px 7px;"
+                  onclick="viewAnswersDirect('${s.matric}',${exam.id})">View</button>
+                <button class="btn btn-sm" style="font-size:0.7rem;padding:2px 7px;background:#f39c12;color:#fff;border:none;border-radius:4px;cursor:pointer;"
+                  onclick="openTheoryResetForStudent(${exam.id},'${s.matric}')">&#128260; Reset</button>
+              </div>
             </td>`;
         }).join('');
         return `
@@ -1111,6 +1115,14 @@
 
     // ---- Theory Reset ----
     let theoryResetTargetExamId = null;
+
+    // Opens reset modal pre-selecting a specific student (called from table cell Reset button)
+    function openTheoryResetForStudent(examId, matric) {
+      openTheoryResetModal(examId);
+      // After modal is populated, pre-select the specific student
+      const sel = document.getElementById('theoryResetStudentSelect');
+      sel.value = matric;
+    }
 
     function openTheoryResetModal(examId) {
       theoryResetTargetExamId = examId;
