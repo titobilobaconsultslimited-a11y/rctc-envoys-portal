@@ -703,38 +703,27 @@
       }
       noEl.classList.add('hidden');
 
-      // Build header dynamically
+      // Build header dynamically — two columns per exam: Score + %
       document.getElementById('resultsHead').innerHTML = `
         <tr>
           <th>#</th>
           <th>Matric No.</th>
           <th>Student Name</th>
-          ${SOD_EXAMS.map(e => `<th style="text-align:center;white-space:nowrap;">${e.title}</th>`).join('')}
-          <th style="text-align:center;white-space:nowrap;background:#f0f4ff;">Total Score</th>
-          <th style="text-align:center;white-space:nowrap;background:#f0f4ff;">Overall %</th>
+          ${SOD_EXAMS.map(e => `
+            <th style="text-align:center;white-space:nowrap;">${e.title}<br><small style="font-weight:400;opacity:.75;">Score</small></th>
+            <th style="text-align:center;white-space:nowrap;">${e.title}<br><small style="font-weight:400;opacity:.75;">%</small></th>`).join('')}
         </tr>`;
 
       tbody.innerHTML = students.map((s, idx) => {
         const yearCells = SOD_EXAMS.map(exam => {
           const r = s.years[exam.id];
-          if (!r) return `<td style="text-align:center;color:#bbb;">—</td>`;
+          if (!r) return `<td style="text-align:center;color:#bbb;">—</td><td style="text-align:center;color:#bbb;">—</td>`;
           const cls = r.percentage >= 50 ? 'score-pass' : 'score-fail';
-          return `<td style="text-align:center;"><span class="score-cell ${cls}" title="${r.score}/${r.total} on ${formatDate(r.dateTaken)}">${r.percentage}%</span></td>`;
+          return [
+            `<td style="text-align:center;"><span class="score-cell" title="taken on ${formatDate(r.dateTaken)}">${r.score}/${r.total}</span></td>`,
+            `<td style="text-align:center;"><span class="score-cell ${cls}">${r.percentage}%</span></td>`
+          ].join('');
         }).join('');
-
-        // Aggregate score & percentage across all taken exams
-        const takenResults = SOD_EXAMS.map(e => s.years[e.id]).filter(Boolean);
-        const totalScore   = takenResults.reduce((sum, r) => sum + r.score, 0);
-        const totalTotal   = takenResults.reduce((sum, r) => sum + r.total, 0);
-        const overallPct   = totalTotal > 0 ? Math.round((totalScore / totalTotal) * 100) : null;
-        const aggCls       = overallPct !== null ? (overallPct >= 50 ? 'score-pass' : 'score-fail') : '';
-
-        const scoreCell = totalTotal > 0
-          ? `<td style="text-align:center;background:#f8faff;"><span class="score-cell" style="font-weight:700;">${totalScore}/${totalTotal}</span></td>`
-          : `<td style="text-align:center;color:#bbb;background:#f8faff;">—</td>`;
-        const pctCell = overallPct !== null
-          ? `<td style="text-align:center;background:#f8faff;"><span class="score-cell ${aggCls}" style="font-weight:700;">${overallPct}%</span></td>`
-          : `<td style="text-align:center;color:#bbb;background:#f8faff;">—</td>`;
 
         return `
           <tr>
@@ -742,8 +731,6 @@
             <td><code style="font-size:0.8rem;font-weight:600;">${s.matric}</code></td>
             <td>${s.name}</td>
             ${yearCells}
-            ${scoreCell}
-            ${pctCell}
           </tr>`;
       }).join('');
     }
@@ -768,20 +755,17 @@
         .filter(([m]) => m !== 'SOD202612345')
         .filter(([m]) => !visibleMatrics || visibleMatrics.has(m));
 
-      const yearTitles = SOD_EXAMS.map(e => e.title);
-      const headers    = ['Matric No.', 'Student Name', ...yearTitles, 'Total Score', 'Overall %'];
+      const examPairHeaders = SOD_EXAMS.flatMap(e => [`${e.title} Score`, `${e.title} %`]);
+      const headers = ['Matric No.', 'Student Name', ...examPairHeaders];
 
       const rows = students.map(([matric, name]) => {
         const years = pivot[matric]?.years || {};
         const obj   = { 'Matric No.': matric, 'Student Name': name };
         SOD_EXAMS.forEach(exam => {
-          obj[exam.title] = years[exam.id] ? years[exam.id].percentage + '%' : '—';
+          const r = years[exam.id];
+          obj[`${exam.title} Score`] = r ? `${r.score}/${r.total}` : '—';
+          obj[`${exam.title} %`]     = r ? r.percentage + '%' : '—';
         });
-        const takenResults = SOD_EXAMS.map(e => years[e.id]).filter(Boolean);
-        const totalScore   = takenResults.reduce((sum, r) => sum + r.score, 0);
-        const totalTotal   = takenResults.reduce((sum, r) => sum + r.total, 0);
-        obj['Total Score'] = totalTotal > 0 ? `${totalScore}/${totalTotal}` : '—';
-        obj['Overall %']   = totalTotal > 0 ? Math.round((totalScore / totalTotal) * 100) + '%' : '—';
         return obj;
       });
 
