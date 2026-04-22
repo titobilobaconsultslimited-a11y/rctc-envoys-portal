@@ -758,6 +758,18 @@ const SOD_STUDENTS = {
   "SOD202666276": "Nwasor Maureen kaobimdi",
   "SOD202683646": "Abiodun Adesanya",
   "SOD202683439": "Peace Igbinosa",
+  "SOD202650792": "Abandy Esther Thompson",
+  "SOD202637093": "Adigun Olu Matthew",
+  "SOD202661784": "Ajayi Damilola Opeyemi",
+  "SOD202629605": "Asoah Israel Onoesta",
+  "SOD202635261": "Bello Michael",
+  "SOD202667020": "Bello Folake",
+  "SOD202657924": "Ebohon Princewill",
+  "SOD202646931": "Emmanuel Temitayo Olabisi",
+  "SOD202692858": "Janet Oluwabunmi",
+  "SOD202684307": "Folarin Olawunmi Oluwaseun",
+  "SOD202683422": "Odupe Emmanuel",
+  "SOD202641076": "Rasaq Afolabi Oreoluwa",
   // ---- ADMIN TEST ACCOUNT ----
   "SOD202612345": "Admin Test Account",
 };
