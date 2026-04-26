@@ -690,6 +690,79 @@ const EXAMS = [
       { q: "Understanding the cultural and historical background of a text is important in interpretation because:", options: ["It can ultimately substitute for the careful reading of the text itself","It illuminates the meaning the author intended and the audience originally received","It overrides or qualifies the plain grammatical meaning of the individual words","It is only genuinely relevant and necessary for the interpretation of Old Testament texts"], answer: 1 },
       { q: "The 'sensus plenior' (fuller sense) refers to:", options: ["The plain and immediately obvious sense of the text","A deeper or fuller meaning of Scripture intended by God beyond what the human author fully grasped","The complete and entire canon of the biblical Scriptures","A traditional verse-by-verse commentary and exposition method"], answer: 1 }
     ]
+  },
+
+  // 
+  // 24. INTRODUCTION TO CHURCH CONFLICT MANAGEMENT AND RESOLUTION
+  // 
+  {
+    id: 24,
+    code: "CCM 101",
+    title: "Intro to Church Conflict Management",
+    icon: "",
+    duration: 60,
+    questions: [
+      // MODULE I: INTRODUCTION
+      { q: "Who authored the book 'Well Intentioned Dragons' referenced in the lecture on Church Conflict?", options: ["Norman Shawchuck","Keith Huttenlocker","Marshall Shelley","Hocker and William"], answer: 2 },
+      { q: "According to the lecture, who is the prime target of conflict in the church?", options: ["Church elders","The Pastor","The choir leader","New members"], answer: 1 },
+      { q: "Which of the following is NOT mentioned as a biblical example of conflict?", options: ["Cain and Abel","Adam and Eve","Paul and Barnabas","Solomon and David"], answer: 3 },
+      { q: "The study of Church Conflict is described as a fall out of the fact that conflict forms an integral part of:", options: ["Church administration only","Our lives whether we like it or not","Government and politics","Social media interactions"], answer: 1 },
+      { q: "Which scripture is cited in the lecture as important for our understanding of conflict among people, problems and solutions?", options: ["John 3:16","Romans 8:28","2 Timothy 3:16","Hebrews 11:1"], answer: 2 },
+      // MODULE II: DEFINITION OF CONFLICT
+      { q: "The Latin word 'configere' from which 'conflict' is derived means:", options: ["To argue loudly","To strike together","To run away","To negotiate peace"], answer: 1 },
+      { q: "Which of the following best defines conflict according to the lecture?", options: ["A situation where one person dominates another","A clash of differing points of opinions and/or values between two or more people","A legal dispute between organisations","A breakdown in financial management"], answer: 1 },
+      { q: "Conflict is defined as 'two pieces of matter trying to occupy the same place at the same time.' This is referred to as the:", options: ["Biblical definition","Sociological definition","Working definition","Theological definition"], answer: 2 },
+      { q: "According to the lecture, conflict is the interaction of interdependent people who perceive incompatible goals and:", options: ["Seek legal advice from each other","Refuse to communicate entirely","Interference from each other in achieving those goals","Agree to disagree peacefully"], answer: 2 },
+      { q: "The Latin prefix 'con' in 'conflict' means:", options: ["Against","Forward","Together","Away"], answer: 2 },
+      // MODULE III: CAUSES OF CONFLICT IN THE CHURCH
+      { q: "Which of the following is NOT listed as one of the three types of conflict in the church?", options: ["Conflict over budget and accountability","Conflict over church politics and power","Conflict over worship styles and music","Conflict over programmes and doctrine"], answer: 2 },
+      { q: "The local church is described as a social institution primarily because:", options: ["It collects tithes and offerings","People are at the heart of every social institution","It is registered with the government","It holds weekly services"], answer: 1 },
+      { q: "Which of the following is a unique contextual factor of the church that affects conflict?", options: ["The church uses paid professionals exclusively","The work of the church is accomplished through volunteers","The church never experiences financial issues","Church leaders are always neutral in conflict"], answer: 1 },
+      { q: "Which of the following is listed as a cause of conflict in the church?", options: ["Too many prayer meetings","Prescriptive expectations","Building renovations","International missions"], answer: 1 },
+      { q: "An indicator of conflict within the church is:", options: ["Growing Sunday school attendance","Parish members informally organizing cliques and factions","Increase in missionary activities","Regular pastoral visitation"], answer: 1 },
+      // MODULE IV: PREDICTABLE TIMES OF CONFLICT
+      { q: "According to the lecture, which of the following is a predictable time of conflict in the church?", options: ["Annual retreats","Introduction of baby boomers into the church","Christmas carolling","Mid-week Bible study"], answer: 1 },
+      { q: "'Trained Incapacities' is a concept associated with which author?", options: ["Marshall Shelley","Norman Shawchuck","Keith Huttenlocker","Hocker and William"], answer: 2 },
+      { q: "Which of the following is an example of a 'Trained Incapacity' in handling conflict?", options: ["Setting up a conflict resolution committee","Seeking outside mediation","Spiritualizing it — 'We are surrounded by a sea of lost souls, why bother?'","Documenting all grievances formally"], answer: 2 },
+      { q: "'Congregational Patterns' refer to:", options: ["The seating arrangement during services","Corporate patterns of behaviour in dealing with conflict","The order of worship in a congregation","Annual giving trends in the church"], answer: 1 },
+      { q: "Moving congregations from one conflict behaviour pattern to another is described as:", options: ["Very simple if the pastor leads","Automatic over time","Extremely difficult","Unnecessary once conflict ends"], answer: 2 },
+      // MODULE V: CONFLICT AND CONFLICT MANAGEMENT CYCLES
+      { q: "The conflict cycle is credited to:", options: ["Keith Huttenlocker","Marshall Shelley","Norman Shawchuck","Hocker and William"], answer: 2 },
+      { q: "Which of the following correctly lists the THREE components of the Conflict Cycle?", options: ["Action, Threat, Reaction","Problem, Discussion, Resolution","Anger, Denial, Acceptance","Complaint, Mediation, Agreement"], answer: 0 },
+      { q: "In the conflict cycle, 'Threat' means:", options: ["Behaviour of one party that starts a dispute","Threatens to take damage or destroy a 'territory' claimed by another party","The final stage before reconciliation","A legal warning issued during conflict"], answer: 1 },
+      { q: "According to the lecture, the conflict cycle can be broken or discontinued if:", options: ["Both parties agree to leave the church","Basic principles of managing conflict are applied at any stage","The matter is reported to law enforcement","The weaker party surrenders"], answer: 1 },
+      { q: "Which stage comes FIRST in 'The Conflict Cycle' diagram?", options: ["Confrontation","Role Dilemma","Tension Development","Injustice Collecting"], answer: 2 },
+      // MODULE VI: MIND AND EMOTIONS
+      { q: "'Cognitive Dissonance' as described in the lecture refers to:", options: ["The ability to think clearly during conflict","Distorted thinking during conflict","A method of conflict resolution","Healthy disagreement between parties"], answer: 1 },
+      { q: "Which of the following is a typical emotion people feel during conflict?", options: ["Gratitude","Ambivalence","Generosity","Patience"], answer: 1 },
+      { q: "'Overgeneralization' in conflict is expressed as:", options: ["'I observe in you what I won't recognize in me'","'I extend conclusions beyond observable limits'","'I see or hear only what supports my case'","'I attribute motives beyond their significance'"], answer: 1 },
+      { q: "Why should people be given permission to vent during conflict according to the lecture?", options: ["So they can blame others freely","Because repressed feelings will stay and cause future displacement","To give them authority over the process","Because venting always leads to resolution"], answer: 1 },
+      { q: "According to the lecture, feelings during conflict must be:", options: ["Ignored to maintain focus on facts","Acknowledged and expressed","Dismissed as irrelevant","Shared only with the pastor"], answer: 1 },
+      // MODULE VII: RELATIONSHIPS IN CONFLICT
+      { q: "Healthy relationships are described in the lecture as:", options: ["A human achievement through hard work","God-given (divine requirement) and needed for growth","Optional for mature believers","Only relevant outside the church"], answer: 1 },
+      { q: "The THREE basic ingredients groups that handle conflict well must possess are:", options: ["Budget, Structure, Leadership","Counsellor, Security, Spirituality","Prayer, Fasting, Worship","Discipline, Authority, Control"], answer: 1 },
+      { q: "A 'Constructive relational process' in conflict is described as:", options: ["Hard on people and soft on problem","Soft on people and soft on problem","Soft on people and hard on problem","Avoiding both people and problem"], answer: 2 },
+      { q: "Which of the following is NOT one of the five ingredients for building trust?", options: ["Communication","Openness","Dominance","Transparency"], answer: 2 },
+      { q: "According to Module VII, which of the following is a major level where conflict can be experienced?", options: ["Personal hygiene differences","Power or Position","Dress code disagreements","Service time preferences"], answer: 1 },
+      // MODULE VIII: VARIETIES OF CONFLICT
+      { q: "Which of the following is a NEGATIVE result of conflict?", options: ["Group solidarity","Stronger commitment to solutions","Disintegrating and dissociation of relationships","People are communicating"], answer: 2 },
+      { q: "Which of the following is a POSITIVE result of conflict?", options: ["Personal hurt","Dysfunctional church","Bitterness","Develops new understanding of other's point of view"], answer: 3 },
+      { q: "All conflict is described in the lecture as either:", options: ["Spiritual or physical","Internal or external","Self-centred or others-centred","Public or private"], answer: 2 },
+      { q: "Which of the following is listed as one of the THREE basic types of conflict within the church?", options: ["Conflict over worship styles","Conflict over money or budgets","Conflict over building design","Conflict over social media use"], answer: 1 },
+      { q: "Conflict brings about which of the following positive outcomes?", options: ["Automatic unity among members","New ways of thinking and doing things","Permanent resolution of all issues","Elimination of leadership problems"], answer: 1 },
+      // MODULE IX: COMMUNICATION IN CONFLICT
+      { q: "According to the lecture, conflict CANNOT exist without:", options: ["Legal documentation","Communication","A mediator","Financial disputes"], answer: 1 },
+      { q: "Which of the following is a simple rule of good communication?", options: ["Good communication promotes judgment","Good communication increases suspense","Good communication promotes trust","Good communication avoids difficult topics"], answer: 2 },
+      { q: "'Public Distance' in spatial relationships (proxemics) is measured as:", options: ["Less than one arm's length","Two arm's length","No arm's length","3–6 meters"], answer: 3 },
+      { q: "The communication theory model described in the lecture follows which sequence?", options: ["Receiver → Decode → Noise → Encode → Sender","Sender → Encode → Noise → Decode → Receiver","Noise → Sender → Encode → Decode → Receiver","Sender → Decode → Noise → Encode → Receiver"], answer: 1 },
+      { q: "'Active Listening' is described in the lecture as:", options: ["Only hearing words without context","Keeping your mouth shut and listening attentively, observing movement and context of communication","Interrupting to clarify immediately","Listening only to facts and ignoring tone"], answer: 1 },
+      // MODULE X: STYLES OF CONFLICT MANAGEMENT
+      { q: "How many basic styles of conflict management are identified in the lecture?", options: ["Three","Four","Five","Six"], answer: 2 },
+      { q: "The purpose of 'The Avoider' style of conflict management is:", options: ["To win at all costs","To preserve the relationship at any cost","To stay off conflict and withdraw to avoid identifying with either side","To get all parties to a mutual agreement"], answer: 2 },
+      { q: "Which conflict management style believes that mutually agreeable solutions can be worked out among all conflicting parties?", options: ["The Avoider","The Competitor","The Accommodator","The Collaborator"], answer: 3 },
+      { q: "The purpose of 'The Compromiser' is:", options: ["To ensure only the strongest party wins","To ensure that everyone wins a little and gives up a little","To avoid all conflict permanently","To bring in a third party arbitrator"], answer: 1 },
+      { q: "A possible use of 'The Competitor' style is:", options: ["When the stakes are low and relationship matters more","When all parties are willing to compromise","When important and vital decisions must be made urgently","When there is plenty of time to explore all options"], answer: 2 }
+    ]
   }
 
 ]; // END OF EXAMS ARRAY
