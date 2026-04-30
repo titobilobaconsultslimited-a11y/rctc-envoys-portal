@@ -1799,7 +1799,7 @@ const SIT_EXAMS = [
     code: "SIT MOD 1",
     title: "Starter Pack Module 1",
     icon: "🎖️",
-    duration: 90,
+    duration: 60,
     questions: [
 
       // ---- THE BIBLE (Q1–10) ----
