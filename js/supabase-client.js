@@ -313,3 +313,184 @@ async function dbSetAllSodTheoryLocks(examIds, locked) {
     .upsert(rows, { onConflict: 'exam_id,portal' });
   if (error) console.error('dbSetAllSodTheoryLocks:', error);
 }
+
+// ============================================================
+// SIT PORTAL — RESULTS
+// ============================================================
+async function dbGetAllSitResults() {
+  const { data, error } = await db
+    .from('sit_exam_results')
+    .select('*')
+    .order('date_taken', { ascending: false });
+  if (error) { console.error('dbGetAllSitResults:', error); return []; }
+  return (data || []).map(_mapResult);
+}
+
+async function dbGetSitStudentResults(matric) {
+  const { data, error } = await db
+    .from('sit_exam_results')
+    .select('*')
+    .eq('matric', matric);
+  if (error) { console.error('dbGetSitStudentResults:', error); return []; }
+  return (data || []).map(_mapResult);
+}
+
+async function dbHasSitStudentTakenExam(matric, examId) {
+  const { data, error } = await db
+    .from('sit_exam_results')
+    .select('*')
+    .eq('matric', matric)
+    .eq('exam_id', examId)
+    .maybeSingle();
+  if (error) { console.error('dbHasSitStudentTakenExam:', error); return null; }
+  return data ? _mapResult(data) : null;
+}
+
+async function dbSaveSitResult(result) {
+  const { error } = await db
+    .from('sit_exam_results')
+    .insert({
+      matric:     result.matric,
+      name:       result.name,
+      exam_id:    result.examId,
+      exam_code:  result.examCode,
+      exam_title: result.examTitle,
+      score:      result.score,
+      total:      result.total,
+      percentage: result.percentage,
+      date_taken: new Date(result.dateTaken).toISOString()
+    });
+  if (error) console.error('dbSaveSitResult:', error);
+}
+
+async function dbDeleteSitResults(examId, matric) {
+  let query = db.from('sit_exam_results').delete().eq('exam_id', examId);
+  if (matric) query = query.eq('matric', matric);
+  const { error } = await query;
+  if (error) console.error('dbDeleteSitResults:', error);
+}
+
+async function dbClearAllSitResults() {
+  const { error } = await db.from('sit_exam_results').delete().neq('id', 0);
+  if (error) console.error('dbClearAllSitResults:', error);
+}
+
+// ============================================================
+// SIT PORTAL — EXAM LOCKS
+// ============================================================
+async function dbGetSitLocks() {
+  const { data, error } = await db
+    .from('exam_locks')
+    .select('*')
+    .eq('portal', 'sit');
+  if (error) { console.error('dbGetSitLocks:', error); return {}; }
+  const locks = {};
+  (data || []).forEach(row => { locks[row.exam_id] = row.locked; });
+  return locks;
+}
+
+async function dbSetSitLock(examId, locked) {
+  const { error } = await db
+    .from('exam_locks')
+    .upsert({ exam_id: examId, locked, portal: 'sit' }, { onConflict: 'exam_id,portal' });
+  if (error) console.error('dbSetSitLock:', error);
+}
+
+async function dbSetAllSitLocks(examIds, locked) {
+  const rows = examIds.map(id => ({ exam_id: id, locked, portal: 'sit' }));
+  const { error } = await db
+    .from('exam_locks')
+    .upsert(rows, { onConflict: 'exam_id,portal' });
+  if (error) console.error('dbSetAllSitLocks:', error);
+}
+
+// ============================================================
+// SIT PORTAL — THEORY RESULTS
+// ============================================================
+async function dbGetAllSitTheoryResults() {
+  const { data, error } = await db
+    .from('sit_theory_results')
+    .select('*')
+    .order('date_taken', { ascending: false });
+  if (error) { console.error('dbGetAllSitTheoryResults:', error); return []; }
+  return (data || []).map(_mapTheoryResult);
+}
+
+async function dbGetSitStudentTheoryResults(matric) {
+  const { data, error } = await db
+    .from('sit_theory_results')
+    .select('*')
+    .eq('matric', matric);
+  if (error) { console.error('dbGetSitStudentTheoryResults:', error); return []; }
+  return (data || []).map(_mapTheoryResult);
+}
+
+async function dbHasSitStudentTakenTheory(matric, examId) {
+  const { data, error } = await db
+    .from('sit_theory_results')
+    .select('*')
+    .eq('matric', matric)
+    .eq('exam_id', examId)
+    .maybeSingle();
+  if (error) { console.error('dbHasSitStudentTakenTheory:', error); return null; }
+  return data ? _mapTheoryResult(data) : null;
+}
+
+async function dbSaveSitTheoryResult(result) {
+  const { error } = await db
+    .from('sit_theory_results')
+    .insert({
+      matric:     result.matric,
+      name:       result.name,
+      exam_id:    result.examId,
+      exam_code:  result.examCode,
+      exam_title: result.examTitle,
+      answers:    result.answers,
+      score:      result.score,
+      total:      result.total,
+      percentage: result.percentage,
+      date_taken: new Date(result.dateTaken).toISOString()
+    });
+  if (error) console.error('dbSaveSitTheoryResult:', error);
+}
+
+async function dbDeleteSitTheoryResults(examId, matric) {
+  let query = db.from('sit_theory_results').delete().eq('exam_id', examId);
+  if (matric) query = query.eq('matric', matric);
+  const { error } = await query;
+  if (error) console.error('dbDeleteSitTheoryResults:', error);
+}
+
+async function dbClearAllSitTheoryResults() {
+  const { error } = await db.from('sit_theory_results').delete().neq('id', 0);
+  if (error) console.error('dbClearAllSitTheoryResults:', error);
+}
+
+// ============================================================
+// SIT PORTAL — THEORY EXAM LOCKS
+// ============================================================
+async function dbGetSitTheoryLocks() {
+  const { data, error } = await db
+    .from('exam_locks')
+    .select('*')
+    .eq('portal', 'sit-theory');
+  if (error) { console.error('dbGetSitTheoryLocks:', error); return {}; }
+  const locks = {};
+  (data || []).forEach(row => { locks[row.exam_id] = row.locked; });
+  return locks;
+}
+
+async function dbSetSitTheoryLock(examId, locked) {
+  const { error } = await db
+    .from('exam_locks')
+    .upsert({ exam_id: examId, locked, portal: 'sit-theory' }, { onConflict: 'exam_id,portal' });
+  if (error) console.error('dbSetSitTheoryLock:', error);
+}
+
+async function dbSetAllSitTheoryLocks(examIds, locked) {
+  const rows = examIds.map(id => ({ exam_id: id, locked, portal: 'sit-theory' }));
+  const { error } = await db
+    .from('exam_locks')
+    .upsert(rows, { onConflict: 'exam_id,portal' });
+  if (error) console.error('dbSetAllSitTheoryLocks:', error);
+}

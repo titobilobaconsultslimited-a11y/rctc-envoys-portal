@@ -252,3 +252,63 @@ function renderSodHeader(studentMatric) {
       </div>
     </div>`;
 }
+
+// ============================================================
+// STEWARDS IN TRAINING (SIT) — SHARED APPLICATION LOGIC
+// ============================================================
+
+// ---- SIT AUTH HELPERS ----
+function getCurrentSitStudent() {
+  return store.sessionGet('rctc_sit_student');
+}
+
+function requireSitStudentAuth() {
+  const matric = getCurrentSitStudent();
+  if (!matric || !SIT_STUDENTS[matric]) {
+    window.location.href = 'sit-login.html';
+    return null;
+  }
+  return matric;
+}
+
+function sitStudentLogout() {
+  store.sessionRemove('rctc_sit_student');
+  window.location.href = 'sit-login.html';
+}
+
+// ---- SIT EXAM STATE ----
+function saveSitExamProgress(examId, startTime, answers) {
+  store.set('rctc_sit_active_exam', { examId, startTime, answers });
+}
+
+function getSitExamProgress() {
+  return store.get('rctc_sit_active_exam');
+}
+
+function clearSitExamProgress() {
+  store.remove('rctc_sit_active_exam');
+}
+
+// ---- RENDER SIT HEADER ----
+function renderSitHeader(studentMatric) {
+  const name = studentMatric ? SIT_STUDENTS[studentMatric] : '';
+  const headerEl = document.getElementById('siteHeader');
+  if (!headerEl) return;
+  headerEl.innerHTML = `
+    <div class="header-top">
+      <div class="header-brand">
+        <div class="header-logos">
+          <img src="Media/envoys logo.png" alt="Envoys Logo" class="header-logo">
+          <img src="Media/YP20.jpg" alt="YP20 Logo" class="header-logo">
+        </div>
+        <div class="header-text">
+          <h1>Stewards in Training</h1>
+          <h2>Envoys Campus — SIT Examination Portal</h2>
+        </div>
+      </div>
+      <div class="header-nav">
+        ${studentMatric ? `<div class="user-badge">👤 <span>${name}</span> &mdash; ${studentMatric}</div>` : ''}
+        ${studentMatric ? `<button onclick="sitStudentLogout()" class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);">Logout</button>` : ''}
+      </div>
+    </div>`;
+}

@@ -3,11 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RCTC Envoys — Exam Portal Login</title>
+  <title>RCTC Envoys — Stewards in Training Exam Portal Login</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
     .divider { display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--gray);font-size:0.82rem; }
     .divider::before,.divider::after { content:'';flex:1;height:1px;background:var(--border); }
+    .sit-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 <body class="login-body">
@@ -17,25 +29,27 @@
     <!-- Branding -->
     <div class="login-header-box">
       <div class="login-logos">
-        <img src="Media/rcbc logo.png" alt="RCTC Logo" class="login-logo">
         <img src="Media/envoys logo.png" alt="Envoys Logo" class="login-logo">
         <img src="Media/YP20.jpg" alt="YP20 Logo" class="login-logo">
       </div>
-      <h1>Redeemed Christian Theology College</h1>
+      <h1>Stewards in Training</h1>
       <h2>Envoys Campus</h2>
-      <p>Online Examination Portal</p>
+      <p>Stewards in Training — Examination Portal</p>
     </div>
 
-    <!-- Student Login Card -->
+    <!-- SIT Student Login Card -->
     <div class="login-card">
-      <h3>🎓 Student Login</h3>
+      <div style="text-align:center;margin-bottom:4px;">
+        <span class="sit-badge">Stewards in Training</span>
+      </div>
+      <h3>🌱 SIT Student Login</h3>
 
       <div class="form-group">
-        <label for="matricNo">Matric Number</label>
+        <label for="matricNo">SIT Matric Number</label>
         <input
           type="text"
           id="matricNo"
-          placeholder="e.g. 276379"
+          placeholder="e.g. SIT2026001"
           autocomplete="off"
           spellcheck="false"
         >
@@ -43,22 +57,18 @@
 
       <div id="loginError" class="error-msg hidden"></div>
 
-      <button onclick="doStudentLogin()" class="btn btn-primary btn-full btn-lg">
+      <button onclick="doSitLogin()" class="btn btn-primary btn-full btn-lg">
         Login &rarr;
       </button>
 
       <div class="divider">or</div>
 
       <div class="admin-link" style="margin-bottom:10px;">
-        <a href="sod-login.html">📖 School of Discipleship (SOD) Portal</a>
-      </div>
-
-      <div class="admin-link" style="margin-bottom:10px;">
-        <a href="sit-login.html">🎖️ Stewards in Training (SIT) Portal</a>
+        <a href="sit-admin.html">🔒 SIT Admin Dashboard</a>
       </div>
 
       <div class="admin-link">
-        <a href="admin.html">🔒 Admin Dashboard Access</a>
+        <a href="index.html">&#8592; Back to Main Portal</a>
       </div>
     </div>
 
@@ -73,8 +83,8 @@
   <script src="js/app.js"></script>
   <script>
     // Auto-redirect if already logged in
-    if (store.sessionGet('rctc_student')) {
-      window.location.href = 'dashboard.html';
+    if (store.sessionGet('rctc_sit_student')) {
+      window.location.href = 'sit-dashboard.html';
     }
 
     const matricInput = document.getElementById('matricNo');
@@ -87,28 +97,29 @@
     });
 
     matricInput.addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') doStudentLogin();
+      if (e.key === 'Enter') doSitLogin();
     });
 
-    function doStudentLogin() {
+    function doSitLogin() {
       hideError('loginError');
       const matric = matricInput.value.trim().toUpperCase();
 
       if (!matric) {
-        showError('loginError', 'Please enter your matric number.');
+        showError('loginError', 'Please enter your SIT matric number.');
         matricInput.focus();
         return;
       }
 
-      if (!STUDENTS[matric]) {
+      if (!SIT_STUDENTS[matric]) {
         showError('loginError', 'Matric number not recognised. Please check and try again, or contact your administrator.');
         matricInput.select();
         return;
       }
 
-      store.sessionSet('rctc_student', matric);
-      window.location.href = 'dashboard.html';
+      store.sessionSet('rctc_sit_student', matric);
+      window.location.href = 'sit-dashboard.html';
     }
   </script>
+
 </body>
 </html>

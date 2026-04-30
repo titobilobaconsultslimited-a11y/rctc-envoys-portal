@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RCTC SIT — Admin Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .admin-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .admin-header-bar h2 { font-size: 1.05rem; color: var(--navy); }
+    .admin-header-bar p  { font-size: 0.82rem; color: var(--gray); margin-top: 2px; }
+
+    .clear-data-btn {
+      background: transparent;
+      border: 2px solid var(--danger);
+      color: var(--danger);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .clear-data-btn:hover { background: var(--danger); color: #fff; }
+
+    .rank-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--light);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .exam-lock-section {
+      margin-bottom: 20px;
+      border: 1.5px solid #dde3ec;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .exam-lock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 18px;
+      background: var(--navy);
+      color: #fff;
+      gap: 12px;
+      flex-wrap: wrap;
+      cursor: pointer;
+      user-select: none;
+    }
+    .exam-lock-header h3 { font-size: 0.92rem; font-weight: 700; margin: 0; color: #fff; }
+    .exam-lock-summary { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+    .exam-lock-bulk { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+    .btn-lock-bulk {
+      padding: 5px 13px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.76rem;
+      cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.45);
+      background: transparent;
+      color: #fff;
+      transition: var(--transition);
+    }
+    .btn-lock-bulk:hover { background: rgba(255,255,255,0.15); }
+    .btn-lock-bulk.bulk-danger { border-color: #ff8a80; color: #ff8a80; }
+    .btn-lock-bulk.bulk-danger:hover { background: rgba(231,76,60,0.22); }
+    .exam-lock-body { max-height: 480px; overflow-y: auto; }
+    .exam-lock-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 16px;
+      border-bottom: 1px solid #f4f4f4;
+      transition: background 0.15s;
+    }
+    .exam-lock-row:last-child { border-bottom: none; }
+    .exam-lock-row.row-locked { background: #fff5f5; }
+    .exam-lock-row:not(.row-locked):hover { background: #f8fafc; }
+    .elr-num   { font-size: 0.72rem; font-weight: 700; color: var(--gray); min-width: 18px; text-align: right; }
+    .elr-icon  { font-size: 1.15rem; min-width: 22px; }
+    .elr-code  { font-size: 0.7rem; font-weight: 700; color: #fff; background: var(--navy); padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
+    .elr-title { flex: 1; font-size: 0.83rem; font-weight: 600; color: var(--navy); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .elr-status { font-size: 0.68rem; font-weight: 700; padding: 2px 9px; border-radius: 20px; white-space: nowrap; }
+    .elr-status.st-open   { background: var(--success-light); color: var(--success); }
+    .elr-status.st-locked { background: var(--danger-light);  color: var(--danger); }
+    .btn-exam-tog {
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+    .btn-exam-tog.do-lock   { background: var(--danger); color: #fff; }
+    .btn-exam-tog.do-lock:hover   { background: #c0392b; }
+    .btn-exam-tog.do-unlock { background: var(--success); color: #fff; }
+    .btn-exam-tog.do-unlock:hover { background: #219a52; }
+    .btn-exam-reset {
+      padding: 4px 11px;
+      border-radius: var(--radius-sm);
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      background: #f39c12;
+      color: #fff;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+    .btn-exam-reset:hover { background: #d68910; }
+    .lock-chevron { font-size: 0.75rem; margin-left: 6px; }
+
+    @media (max-width: 600px) {
+      .admin-toolbar { flex-direction: column; }
+      .admin-toolbar .form-group { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header" id="siteHeader"></header>
+
+  <!-- ADMIN LOGIN OVERLAY -->
+  <div id="adminLoginSection">
+    <div class="admin-main">
+      <div class="admin-login-overlay">
+        <div style="width:100%;max-width:380px;">
+          <div class="login-card">
+            <h3>🔒 Admin Login</h3>
+            <p style="font-size:0.82rem;color:var(--gray);margin-bottom:16px;">Stewards in Training Dashboard</p>
+            <div class="form-group">
+              <label for="adminUser">Username</label>
+              <input type="text" id="adminUser" placeholder="sit-admin" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="adminPass">Password</label>
+              <input type="password" id="adminPass" placeholder="••••••••">
+            </div>
+            <div id="adminLoginError" class="error-msg hidden"></div>
+            <button onclick="doAdminLogin()" class="btn btn-primary btn-full">Login as Admin</button>
+            <div class="admin-link" style="margin-top:14px;">
+              <a href="sit-login.html">&larr; SIT Student Login</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN DASHBOARD (hidden until logged in) -->
+  <div id="adminDashSection" class="hidden">
+    <main class="admin-main">
+
+      <!-- Header Row -->
+      <div class="admin-header-bar">
+        <div>
+          <h2>📊 SIT Examination Results Dashboard</h2>
+          <p>Redeemed Christian Theology College — Envoys Campus, Stewards in Training</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button onclick="showSection('analytics')" class="btn btn-navy btn-sm">📈 Analytics</button>
+          <button onclick="showSection('theory')" class="btn btn-navy btn-sm">✍️ Theory Results</button>
+          <button onclick="downloadAllCSV()" class="btn btn-success">⬇ Download CSV</button>
+          <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <!-- Exam Timetable Control Panel -->
+      <div class="exam-lock-section">
+        <div class="exam-lock-header" onclick="toggleLockSection()">
+          <div>
+            <h3>&#128197; SIT Exam Timetable Control</h3>
+            <div class="exam-lock-summary" id="lockSummary">Loading&hellip;</div>
+          </div>
+          <div class="exam-lock-bulk">
+            <button class="btn-lock-bulk" onclick="event.stopPropagation();unlockAllExams()">&#128275; Open All</button>
+            <button class="btn-lock-bulk bulk-danger" onclick="event.stopPropagation();lockAllExams()">&#128274; Lock All</button>
+            <span class="lock-chevron" id="lockChevron">&#9650;</span>
+          </div>
+        </div>
+        <div class="exam-lock-body" id="examLockBody"></div>
+      </div>
+
+      <!-- Toolbar: Filters -->
+      <div class="admin-toolbar">
+        <div class="form-group">
+          <label for="filterExam">Filter by Exam</label>
+          <select id="filterExam" onchange="applyFilters()">
+            <option value="">All Exams</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="filterMatric">Filter by Matric No.</label>
+          <input type="text" id="filterMatric" placeholder="e.g. SIT2026001" oninput="applyFilters()">
+        </div>
+        <div class="form-group">
+          <label for="filterGrade">Filter by Result</label>
+          <select id="filterGrade" onchange="applyFilters()">
+            <option value="">All Results</option>
+            <option value="pass">Pass (≥50%)</option>
+            <option value="fail">Fail (&lt;50%)</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:8px;">
+          <button onclick="clearFilters()" class="btn btn-outline btn-sm">Clear Filters</button>
+          <button onclick="downloadFilteredCSV()" class="btn btn-navy btn-sm">⬇ Export Filtered</button>
+        </div>
+      </div>
+
+      <!-- Results Table -->
+      <div class="results-table-wrap">
+        <div class="table-header">
+          <h3 id="tableTitle">All SIT Results</h3>
+          <span id="tableCount" class="badge badge-navy">0 records</span>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="results-table" id="resultsTable">
+            <thead id="resultsHead"></thead>
+            <tbody id="resultsBody"></tbody>
+          </table>
+        </div>
+
+        <div id="noResults" class="no-results hidden">
+          <div class="no-icon">📭</div>
+          <p>No exam results found matching your filters.</p>
+        </div>
+      </div>
+
+      <!-- Clear all MCQ data -->
+      <div style="margin-top:24px;text-align:right;">
+        <button onclick="clearAllData()" class="clear-data-btn">🗑 Clear All MCQ Exam Data</button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- THEORY DASHBOARD -->
+  <div id="theoryDashSection" class="hidden">
+    <main class="admin-main">
+
+      <div class="admin-header-bar">
+        <div>
+          <h2>✍️ SIT Theory Results Dashboard</h2>
+          <p>Redeemed Christian Theology College — Envoys Campus, Stewards in Training</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button onclick="showSection('mcq')" class="btn btn-outline btn-sm">&#8592; MCQ Results</button>
+          <button onclick="showSection('analytics')" class="btn btn-navy btn-sm">📈 Analytics</button>
+          <button onclick="downloadAllTheoryCSV()" class="btn btn-success">&#8595; Download CSV</button>
+          <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
+        </div>
+      </div>
+
+      <!-- Theory Stats -->
+      <div class="stats-grid" id="theoryStatsGrid"></div>
+
+      <!-- Theory Lock Panel -->
+      <div class="exam-lock-section">
+        <div class="exam-lock-header" onclick="toggleTheoryLockSection()">
+          <div>
+            <h3>&#128197; Theory Exam Timetable Control</h3>
+            <div class="exam-lock-summary" id="theoryLockSummary">Loading&hellip;</div>
+          </div>
+          <div class="exam-lock-bulk">
+            <button class="btn-lock-bulk" onclick="event.stopPropagation();unlockAllTheoryExams()">&#128275; Open All</button>
+            <button class="btn-lock-bulk bulk-danger" onclick="event.stopPropagation();lockAllTheoryExams()">&#128274; Lock All</button>
+            <span class="lock-chevron" id="theoryLockChevron">&#9650;</span>
+          </div>
+        </div>
+        <div class="exam-lock-body" id="theoryExamLockBody"></div>
+      </div>
+
+      <!-- Filters -->
+      <div class="admin-toolbar">
+        <div class="form-group">
+          <label for="tFilterExam">Filter by Exam</label>
+          <select id="tFilterExam" onchange="applyTheoryFilters()">
+            <option value="">All Theory Exams</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tFilterMatric">Filter by Matric No.</label>
+          <input type="text" id="tFilterMatric" placeholder="e.g. SIT2026001" oninput="applyTheoryFilters()">
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:8px;">
+          <button onclick="clearTheoryFilters()" class="btn btn-outline btn-sm">Clear Filters</button>
+          <button onclick="downloadFilteredTheoryCSV()" class="btn btn-navy btn-sm">&#8595; Export Filtered</button>
+        </div>
+      </div>
+
+      <!-- Theory Results Table -->
+      <div class="results-table-wrap">
+        <div class="table-header">
+          <h3 id="theoryTableTitle">All Theory Results</h3>
+          <span id="theoryTableCount" class="badge badge-navy">0 records</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="results-table" id="theoryResultsTable">
+            <thead id="theoryResultsHead"></thead>
+            <tbody id="theoryResultsBody"></tbody>
+          </table>
+        </div>
+        <div id="theoryNoResults" class="no-results hidden">
+          <div class="no-icon">&#128205;</div>
+          <p>No theory results found.</p>
+        </div>
+      </div>
+
+      <!-- Answer View Panel -->
+      <div id="theoryAnswerPanel" class="hidden" style="margin-top:24px;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+        <div style="background:var(--navy);color:#fff;padding:13px 18px;display:flex;justify-content:space-between;align-items:center;">
+          <h3 style="font-size:0.92rem;margin:0;color:#fff;" id="answerPanelTitle">Student Answers</h3>
+          <button onclick="document.getElementById('theoryAnswerPanel').classList.add('hidden')" style="background:transparent;border:none;color:#fff;cursor:pointer;font-size:1.1rem;">&#10005;</button>
+        </div>
+        <div id="answerPanelBody" style="padding:18px;"></div>
+      </div>
+
+      <!-- Clear theory data -->
+      <div style="margin-top:24px;text-align:right;">
+        <button onclick="clearAllTheoryData()" class="clear-data-btn">🗑 Clear All Theory Data</button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ANALYTICS SECTION -->
+  <div id="analyticsDashSection" class="hidden">
+    <main class="admin-main">
+      <div class="admin-header-bar">
+        <div>
+          <h2>📈 SIT Analytics — Participation Tracker</h2>
+          <p>See which students have written each exam and who is yet to take it.</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button onclick="showSection('mcq')" class="btn btn-outline btn-sm">← MCQ Results</button>
+          <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--border);">
+        <button id="tabMcqBtn" onclick="switchAnalyticsTab('mcq')" style="padding:9px 22px;font-weight:700;font-size:0.88rem;border:none;background:var(--navy);color:#fff;border-radius:6px 6px 0 0;cursor:pointer;">📋 MCQ Exams</button>
+        <button id="tabTheoryBtn" onclick="switchAnalyticsTab('theory')" style="padding:9px 22px;font-weight:700;font-size:0.88rem;border:none;background:#e9ecef;color:var(--navy);border-radius:6px 6px 0 0;cursor:pointer;margin-left:4px;">✍️ Theory Exams</button>
+      </div>
+
+      <!-- MCQ Tab -->
+      <div id="analyticsTabMcq">
+        <p class="section-title" style="margin-bottom:12px;">📋 Per-Exam Participation (MCQ)</p>
+        <div id="analyticsExamTable" style="overflow-x:auto;margin-bottom:32px;"></div>
+        <p class="section-title" style="margin-bottom:12px;">👤 Per-Student Completion (MCQ)</p>
+        <div style="margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="analyticsStudentFilter" placeholder="Filter by name or matric…"
+            oninput="renderStudentCompletion()"
+            style="padding:7px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.85rem;min-width:220px;">
+          <label style="font-size:0.82rem;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="analyticsShowPending" onchange="renderStudentCompletion()" style="cursor:pointer;">
+            Show only students with pending exams
+          </label>
+        </div>
+        <div id="analyticsStudentTable" style="overflow-x:auto;"></div>
+      </div>
+
+      <!-- Theory Tab -->
+      <div id="analyticsTabTheory" class="hidden">
+        <p class="section-title" style="margin-bottom:12px;">📋 Per-Exam Participation (Theory)</p>
+        <div id="analyticsTheoryExamTable" style="overflow-x:auto;margin-bottom:32px;"></div>
+        <p class="section-title" style="margin-bottom:12px;">👤 Per-Student Completion (Theory)</p>
+        <div style="margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="analyticsTheoryStudentFilter" placeholder="Filter by name or matric…"
+            oninput="renderTheoryStudentCompletion()"
+            style="padding:7px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.85rem;min-width:220px;">
+          <label style="font-size:0.82rem;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="analyticsTheoryShowPending" onchange="renderTheoryStudentCompletion()" style="cursor:pointer;">
+            Show only students with pending exams
+          </label>
+        </div>
+        <div id="analyticsTheoryStudentTable" style="overflow-x:auto;"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- CLEAR DATA CONFIRM MODAL -->
+  <div class="modal-overlay hidden" id="clearModal">
+    <div class="modal">
+      <h3>⚠️ Clear All SIT Exam Data?</h3>
+      <p>This will permanently delete ALL SIT exam results from the system. This action cannot be undone. Are you sure?</p>
+      <div class="modal-actions">
+        <button onclick="document.getElementById('clearModal').classList.add('hidden')" class="btn btn-outline">Cancel</button>
+        <button onclick="confirmClearAll()" class="btn btn-danger">Yes, Delete All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESET EXAM MODAL -->
+  <div class="modal-overlay hidden" id="resetModal">
+    <div class="modal">
+      <h3>&#128260; Reset Exam for Student</h3>
+      <p id="resetModalExamName" style="font-weight:700;color:var(--navy);margin-bottom:12px;"></p>
+      <div class="form-group">
+        <label for="resetStudentSelect">Select Student to Reset</label>
+        <select id="resetStudentSelect" style="width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;">
+          <option value="__all__">&#128293; Reset ALL students for this exam</option>
+        </select>
+      </div>
+      <p style="font-size:0.8rem;color:var(--gray);margin-bottom:16px;">The selected student(s) result will be permanently deleted, allowing them to retake this exam.</p>
+      <div class="modal-actions">
+        <button onclick="document.getElementById('resetModal').classList.add('hidden')" class="btn btn-outline">Cancel</button>
+        <button onclick="confirmResetExam()" class="btn" style="background:#f39c12;color:#fff;">&#128260; Confirm Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- THEORY RESET MODAL -->
+  <div class="modal-overlay hidden" id="theoryResetModal">
+    <div class="modal">
+      <h3>&#128260; Reset Theory for Student</h3>
+      <p id="theoryResetModalExamName" style="font-weight:700;color:var(--navy);margin-bottom:12px;"></p>
+      <div class="form-group">
+        <label for="theoryResetStudentSelect">Select Student to Reset</label>
+        <select id="theoryResetStudentSelect" style="width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;">
+          <option value="__all__">&#128293; Reset ALL students for this exam</option>
+        </select>
+      </div>
+      <p style="font-size:0.8rem;color:var(--gray);margin-bottom:16px;">The selected student(s) result will be permanently deleted, allowing them to retake this theory exam.</p>
+      <div class="modal-actions">
+        <button onclick="document.getElementById('theoryResetModal').classList.add('hidden')" class="btn btn-outline">Cancel</button>
+        <button onclick="confirmResetTheory()" class="btn" style="background:#f39c12;color:#fff;">&#128260; Confirm Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLEAR THEORY DATA CONFIRM MODAL -->
+  <div class="modal-overlay hidden" id="clearTheoryModal">
+    <div class="modal">
+      <h3>⚠️ Clear All Theory Data?</h3>
+      <p>This will permanently delete ALL theory exam results. This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button onclick="document.getElementById('clearTheoryModal').classList.add('hidden')" class="btn btn-outline">Cancel</button>
+        <button onclick="confirmClearAllTheory()" class="btn btn-danger">Yes, Delete All</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/data.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // ============================================================
+    // SIT ADMIN DASHBOARD LOGIC
+    // ============================================================
+
+    document.getElementById('siteHeader').innerHTML = `
+      <div class="header-top">
+        <div class="header-brand">
+          <div class="header-logos">
+            <img src="Media/envoys logo.png" alt="Envoys Logo" class="header-logo">
+            <img src="Media/YP20.jpg" alt="YP20 Logo" class="header-logo">
+          </div>
+          <div class="header-text">
+            <h1>Stewards in Training</h1>
+            <h2>Envoys Campus — SIT Admin</h2>
+          </div>
+        </div>
+      </div>`;
+
+    if (store.sessionGet('rctc_sit_admin')) {
+      showAdminDashboard();
+    }
+
+    document.getElementById('adminPass').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') doAdminLogin();
+    });
+
+    function doAdminLogin() {
+      hideError('adminLoginError');
+      const user = document.getElementById('adminUser').value.trim();
+      const pass = document.getElementById('adminPass').value;
+
+      if (!user || !pass) {
+        showError('adminLoginError', 'Please enter both username and password.');
+        return;
+      }
+
+      if (user !== SIT_ADMIN.username || pass !== SIT_ADMIN.password) {
+        showError('adminLoginError', 'Invalid username or password.');
+        document.getElementById('adminPass').value = '';
+        return;
+      }
+
+      store.sessionSet('rctc_sit_admin', true);
+      showAdminDashboard();
+    }
+
+    function doAdminLogout() {
+      store.sessionRemove('rctc_sit_admin');
+      window.location.reload();
+    }
+
+    function showAdminDashboard() {
+      document.getElementById('adminLoginSection').classList.add('hidden');
+      document.getElementById('adminDashSection').classList.remove('hidden');
+      initDashboard();
+    }
+
+    // ============================================================
+    // SECTION SWITCHER
+    // ============================================================
+    function showSection(section) {
+      document.getElementById('adminDashSection').classList.add('hidden');
+      document.getElementById('theoryDashSection').classList.add('hidden');
+      document.getElementById('analyticsDashSection').classList.add('hidden');
+      if (section === 'mcq') {
+        document.getElementById('adminDashSection').classList.remove('hidden');
+      } else if (section === 'theory') {
+        document.getElementById('theoryDashSection').classList.remove('hidden');
+        initTheoryDashboard();
+      } else if (section === 'analytics') {
+        document.getElementById('analyticsDashSection').classList.remove('hidden');
+        initAnalytics();
+      }
+    }
+
+    // ============================================================
+    // MCQ DASHBOARD INIT
+    // ============================================================
+    let allResults      = [];
+    let allTheoryResults = [];
+
+    async function initDashboard() {
+      allResults = await dbGetAllSitResults();
+      allResults.sort((a, b) => b.dateTaken - a.dateTaken);
+      populateExamFilter();
+      applyFilters();
+      renderStats();
+      renderExamLockSection();
+    }
+
+    async function toggleSingleExamLock(examId) {
+      const locks = await dbGetSitLocks();
+      await dbSetSitLock(examId, !locks[examId]);
+      renderExamLockSection();
+    }
+
+    async function lockAllExams() {
+      await dbSetAllSitLocks(SIT_EXAMS.map(e => e.id), true);
+      renderExamLockSection();
+    }
+
+    async function unlockAllExams() {
+      await dbSetAllSitLocks(SIT_EXAMS.map(e => e.id), false);
+      renderExamLockSection();
+    }
+
+    function toggleLockSection() {
+      const body    = document.getElementById('examLockBody');
+      const chevron = document.getElementById('lockChevron');
+      const hiding  = !body.classList.toggle('hidden');
+      chevron.innerHTML = hiding ? '&#9660;' : '&#9650;';
+    }
+
+    async function renderExamLockSection() {
+      const locks       = await dbGetSitLocks();
+      const lockedCount = SIT_EXAMS.filter(e => locks[e.id] === true).length;
+      const openCount   = SIT_EXAMS.length - lockedCount;
+      document.getElementById('lockSummary').textContent =
+        openCount + ' Open  •  ' + lockedCount + ' Locked';
+
+      if (SIT_EXAMS.length === 0) {
+        document.getElementById('examLockBody').innerHTML =
+          '<p style="text-align:center;padding:20px;color:var(--gray);font-size:0.85rem;">No SIT exams have been added yet.</p>';
+        return;
+      }
+
+      document.getElementById('examLockBody').innerHTML = SIT_EXAMS.map((exam, idx) => {
+        const lk = locks[exam.id] === true;
+        return `
+          <div class="exam-lock-row ${lk ? 'row-locked' : ''}">
+            <span class="elr-num">${idx + 1}</span>
+            <span class="elr-icon">${exam.icon}</span>
+            <span class="elr-code">${exam.code}</span>
+            <span class="elr-title">${exam.title}</span>
+            <span class="elr-status ${lk ? 'st-locked' : 'st-open'}">${lk ? '&#128274; Locked' : '&#128275; Open'}</span>
+            <button class="btn-exam-tog ${lk ? 'do-unlock' : 'do-lock'}" onclick="toggleSingleExamLock(${exam.id})">
+              ${lk ? 'Unlock' : 'Lock'}
+            </button>
+            <button class="btn-exam-reset" onclick="openResetModal(${exam.id})">&#128260; Reset</button>
+          </div>`;
+      }).join('');
+    }
+
+    function populateExamFilter() {
+      const sel     = document.getElementById('filterExam');
+      const examIds = [...new Set(allResults.map(r => r.examId))].sort((a, b) => a - b);
+      examIds.forEach(id => {
+        const r = allResults.find(x => x.examId === id);
+        if (r) {
+          const opt = document.createElement('option');
+          opt.value = id;
+          opt.textContent = `${r.examCode} — ${r.examTitle}`;
+          sel.appendChild(opt);
+        }
+      });
+    }
+
+    function renderStats() {
+      const totalAttempts  = allResults.length;
+      const uniqueStudents = new Set(allResults.map(r => r.matric)).size;
+      const avgPct         = totalAttempts
+        ? Math.round(allResults.reduce((s, r) => s + r.percentage, 0) / totalAttempts)
+        : 0;
+      const passCount = allResults.filter(r => r.percentage >= 50).length;
+
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card navy">
+          <div class="stat-num">${totalAttempts}</div>
+          <div class="stat-lbl">Total Attempts</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-num">${uniqueStudents}</div>
+          <div class="stat-lbl">Students Tested</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-num">${passCount}</div>
+          <div class="stat-lbl">Passes (≥50%)</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-num">${avgPct}%</div>
+          <div class="stat-lbl">Avg. Score</div>
+        </div>`;
+    }
+
+    function applyFilters() { renderTable(); }
+
+    function renderTable() {
+      const examFilter   = document.getElementById('filterExam').value;
+      const matricFilter = document.getElementById('filterMatric').value.trim().toUpperCase();
+      const gradeFilter  = document.getElementById('filterGrade').value;
+
+      const pivot = {};
+      allResults.forEach(r => {
+        if (!pivot[r.matric]) pivot[r.matric] = { name: r.name || '', years: {} };
+        if (!pivot[r.matric].years[r.examId]) pivot[r.matric].years[r.examId] = r;
+      });
+
+      let students = Object.entries(SIT_STUDENTS)
+        .filter(([m]) => m !== 'SIT2026001')
+        .map(([matric, name]) => ({
+          matric,
+          name,
+          years: pivot[matric]?.years || {}
+        }));
+
+      if (matricFilter) {
+        students = students.filter(s =>
+          s.matric.includes(matricFilter) || s.name.toUpperCase().includes(matricFilter)
+        );
+      }
+      if (examFilter) {
+        const eid = parseInt(examFilter, 10);
+        students = students.filter(s => s.years[eid]);
+      }
+      if (gradeFilter) {
+        students = students.filter(s => {
+          const taken = Object.values(s.years);
+          if (!taken.length) return false;
+          const avg = taken.reduce((sum, r) => sum + r.percentage, 0) / taken.length;
+          return gradeFilter === 'pass' ? avg >= 50 : avg < 50;
+        });
+      }
+
+      document.getElementById('tableCount').textContent =
+        `${students.length} student${students.length !== 1 ? 's' : ''}`;
+
+      const tbody = document.getElementById('resultsBody');
+      const noEl  = document.getElementById('noResults');
+
+      if (!students.length) {
+        tbody.innerHTML = '';
+        noEl.classList.remove('hidden');
+        document.getElementById('resultsHead').innerHTML = '';
+        return;
+      }
+      noEl.classList.add('hidden');
+
+      if (SIT_EXAMS.length === 0) {
+        document.getElementById('resultsHead').innerHTML = `<tr><th>#</th><th>Matric No.</th><th>Student Name</th><th>Status</th></tr>`;
+        tbody.innerHTML = students.map((s, idx) => `
+          <tr>
+            <td><span class="rank-num">${idx + 1}</span></td>
+            <td><code style="font-size:0.8rem;font-weight:600;">${s.matric}</code></td>
+            <td>${s.name}</td>
+            <td style="color:var(--gray);font-size:0.82rem;">No exams available</td>
+          </tr>`).join('');
+        return;
+      }
+
+      document.getElementById('resultsHead').innerHTML = `
+        <tr>
+          <th>#</th>
+          <th>Matric No.</th>
+          <th>Student Name</th>
+          ${SIT_EXAMS.map(e => `
+            <th style="text-align:center;white-space:nowrap;">${e.title}<br><small style="font-weight:400;opacity:.75;">Score</small></th>
+            <th style="text-align:center;white-space:nowrap;">${e.title}<br><small style="font-weight:400;opacity:.75;">%</small></th>`).join('')}
+        </tr>`;
+
+      tbody.innerHTML = students.map((s, idx) => {
+        const yearCells = SIT_EXAMS.map(exam => {
+          const r = s.years[exam.id];
+          if (!r) return `<td style="text-align:center;color:#bbb;">—</td><td style="text-align:center;color:#bbb;">—</td>`;
+          const cls = r.percentage >= 50 ? 'score-pass' : 'score-fail';
+          return [
+            `<td style="text-align:center;"><span class="score-cell" title="taken on ${formatDate(r.dateTaken)}">${r.score}/${r.total}</span></td>`,
+            `<td style="text-align:center;"><span class="score-cell ${cls}">${r.percentage}%</span></td>`
+          ].join('');
+        }).join('');
+
+        return `
+          <tr>
+            <td><span class="rank-num">${idx + 1}</span></td>
+            <td><code style="font-size:0.8rem;font-weight:600;">${s.matric}</code></td>
+            <td>${s.name}</td>
+            ${yearCells}
+          </tr>`;
+      }).join('');
+    }
+
+    function clearFilters() {
+      document.getElementById('filterExam').value   = '';
+      document.getElementById('filterMatric').value = '';
+      document.getElementById('filterGrade').value  = '';
+      applyFilters();
+    }
+
+    // ---- CSV Downloads ----
+    function buildPivotCSVData(visibleMatrics) {
+      const pivot = {};
+      allResults.forEach(r => {
+        if (!pivot[r.matric]) pivot[r.matric] = { years: {} };
+        if (!pivot[r.matric].years[r.examId]) pivot[r.matric].years[r.examId] = r;
+      });
+
+      const students = Object.entries(SIT_STUDENTS)
+        .filter(([m]) => m !== 'SIT2026001')
+        .filter(([m]) => !visibleMatrics || visibleMatrics.has(m));
+
+      const examPairHeaders = SIT_EXAMS.flatMap(e => [`${e.title} Score`, `${e.title} %`]);
+      const headers = ['Matric No.', 'Student Name', ...examPairHeaders];
+
+      const rows = students.map(([matric, name]) => {
+        const years = pivot[matric]?.years || {};
+        const obj   = { 'Matric No.': matric, 'Student Name': name };
+        SIT_EXAMS.forEach(exam => {
+          const r = years[exam.id];
+          obj[`${exam.title} Score`] = r ? `${r.score}/${r.total}` : '—';
+          obj[`${exam.title} %`]     = r ? r.percentage + '%' : '—';
+        });
+        return obj;
+      });
+
+      return { headers, rows };
+    }
+
+    function downloadAllCSV() {
+      if (!allResults.length) { alert('No SIT results to export.'); return; }
+      const { headers, rows } = buildPivotCSVData(null);
+      downloadCSV(
+        `RCTC_SIT_All_Results_${new Date().toISOString().slice(0,10)}.csv`,
+        rows, headers
+      );
+    }
+
+    function downloadFilteredCSV() {
+      const codeCells = document.querySelectorAll('#resultsBody tr td:nth-child(2) code');
+      if (!codeCells.length) { alert('No results visible to export.'); return; }
+      const visibleMatrics = new Set([...codeCells].map(c => c.textContent));
+      const { headers, rows } = buildPivotCSVData(visibleMatrics);
+      downloadCSV(
+        `RCTC_SIT_Results_Filtered_${new Date().toISOString().slice(0,10)}.csv`,
+        rows, headers
+      );
+    }
+
+    // ---- Reset Exam ----
+    let resetTargetExamId = null;
+
+    function openResetModal(examId) {
+      resetTargetExamId = examId;
+      const exam = SIT_EXAMS.find(e => e.id === examId);
+      document.getElementById('resetModalExamName').textContent = exam ? `${exam.code} — ${exam.title}` : `Exam #${examId}`;
+      const sel = document.getElementById('resetStudentSelect');
+      sel.innerHTML = '<option value="__all__">&#128293; Reset ALL students for this exam</option>';
+      const taken = allResults.filter(r => r.examId === examId);
+      taken.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.matric;
+        opt.textContent = `${SIT_STUDENTS[r.matric] || r.name} (${r.matric})`;
+        sel.appendChild(opt);
+      });
+      document.getElementById('resetModal').classList.remove('hidden');
+    }
+
+    async function confirmResetExam() {
+      const sel    = document.getElementById('resetStudentSelect').value;
+      const matric = sel === '__all__' ? null : sel;
+      await dbDeleteSitResults(resetTargetExamId, matric);
+      document.getElementById('resetModal').classList.add('hidden');
+      allResults = await dbGetAllSitResults();
+      allResults.sort((a, b) => b.dateTaken - a.dateTaken);
+      applyFilters();
+      renderStats();
+    }
+
+    // ---- Clear all ----
+    function clearAllData() {
+      document.getElementById('clearModal').classList.remove('hidden');
+    }
+
+    async function confirmClearAll() {
+      await dbClearAllSitResults();
+      document.getElementById('clearModal').classList.add('hidden');
+      allResults = [];
+      applyFilters();
+      renderStats();
+    }
+
+    // ============================================================
+    // THEORY DASHBOARD
+    // ============================================================
+    async function initTheoryDashboard() {
+      allTheoryResults = await dbGetAllSitTheoryResults();
+      allTheoryResults.sort((a, b) => b.dateTaken - a.dateTaken);
+      populateTheoryExamFilter();
+      applyTheoryFilters();
+      renderTheoryStats();
+      renderTheoryLockSection();
+    }
+
+    async function toggleSingleTheoryLock(examId) {
+      const locks = await dbGetSitTheoryLocks();
+      await dbSetSitTheoryLock(examId, !locks[examId]);
+      renderTheoryLockSection();
+    }
+
+    async function lockAllTheoryExams() {
+      await dbSetAllSitTheoryLocks(SIT_THEORY_EXAMS.map(e => e.id), true);
+      renderTheoryLockSection();
+    }
+
+    async function unlockAllTheoryExams() {
+      await dbSetAllSitTheoryLocks(SIT_THEORY_EXAMS.map(e => e.id), false);
+      renderTheoryLockSection();
+    }
+
+    function toggleTheoryLockSection() {
+      const body    = document.getElementById('theoryExamLockBody');
+      const chevron = document.getElementById('theoryLockChevron');
+      const hiding  = !body.classList.toggle('hidden');
+      chevron.innerHTML = hiding ? '&#9660;' : '&#9650;';
+    }
+
+    async function renderTheoryLockSection() {
+      const locks       = await dbGetSitTheoryLocks();
+      const lockedCount = SIT_THEORY_EXAMS.filter(e => locks[e.id] === true).length;
+      const openCount   = SIT_THEORY_EXAMS.length - lockedCount;
+      document.getElementById('theoryLockSummary').textContent =
+        openCount + ' Open  •  ' + lockedCount + ' Locked';
+
+      if (SIT_THEORY_EXAMS.length === 0) {
+        document.getElementById('theoryExamLockBody').innerHTML =
+          '<p style="text-align:center;padding:20px;color:var(--gray);font-size:0.85rem;">No SIT theory exams have been added yet.</p>';
+        return;
+      }
+
+      document.getElementById('theoryExamLockBody').innerHTML = SIT_THEORY_EXAMS.map((exam, idx) => {
+        const lk = locks[exam.id] === true;
+        return `
+          <div class="exam-lock-row ${lk ? 'row-locked' : ''}">
+            <span class="elr-num">${idx + 1}</span>
+            <span class="elr-icon">${exam.icon}</span>
+            <span class="elr-code">${exam.code}</span>
+            <span class="elr-title">${exam.title}</span>
+            <span class="elr-status ${lk ? 'st-locked' : 'st-open'}">${lk ? '&#128274; Locked' : '&#128275; Open'}</span>
+            <button class="btn-exam-tog ${lk ? 'do-unlock' : 'do-lock'}" onclick="toggleSingleTheoryLock(${exam.id})">
+              ${lk ? 'Unlock' : 'Lock'}
+            </button>
+            <button class="btn-exam-reset" onclick="openTheoryResetModal(${exam.id})">&#128260; Reset</button>
+          </div>`;
+      }).join('');
+    }
+
+    function populateTheoryExamFilter() {
+      const sel = document.getElementById('tFilterExam');
+      sel.innerHTML = '<option value="">All Theory Exams</option>';
+      const examIds = [...new Set(allTheoryResults.map(r => r.examId))].sort((a, b) => a - b);
+      examIds.forEach(id => {
+        const r = allTheoryResults.find(x => x.examId === id);
+        if (r) {
+          const opt = document.createElement('option');
+          opt.value = id;
+          opt.textContent = `${r.examCode} — ${r.examTitle}`;
+          sel.appendChild(opt);
+        }
+      });
+    }
+
+    function renderTheoryStats() {
+      const total          = allTheoryResults.length;
+      const uniqueStudents = new Set(allTheoryResults.map(r => r.matric)).size;
+      const avgPct         = total
+        ? Math.round(allTheoryResults.reduce((s, r) => s + r.percentage, 0) / total)
+        : 0;
+      const passCount = allTheoryResults.filter(r => r.percentage >= 50).length;
+
+      document.getElementById('theoryStatsGrid').innerHTML = `
+        <div class="stat-card navy"><div class="stat-num">${total}</div><div class="stat-lbl">Submissions</div></div>
+        <div class="stat-card gold"><div class="stat-num">${uniqueStudents}</div><div class="stat-lbl">Students</div></div>
+        <div class="stat-card green"><div class="stat-num">${passCount}</div><div class="stat-lbl">Passes (≥50%)</div></div>
+        <div class="stat-card orange"><div class="stat-num">${avgPct}%</div><div class="stat-lbl">Avg. Score</div></div>`;
+    }
+
+    function applyTheoryFilters() { renderTheoryTable(); }
+
+    function renderTheoryTable() {
+      const examFilter   = document.getElementById('tFilterExam').value;
+      const matricFilter = document.getElementById('tFilterMatric').value.trim().toUpperCase();
+
+      let results = [...allTheoryResults];
+      if (examFilter)   results = results.filter(r => r.examId === parseInt(examFilter, 10));
+      if (matricFilter) results = results.filter(r =>
+        r.matric.includes(matricFilter) || (r.name || '').toUpperCase().includes(matricFilter)
+      );
+
+      document.getElementById('theoryTableCount').textContent =
+        `${results.length} record${results.length !== 1 ? 's' : ''}`;
+
+      const tbody = document.getElementById('theoryResultsBody');
+      const noEl  = document.getElementById('theoryNoResults');
+
+      if (!results.length) {
+        tbody.innerHTML = '';
+        noEl.classList.remove('hidden');
+        document.getElementById('theoryResultsHead').innerHTML = '';
+        return;
+      }
+      noEl.classList.add('hidden');
+
+      document.getElementById('theoryResultsHead').innerHTML = `
+        <tr>
+          <th>#</th><th>Matric</th><th>Student Name</th>
+          <th>Exam</th><th style="text-align:center;">Score</th>
+          <th style="text-align:center;">%</th><th>Date</th><th>Answers</th>
+        </tr>`;
+
+      tbody.innerHTML = results.map((r, idx) => {
+        const grade = getGrade(r.percentage);
+        return `
+          <tr>
+            <td><span class="rank-num">${idx + 1}</span></td>
+            <td><code style="font-size:0.8rem;font-weight:600;">${r.matric}</code></td>
+            <td>${r.name || SIT_STUDENTS[r.matric] || '—'}</td>
+            <td><span style="font-size:0.8rem;font-weight:700;">${r.examCode}</span><br>
+              <span style="font-size:0.75rem;color:var(--gray);">${r.examTitle}</span></td>
+            <td style="text-align:center;">${r.score}/${r.total}</td>
+            <td style="text-align:center;"><span class="score-cell ${r.percentage >= 50 ? 'score-pass' : 'score-fail'}">${r.percentage}%</span></td>
+            <td style="font-size:0.78rem;color:var(--gray);">${formatDate(r.dateTaken)}</td>
+            <td><button class="btn btn-sm btn-outline" onclick="viewAnswers(${r.id})">View</button></td>
+          </tr>`;
+      }).join('');
+    }
+
+    function viewAnswers(resultId) {
+      const result = allTheoryResults.find(r => r.id === resultId);
+      if (!result) return;
+      const panel = document.getElementById('theoryAnswerPanel');
+      document.getElementById('answerPanelTitle').textContent =
+        `${result.name || result.matric} — ${result.examTitle}`;
+      const answers = result.answers || [];
+      document.getElementById('answerPanelBody').innerHTML = answers.length === 0
+        ? '<p style="color:var(--gray);">No answer data available.</p>'
+        : answers.map((a, i) => {
+          if (a.selectedAnswer !== undefined) {
+            return `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+              <div style="font-weight:700;margin-bottom:4px;">Q${i+1}. ${a.question}</div>
+              <div style="font-size:0.85rem;">Selected: <strong>${a.selectedAnswer}</strong> | Correct: <strong>${a.correctAnswer}</strong>
+              | <span style="color:${a.isCorrect?'var(--success)':'var(--danger)'};font-weight:700;">${a.isCorrect?'✓ Correct':'✗ Wrong'}</span>
+              | <span style="font-weight:700;">${a.marksEarned}/${a.totalMarks} marks</span></div>
+            </div>`;
+          }
+          return `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+            <div style="font-weight:700;margin-bottom:4px;">Q${i+1}. ${a.question} <span style="font-size:0.8rem;color:var(--gray);">(${a.totalMarks} marks)</span></div>
+            <div style="font-size:0.85rem;background:#f8fafc;padding:10px 12px;border-radius:6px;margin:6px 0;">${a.studentAnswer || '<em>No answer given</em>'}</div>
+            <div style="font-size:0.8rem;color:var(--gray);">Keywords matched: ${(a.matchedKeywords||[]).join(', ')||'none'} | Marks: <strong>${a.marksEarned}/${a.totalMarks}</strong></div>
+          </div>`;
+        }).join('');
+      panel.classList.remove('hidden');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function clearTheoryFilters() {
+      document.getElementById('tFilterExam').value   = '';
+      document.getElementById('tFilterMatric').value = '';
+      applyTheoryFilters();
+    }
+
+    function buildTheoryCSVData(visibleIds) {
+      const results = visibleIds ? allTheoryResults.filter(r => visibleIds.has(r.id)) : allTheoryResults;
+      const headers = ['Matric No.', 'Student Name', 'Exam Code', 'Exam Title', 'Score', 'Total', '%', 'Date'];
+      const rows = results.map(r => ({
+        'Matric No.': r.matric,
+        'Student Name': r.name || SIT_STUDENTS[r.matric] || '—',
+        'Exam Code': r.examCode,
+        'Exam Title': r.examTitle,
+        'Score': r.score,
+        'Total': r.total,
+        '%': r.percentage + '%',
+        'Date': formatDate(r.dateTaken)
+      }));
+      return { headers, rows };
+    }
+
+    function downloadAllTheoryCSV() {
+      if (!allTheoryResults.length) { alert('No SIT theory results to export.'); return; }
+      const { headers, rows } = buildTheoryCSVData(null);
+      downloadCSV(`RCTC_SIT_Theory_All_${new Date().toISOString().slice(0,10)}.csv`, rows, headers);
+    }
+
+    function downloadFilteredTheoryCSV() {
+      const codeCells = document.querySelectorAll('#theoryResultsBody tr td:nth-child(2) code');
+      if (!codeCells.length) { alert('No results visible to export.'); return; }
+      // Export all theory results for visible matrics
+      const visibleMatrics = new Set([...codeCells].map(c => c.textContent));
+      const filtered = allTheoryResults.filter(r => visibleMatrics.has(r.matric));
+      if (!filtered.length) { alert('No results to export.'); return; }
+      const headers = ['Matric No.', 'Student Name', 'Exam Code', 'Exam Title', 'Score', 'Total', '%', 'Date'];
+      const rows = filtered.map(r => ({
+        'Matric No.': r.matric,
+        'Student Name': r.name || SIT_STUDENTS[r.matric] || '—',
+        'Exam Code': r.examCode,
+        'Exam Title': r.examTitle,
+        'Score': r.score,
+        'Total': r.total,
+        '%': r.percentage + '%',
+        'Date': formatDate(r.dateTaken)
+      }));
+      downloadCSV(`RCTC_SIT_Theory_Filtered_${new Date().toISOString().slice(0,10)}.csv`, rows, headers);
+    }
+
+    // ---- Theory Reset ----
+    let theoryResetTargetId = null;
+
+    function openTheoryResetModal(examId) {
+      theoryResetTargetId = examId;
+      const exam = SIT_THEORY_EXAMS.find(e => e.id === examId);
+      document.getElementById('theoryResetModalExamName').textContent = exam ? `${exam.code} — ${exam.title}` : `Exam #${examId}`;
+      const sel = document.getElementById('theoryResetStudentSelect');
+      sel.innerHTML = '<option value="__all__">&#128293; Reset ALL students for this exam</option>';
+      const taken = allTheoryResults.filter(r => r.examId === examId);
+      taken.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.matric;
+        opt.textContent = `${SIT_STUDENTS[r.matric] || r.name} (${r.matric})`;
+        sel.appendChild(opt);
+      });
+      document.getElementById('theoryResetModal').classList.remove('hidden');
+    }
+
+    async function confirmResetTheory() {
+      const sel    = document.getElementById('theoryResetStudentSelect').value;
+      const matric = sel === '__all__' ? null : sel;
+      await dbDeleteSitTheoryResults(theoryResetTargetId, matric);
+      document.getElementById('theoryResetModal').classList.add('hidden');
+      allTheoryResults = await dbGetAllSitTheoryResults();
+      allTheoryResults.sort((a, b) => b.dateTaken - a.dateTaken);
+      applyTheoryFilters();
+      renderTheoryStats();
+    }
+
+    function clearAllTheoryData() {
+      document.getElementById('clearTheoryModal').classList.remove('hidden');
+    }
+
+    async function confirmClearAllTheory() {
+      await dbClearAllSitTheoryResults();
+      document.getElementById('clearTheoryModal').classList.add('hidden');
+      allTheoryResults = [];
+      applyTheoryFilters();
+      renderTheoryStats();
+    }
+
+    // ============================================================
+    // ANALYTICS
+    // ============================================================
+    function initAnalytics() {
+      switchAnalyticsTab('mcq');
+    }
+
+    function switchAnalyticsTab(tab) {
+      document.getElementById('analyticsTabMcq').classList.toggle('hidden', tab !== 'mcq');
+      document.getElementById('analyticsTabTheory').classList.toggle('hidden', tab !== 'theory');
+      document.getElementById('tabMcqBtn').style.background    = tab === 'mcq' ? 'var(--navy)' : '#e9ecef';
+      document.getElementById('tabMcqBtn').style.color         = tab === 'mcq' ? '#fff' : 'var(--navy)';
+      document.getElementById('tabTheoryBtn').style.background = tab === 'theory' ? 'var(--navy)' : '#e9ecef';
+      document.getElementById('tabTheoryBtn').style.color      = tab === 'theory' ? '#fff' : 'var(--navy)';
+      if (tab === 'mcq')    { renderExamParticipation();       renderStudentCompletion(); }
+      if (tab === 'theory') { renderTheoryExamParticipation(); renderTheoryStudentCompletion(); }
+    }
+
+    function renderExamParticipation() {
+      const container = document.getElementById('analyticsExamTable');
+      if (SIT_EXAMS.length === 0) {
+        container.innerHTML = '<p style="color:var(--gray);text-align:center;padding:20px;">No MCQ exams available yet.</p>';
+        return;
+      }
+      const pivot = {};
+      allResults.forEach(r => {
+        if (!pivot[r.matric]) pivot[r.matric] = {};
+        pivot[r.matric][r.examId] = r;
+      });
+
+      const allStudentMatrics = Object.keys(SIT_STUDENTS).filter(m => m !== 'SIT2026001');
+      const totalStudents = allStudentMatrics.length;
+
+      container.innerHTML = `<table class="results-table"><thead><tr>
+        <th>Exam</th><th style="text-align:center;">Taken</th><th style="text-align:center;">Pending</th>
+        <th style="text-align:center;">Avg %</th><th style="min-width:140px;">Completion</th>
+      </tr></thead><tbody>` +
+      SIT_EXAMS.map(exam => {
+        const takers  = allResults.filter(r => r.examId === exam.id);
+        const taken   = takers.length;
+        const pending = Math.max(0, totalStudents - taken);
+        const avg     = taken ? Math.round(takers.reduce((s, r) => s + r.percentage, 0) / taken) : 0;
+        const pct     = totalStudents > 0 ? Math.round((taken / totalStudents) * 100) : 0;
+        return `<tr>
+          <td><strong>${exam.code}</strong><br><span style="font-size:0.78rem;color:var(--gray);">${exam.title}</span></td>
+          <td style="text-align:center;color:var(--success);font-weight:700;">${taken}</td>
+          <td style="text-align:center;color:var(--danger);font-weight:700;">${pending}</td>
+          <td style="text-align:center;">${avg}%</td>
+          <td><div style="background:#e9ecef;border-radius:20px;height:10px;overflow:hidden;margin-bottom:3px;">
+            <div style="background:var(--navy);height:100%;width:${pct}%;border-radius:20px;"></div></div>
+            <span style="font-size:0.72rem;color:var(--gray);">${pct}% (${taken}/${totalStudents})</span>
+          </td>
+        </tr>`;
+      }).join('') + '</tbody></table>';
+    }
+
+    function renderStudentCompletion() {
+      const container    = document.getElementById('analyticsStudentTable');
+      const filterText   = (document.getElementById('analyticsStudentFilter')?.value || '').toUpperCase();
+      const pendingOnly  = document.getElementById('analyticsShowPending')?.checked;
+
+      const pivot = {};
+      allResults.forEach(r => {
+        if (!pivot[r.matric]) pivot[r.matric] = {};
+        pivot[r.matric][r.examId] = r;
+      });
+
+      let students = Object.entries(SIT_STUDENTS).filter(([m]) => m !== 'SIT2026001');
+      if (filterText) students = students.filter(([m, n]) =>
+        m.includes(filterText) || n.toUpperCase().includes(filterText)
+      );
+      if (pendingOnly) students = students.filter(([m]) =>
+        SIT_EXAMS.some(e => !pivot[m]?.[e.id])
+      );
+
+      if (!students.length) {
+        container.innerHTML = '<p style="text-align:center;padding:20px;color:var(--gray);">No students match your filters.</p>';
+        return;
+      }
+
+      container.innerHTML = `<table class="results-table"><thead><tr>
+        <th>#</th><th>Matric</th><th>Student Name</th>
+        ${SIT_EXAMS.map(e => `<th style="text-align:center;font-size:0.78rem;">${e.code}</th>`).join('')}
+        <th style="text-align:center;">Done</th>
+      </tr></thead><tbody>` +
+      students.map(([matric, name], idx) => {
+        const cells = SIT_EXAMS.map(e => {
+          const r = pivot[matric]?.[e.id];
+          return r
+            ? `<td style="text-align:center;" title="${r.percentage}%"><span style="color:var(--success);font-weight:700;">✓</span></td>`
+            : `<td style="text-align:center;"><span style="color:#ccc;">—</span></td>`;
+        }).join('');
+        const done = SIT_EXAMS.filter(e => pivot[matric]?.[e.id]).length;
+        return `<tr>
+          <td><span class="rank-num">${idx + 1}</span></td>
+          <td><code style="font-size:0.78rem;">${matric}</code></td>
+          <td style="font-size:0.85rem;">${name}</td>
+          ${cells}
+          <td style="text-align:center;font-weight:700;">${done}/${SIT_EXAMS.length}</td>
+        </tr>`;
+      }).join('') + '</tbody></table>';
+    }
+
+    function renderTheoryExamParticipation() {
+      const container = document.getElementById('analyticsTheoryExamTable');
+      if (SIT_THEORY_EXAMS.length === 0) {
+        container.innerHTML = '<p style="color:var(--gray);text-align:center;padding:20px;">No theory exams available yet.</p>';
+        return;
+      }
+      const allStudentMatrics = Object.keys(SIT_STUDENTS).filter(m => m !== 'SIT2026001');
+      const totalStudents = allStudentMatrics.length;
+
+      container.innerHTML = `<table class="results-table"><thead><tr>
+        <th>Exam</th><th style="text-align:center;">Submitted</th><th style="text-align:center;">Pending</th>
+        <th style="text-align:center;">Avg %</th><th style="min-width:140px;">Completion</th>
+      </tr></thead><tbody>` +
+      SIT_THEORY_EXAMS.map(exam => {
+        const takers  = allTheoryResults.filter(r => r.examId === exam.id);
+        const taken   = takers.length;
+        const pending = Math.max(0, totalStudents - taken);
+        const avg     = taken ? Math.round(takers.reduce((s, r) => s + r.percentage, 0) / taken) : 0;
+        const pct     = totalStudents > 0 ? Math.round((taken / totalStudents) * 100) : 0;
+        return `<tr>
+          <td><strong>${exam.code}</strong><br><span style="font-size:0.78rem;color:var(--gray);">${exam.title}</span></td>
+          <td style="text-align:center;color:var(--success);font-weight:700;">${taken}</td>
+          <td style="text-align:center;color:var(--danger);font-weight:700;">${pending}</td>
+          <td style="text-align:center;">${avg}%</td>
+          <td><div style="background:#e9ecef;border-radius:20px;height:10px;overflow:hidden;margin-bottom:3px;">
+            <div style="background:var(--navy);height:100%;width:${pct}%;border-radius:20px;"></div></div>
+            <span style="font-size:0.72rem;color:var(--gray);">${pct}% (${taken}/${totalStudents})</span>
+          </td>
+        </tr>`;
+      }).join('') + '</tbody></table>';
+    }
+
+    function renderTheoryStudentCompletion() {
+      const container   = document.getElementById('analyticsTheoryStudentTable');
+      const filterText  = (document.getElementById('analyticsTheoryStudentFilter')?.value || '').toUpperCase();
+      const pendingOnly = document.getElementById('analyticsTheoryShowPending')?.checked;
+
+      const pivot = {};
+      allTheoryResults.forEach(r => {
+        if (!pivot[r.matric]) pivot[r.matric] = {};
+        pivot[r.matric][r.examId] = r;
+      });
+
+      let students = Object.entries(SIT_STUDENTS).filter(([m]) => m !== 'SIT2026001');
+      if (filterText) students = students.filter(([m, n]) =>
+        m.includes(filterText) || n.toUpperCase().includes(filterText)
+      );
+      if (pendingOnly) students = students.filter(([m]) =>
+        SIT_THEORY_EXAMS.some(e => !pivot[m]?.[e.id])
+      );
+
+      if (!students.length) {
+        container.innerHTML = '<p style="text-align:center;padding:20px;color:var(--gray);">No students match your filters.</p>';
+        return;
+      }
+
+      container.innerHTML = `<table class="results-table"><thead><tr>
+        <th>#</th><th>Matric</th><th>Student Name</th>
+        ${SIT_THEORY_EXAMS.map(e => `<th style="text-align:center;font-size:0.78rem;">${e.code}</th>`).join('')}
+        <th style="text-align:center;">Done</th>
+      </tr></thead><tbody>` +
+      students.map(([matric, name], idx) => {
+        const cells = SIT_THEORY_EXAMS.map(e => {
+          const r = pivot[matric]?.[e.id];
+          return r
+            ? `<td style="text-align:center;" title="${r.percentage}%"><span style="color:var(--success);font-weight:700;">✓</span></td>`
+            : `<td style="text-align:center;"><span style="color:#ccc;">—</span></td>`;
+        }).join('');
+        const done = SIT_THEORY_EXAMS.filter(e => pivot[matric]?.[e.id]).length;
+        return `<tr>
+          <td><span class="rank-num">${idx + 1}</span></td>
+          <td><code style="font-size:0.78rem;">${matric}</code></td>
+          <td style="font-size:0.85rem;">${name}</td>
+          ${cells}
+          <td style="text-align:center;font-weight:700;">${done}/${SIT_THEORY_EXAMS.length}</td>
+        </tr>`;
+      }).join('') + '</tbody></table>';
+    }
+
+  </script>
+</body>
+</html>

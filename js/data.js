@@ -1758,3 +1758,192 @@ const SOD_THEORY_EXAMS = [
   }
 
 ];
+
+// ============================================================
+// STEWARDS IN TRAINING (SIT) — EXAM PORTAL DATA
+// ============================================================
+
+// ---- SIT STUDENT MATRIC NUMBERS ----
+// Format: "SIT_MATRIC_NUMBER": "Full Student Name"
+// Example: "SIT2026001": "Brother James Oluwole"
+const SIT_STUDENTS = {
+  // ---- ADD STUDENTS BELOW THIS LINE ----
+  "SIT2026001": "Oluwatobi Kolapo",
+  // ---- END OF STUDENT LIST ----
+};
+
+// ---- SIT ADMIN CREDENTIALS ----
+const SIT_ADMIN = {
+  username: "admin",
+  password: "Envoys@Admin2024"
+};
+
+// ---- SIT MCQ EXAM DATA ----
+// Add SIT exams here following the same format.
+// Example:
+// {
+//   id: 1,
+//   code: "SIT 101",
+//   title: "Introduction to Stewardship",
+//   icon: "🌱",
+//   duration: 60,
+//   questions: [
+//     { q: "Question text?", options: ["A", "B", "C", "D"], answer: 0 }
+//   ]
+// },
+const SIT_EXAMS = [
+
+  // ---- STARTER PACK MODULE 1 ----
+  {
+    id: 1,
+    code: "SIT MOD 1",
+    title: "Starter Pack Module 1",
+    icon: "🎖️",
+    duration: 90,
+    questions: [
+
+      // ---- THE BIBLE (Q1–10) ----
+      { q: "According to 2 Timothy 3:16-17, all scripture is given by inspiration of:", options: ["God", "Man", "The Church", "The Apostles"], answer: 0 },
+      { q: "How many books are contained in the Bible in total?", options: ["39", "27", "66", "73"], answer: 2 },
+      { q: "How many books are in the Old Testament?", options: ["27", "39", "46", "66"], answer: 1 },
+      { q: "The Bible is described as the CONSTITUTION of every believer because:", options: ["It was written by kings", "It is the oldest book", "It was approved by the church", "The teachings and conducts of every believer are established in it"], answer: 3 },
+      { q: "According to Psalm 119:105, the word of God is described as:", options: ["A lamp to my feet and a light to my path", "A sword in my hands", "A shield and buckler", "A river of life"], answer: 0 },
+      { q: "Which scripture warns against adding to or subtracting from the word of God?", options: ["John 3:16", "Matthew 5:17", "Deuteronomy 4:2 and Revelation 22:18-19", "Romans 1:16"], answer: 2 },
+      { q: "The New Testament is described as the revelation of:", options: ["Future prophecies only", "The mysteries contained in the Old Testament", "The laws of Moses", "The history of Israel"], answer: 1 },
+      { q: "To be approved of God, a believer is instructed to:", options: ["Read the Bible casually", "Attend church regularly", "Give tithes and offerings", "Study the Bible diligently — 2 Timothy 2:15"], answer: 3 },
+      { q: "The doctrines of the Bible are described as all of the following EXCEPT:", options: ["Holy", "True", "Changeable", "Immutable"], answer: 2 },
+      { q: "According to John 1:1, the word of God is identified with:", options: ["Jesus Christ", "The Holy Spirit", "The angels", "The prophets"], answer: 0 },
+
+      // ---- GOD & TRINITY (Q11–20) ----
+      { q: "Trinity means the union of:", options: ["God and His angels", "Three divine persons in one unified Godhead", "The Father and the Son only", "God and all believers"], answer: 1 },
+      { q: "Which scripture records God saying 'Let us make man in our image'?", options: ["Genesis 1:26", "Genesis 2:7", "John 1:1", "Isaiah 6:8"], answer: 0 },
+      { q: "The Holy Spirit is described as:", options: ["A force or energy", "An angel", "The third person in the Trinity", "A created being"], answer: 2 },
+      { q: "Which scripture is used to support the doctrine of the Trinity at the baptism of Jesus?", options: ["John 3:16", "Romans 8:11", "Acts 2:4", "Matthew 3:13-17"], answer: 3 },
+      { q: "According to John 5:26, every creature receives life from:", options: ["God", "The angels", "Nature", "The Holy Spirit alone"], answer: 0 },
+      { q: "The work of the Holy Spirit DOES NOT include:", options: ["Regeneration of man", "Sanctification of born-again souls", "Creating the physical universe alone", "Empowering believers — Acts 1:8"], answer: 2 },
+      { q: "Jesus Christ is described as:", options: ["A great prophet only", "God revealed in flesh — John 1:14", "An angel sent from heaven", "A created being"], answer: 1 },
+      { q: "The benediction in 2 Corinthians 13:14 references all three persons of the Trinity. Which is CORRECTLY listed?", options: ["The Lord Jesus Christ, God, and the Holy Spirit", "The Father, Moses, and the Holy Spirit", "Jesus, the angels, and the church", "God, the prophets, and the apostles"], answer: 0 },
+      { q: "The doctrine of the Trinity is described as:", options: ["A simple truth that everyone understands", "A man-made doctrine", "Only relevant to theologians", "A great mystery and a revealed truth — Deuteronomy 29:29"], answer: 3 },
+      { q: "How many books are in the New Testament?", options: ["39", "20", "27", "33"], answer: 2 },
+
+      // ---- THE DEVIL (Q21–28) ----
+      { q: "What was the original name of the devil when he was an archangel in Heaven?", options: ["Beelzebub", "Lucifer", "Apollyon", "Abaddon"], answer: 1 },
+      { q: "The devil was expelled from Heaven because of:", options: ["Pride", "Lying", "Stealing", "Disobedience to creation orders"], answer: 0 },
+      { q: "According to Revelation 20:1-3, the devil will be chained in the bottomless pit for:", options: ["7 years", "100 years", "1,000 years", "Eternity immediately"], answer: 2 },
+      { q: "The Bible describes the devil as all of the following EXCEPT:", options: ["A murderer", "A deceiver", "A tempter", "An all-powerful being"], answer: 3 },
+      { q: "According to James 4:7, how should a believer deal with the devil?", options: ["Submit to God and resist the devil", "Ignore the devil completely", "Pray and fast for 40 days", "Consult a spiritual leader"], answer: 0 },
+      { q: "According to 1 Peter 5:8, the devil walks about as:", options: ["A wolf in sheep's clothing", "A roaring lion seeking whom he may devour", "A thief in the night", "A snake in the grass"], answer: 1 },
+      { q: "The devil is described as the author of:", options: ["Death only", "Sin only", "Sin, sickness, and death — John 10:10", "Poverty and failure only"], answer: 2 },
+      { q: "What fraction of the angels rebelled with Lucifer in Heaven?", options: ["A third part", "Half", "A quarter", "Two thirds"], answer: 0 },
+
+      // ---- ABOUT MAN (Q29–31) ----
+      { q: "According to Genesis 2:7, man is made up of which three parts?", options: ["Mind, heart, and body", "Body, soul, and spirit", "Flesh, blood, and bone", "Reason, emotion, and will"], answer: 1 },
+      { q: "Man is described as God's ambassador on earth to:", options: ["Worship God alone", "Build the church", "Write the scriptures", "Take control over all other creatures on God's behalf — Genesis 1:26-28"], answer: 3 },
+      { q: "According to the course, a child should be named on which day after birth?", options: ["First day", "Third day", "Eighth day — Luke 2:21", "Fortieth day"], answer: 2 },
+
+      // ---- PERSONAL TRANSFORMATION (Q32–38) ----
+      { q: "Repentance is defined as:", options: ["Godly sorrow for sin with a decision to abstain from them", "Going to confession in church", "Performing religious rituals", "Reading the Bible daily"], answer: 0 },
+      { q: "Justification means being declared righteous such that we stand before God:", options: ["As saints who have suffered", "As though we have never sinned", "With our good works as evidence", "Through the merit of our ancestors"], answer: 1 },
+      { q: "Sanctification means:", options: ["Water baptism in a river", "Attending Bible school", "Total separation from sin and worldliness unto God", "Becoming a church elder"], answer: 2 },
+      { q: "Which of the following is NOT an unscriptural meaning of the New Birth?", options: ["Being religious or churchy", "Keeping the Law", "Being educated and cultured", "Receiving God's life and righteousness by faith"], answer: 3 },
+      { q: "The memory verse for Understanding the New Birth (Study II) is found in:", options: ["2 Corinthians 5:17", "John 3:16", "Romans 8:1", "Acts 4:12"], answer: 0 },
+      { q: "According to Romans 5:12, the fall of man through Adam resulted in:", options: ["Only physical death entering the world", "Sin entering into all men", "The loss of the scriptures", "The creation of angels"], answer: 1 },
+      { q: "Which of the following is NOT listed as an evidence of the New Birth?", options: ["A changed life", "An overcoming life", "Witness of the Spirit", "Speaking in tongues immediately at conversion"], answer: 3 },
+
+      // ---- BAPTISM (Q39–46) ----
+      { q: "How many types of baptism must every true believer undergo?", options: ["One", "Two", "Three", "Four"], answer: 2 },
+      { q: "The agent who carries out baptism INTO CHRIST at salvation is:", options: ["The Holy Spirit", "The pastor", "The elders of the church", "The believer himself"], answer: 0 },
+      { q: "The Greek word for baptism 'Baptizo' means:", options: ["To sprinkle", "To submerge or immerse", "To pour", "To anoint"], answer: 1 },
+      { q: "Water baptism is to be carried out in the name of:", options: ["Jesus only", "The Holy Spirit only", "The Father, the Son, and the Holy Spirit — Matthew 28:19", "The local church authority"], answer: 2 },
+      { q: "What is the immediate outward sign of Holy Spirit baptism according to Acts 2:4?", options: ["Falling under the power", "Weeping and crying", "Visions and dreams", "Speaking in tongues"], answer: 3 },
+      { q: "The agent of the Holy Spirit baptism is:", options: ["Jesus Christ — John 14:16-17", "The pastor", "The elders", "The angels"], answer: 0 },
+      { q: "According to Acts 5:32, the Holy Spirit is given to those who:", options: ["Fast for 40 days", "Obey God", "Pay their tithes", "Attend church consistently"], answer: 1 },
+      { q: "Water baptism is described as:", options: ["Optional for believers", "A means of salvation", "A command — not optional so long as a believer is alive after conversion", "Only for ordained ministers"], answer: 2 },
+
+      // ---- PRAYER & FASTING (Q47–55) ----
+      { q: "Prayer is defined as:", options: ["Divine communication and fellowship with God", "A religious ceremony in church", "Repeating memorised words", "Singing hymns and praises only"], answer: 0 },
+      { q: "According to Mark 9:29, some things can only come forth by:", options: ["Fasting only", "Prayer and fasting", "Prayer alone", "The laying on of hands"], answer: 1 },
+      { q: "Which of the following is NOT listed as a type of prayer?", options: ["Intercession", "Thanksgiving", "Supplication", "Meditation"], answer: 3 },
+      { q: "Biblical fasting means:", options: ["Reducing food intake", "Eating only fruits and vegetables", "Abstaining from food and drinks for a period", "Fasting from social media"], answer: 2 },
+      { q: "According to Isaiah 40:31, one of the advantages of fasting and waiting on the Lord is:", options: ["Renewing of strength", "Instant answers to all prayers", "Healing of all diseases", "Financial breakthrough"], answer: 0 },
+      { q: "During fasting, married couples are instructed to abstain from sexual relations based on:", options: ["Church tradition", "1 Corinthians 7:5", "Leviticus 27:30", "Genesis 2:24"], answer: 1 },
+      { q: "According to 1 Thessalonians 5:17, believers are commanded to pray:", options: ["Only on Sundays", "Three times a day", "During crises only", "Without ceasing"], answer: 3 },
+      { q: "Which requirement for effective prayer involves praying in other tongues?", options: ["1 Corinthians 14:2,4,14-18 and Jude 20", "James 5:14", "Romans 10:9", "Acts 2:38"], answer: 0 },
+      { q: "An 'Absolute Fast' is defined as:", options: ["Eating only once a day", "Abstaining from meat only", "Abstaining from food and water for a stipulated period", "Fasting for 40 days without exception"], answer: 2 },
+
+      // ---- DIVINE HEALING (Q56–62) ----
+      { q: "According to 1 Peter 2:24, our healing was purchased through:", options: ["Our prayers and fasting", "The stripes of Jesus Christ", "The anointing oil", "The laying on of hands by elders"], answer: 1 },
+      { q: "The force behind sickness according to the course is:", options: ["Satan — Job 2:1-9; Luke 13:16", "God's judgment only", "Natural causes alone", "Generational curses only"], answer: 0 },
+      { q: "Which of the following is NOT listed as a source of illness?", options: ["Sin", "Curses and demonic attack", "Malnutrition", "Failure to attend church regularly"], answer: 3 },
+      { q: "The course instructs that healing should be received free of charge based on:", options: ["Church policy", "Common sense", "Matthew 10:8 — 'Freely you have received, freely give'", "The decision of church elders"], answer: 2 },
+      { q: "Anointing the sick with oil and prayer of faith by elders is based on:", options: ["Mark 16:18 only", "James 5:14-15", "Acts 28:8 only", "1 Corinthians 12:9"], answer: 1 },
+      { q: "Healing without medicine is described as:", options: ["Biblical — Matthew 4:23; Psalm 103:3", "Dangerous and unscriptural", "Only for special ministers", "Limited to the apostolic age"], answer: 0 },
+      { q: "Restitution in the course context is described as:", options: ["Receiving healing from God", "Paying offerings in the church", "Breaking evil covenants", "A mark of true repentance — payment or restoration of what is damaged"], answer: 3 },
+
+      // ---- DELIVERANCE (Q63–70) ----
+      { q: "Deliverance is described as including all of the following EXCEPT:", options: ["Setting someone free", "Breaking of yokes", "Performing elaborate rituals with water and candles", "Expelling demons"], answer: 2 },
+      { q: "Can a Christian's SPIRIT be inhabited by demons?", options: ["Yes, if the Christian is weak", "No — the spirit is recreated at new birth and is the abode of God", "Only under severe spiritual attack", "Yes, if the Christian is backslidden"], answer: 1 },
+      { q: "The three major doorways that give Satan authority in a person's life are:", options: ["Covenants, curses, and sins", "Poverty, sickness, and ignorance", "Pride, envy, and hatred", "Unbelief, doubt, and fear"], answer: 0 },
+      { q: "According to Proverbs 26:2, demons cannot possess or oppress a man without:", options: ["Permission from God", "The man being very sinful", "A cause", "The man being unaware"], answer: 2 },
+      { q: "To stay delivered, the course recommends all of the following EXCEPT:", options: ["Living a holy life", "Studying the Bible", "Fellowship with Christians", "Isolating yourself from other people"], answer: 3 },
+      { q: "The soul of a Christian CAN be oppressed by demons because:", options: ["The blood of Jesus wears off over time", "The new birth is a rebirth of the spirit, not the soul", "Christians are not fully protected", "Prayer is not always effective"], answer: 1 },
+      { q: "Which of the following methods of deliverance is listed in the course?", options: ["Pleading the blood of Jesus and speaking in tongues", "Special ritual washing in a river", "Burning candles and holy water", "Wearing a cross or special garment"], answer: 0 },
+      { q: "The memory verse for Deliverance II is found in:", options: ["John 8:32", "Obadiah 1:17", "Romans 12:1-2", "Isaiah 10:27"], answer: 2 },
+
+      // ---- QUIET TIME (Q71–76) ----
+      { q: "Quiet time is defined as:", options: ["Silent prayer in church", "Time set aside regularly to meet with God and communicate through the Living Word", "Reading the Bible in bed at night", "Attending midweek service"], answer: 1 },
+      { q: "According to Daniel 6:10, how often should a believer observe quiet time at minimum?", options: ["At least once a day", "Once a week", "Every Sunday", "Whenever convenient"], answer: 0 },
+      { q: "The memory verse for Quiet Time (1 Peter 2:2) describes the desire for:", options: ["The power of God", "Spiritual gifts", "The sincere milk of the word to grow", "Eternal life"], answer: 2 },
+      { q: "Which of the following is NOT listed as a material required for quiet time?", options: ["A Holy Bible", "A notebook and biro", "A list of prayer points", "A special prayer garment"], answer: 3 },
+      { q: "The best time of day recommended for quiet time according to Psalm 63:1 is:", options: ["Early in the morning", "At midday", "In the evening", "At midnight"], answer: 0 },
+      { q: "Which of the following is described as an obstacle to effective quiet time?", options: ["Reading too much of the Bible", "Haste, disturbance, and laziness", "Praying in tongues", "Having too many prayer points"], answer: 1 },
+
+      // ---- CHARACTER & DISCIPLINE (Q77–84) ----
+      { q: "Malice is defined as:", options: ["Telling lies about others", "Being arrogant and proud", "Having a desire to harm others or ill will", "Failing to pay tithes"], answer: 2 },
+      { q: "Which scripture says 'It is an honour for a man to desist from strife'?", options: ["Proverbs 20:3", "Proverbs 17:14", "2 Timothy 2:24", "Titus 3:9"], answer: 0 },
+      { q: "Unforgiveness can result in all the following EXCEPT:", options: ["Hindrance to prayers", "Exposure to the devil the tormentor", "Bitterness and revenge", "Increased anointing and spiritual power"], answer: 3 },
+      { q: "According to Ecclesiastes 7:9, a person who is easily angry is described as:", options: ["Spiritually weak", "Foolish", "Under a curse", "Backslidden"], answer: 1 },
+      { q: "The memory verse for Christian Conduct (1 Corinthians 14:40) says:", options: ["Love never fails", "Pray without ceasing", "Let all things be done decently and in order", "Be sober and vigilant"], answer: 2 },
+      { q: "Which of the following is NOT listed as a cause of pride?", options: ["Status and position", "Knowledge and physical endowments", "Spiritual gifts", "Poverty and lack"], answer: 3 },
+      { q: "Gossip is described as having all the following consequences EXCEPT:", options: ["Building stronger relationships", "Betrayal of confidence", "Character assassination", "Separation of friends"], answer: 0 },
+      { q: "According to Ephesians 4:28, the instruction given to those who used to steal is to:", options: ["Make restitution to those they stole from", "Fast and pray for forgiveness", "Repent and steal no more but rather work", "Publicly confess in the church"], answer: 2 },
+
+      // ---- MONEY, TITHES & OFFERING (Q85–90) ----
+      { q: "Tithe is defined as:", options: ["Half of your income", "One tenth of your total or gross income", "A freewill offering", "Whatever amount you choose to give"], answer: 1 },
+      { q: "According to Malachi 3:9, failure to pay tithes places a person:", options: ["Under a curse from the highest authority", "Under church discipline only", "In financial difficulty only", "At risk of losing their job"], answer: 0 },
+      { q: "The difference between tithes and offerings is that:", options: ["Tithes are voluntary while offerings are compulsory", "Offerings are ten percent of income", "Tithe is a fixed tenth while offering is a gift given in addition to tithe", "There is no difference"], answer: 2 },
+      { q: "According to the course, the only Bible-recommended debt for a Christian is:", options: ["A mortgage for a home", "A business loan", "Church building fund contributions", "The debt of love — Romans 13:8"], answer: 3 },
+      { q: "Paying of tithes is described as:", options: ["An optional act of worship", "Not a sacrifice but returning to God what belongs to Him", "A means of earning God's favour", "Only relevant under the Old Testament law"], answer: 1 },
+      { q: "Fornication is defined as a sin that:", options: ["Is common but not acceptable to God", "Is permissible before marriage", "Is only physical and has no spiritual consequences", "Is covered by God's grace automatically"], answer: 0 },
+
+      // ---- RELATIONSHIP & MARRIAGE (Q91–93) ----
+      { q: "According to the course, divorce is permissible ONLY when:", options: ["There is persistent poverty or hardship", "The couple no longer loves each other", "A life partner has committed adultery — Matthew 5:31-32", "The marriage was contracted outside the church"], answer: 2 },
+      { q: "The course states that no marriage should be contracted with:", options: ["Someone from a different tribe", "Unbelievers — 2 Corinthians 6:14-17", "Someone of a different denomination", "Someone without a university degree"], answer: 1 },
+      { q: "According to Hebrews 13:4, marriage is described as:", options: ["Honourable in all", "A necessary obligation", "A secular arrangement", "Optional for ministers"], answer: 0 },
+
+      // ---- END TIMES (Q94–100) ----
+      { q: "The second coming of Christ will occur in how many stages?", options: ["One stage", "Two stages", "Three stages", "Four stages"], answer: 1 },
+      { q: "The first phase of Christ's return involves:", options: ["The battle of Armageddon", "The White Throne Judgment", "The rapture of the saints to meet Christ in the sky", "The millennial reign beginning immediately"], answer: 2 },
+      { q: "The Great Tribulation following the rapture will last for how long?", options: ["Seven years", "Three and a half years", "One thousand years", "Forty-two days"], answer: 0 },
+      { q: "The Millennial Reign of Christ will last for:", options: ["7 years", "100 years", "Forever", "1,000 years — Revelation 20:1-6"], answer: 3 },
+      { q: "The Great White Throne Judgment is for:", options: ["The angels who fell", "All the wicked dead from Adam to the end of the millennium", "Believers who did not tithe", "Church leaders who failed in ministry"], answer: 1 },
+      { q: "The judgment seat of Christ (for believers) takes place:", options: ["After the millennial reign", "At the moment of death", "During the 7-year period between rapture and the second advent", "At the Great White Throne"], answer: 2 },
+      { q: "According to 2 Peter 3:10-13, after the final judgment God will create:", options: ["A new Heaven and a new Earth", "A restored version of the current earth", "An improved Garden of Eden", "A spiritual realm only"], answer: 0 },
+
+    ]
+  },
+
+  // ---- END OF EXAM LIST ----
+
+];
+
+// ============================================================
+// SIT THEORY EXAMS
+// ============================================================
+const SIT_THEORY_EXAMS = [
+
+  // ---- ADD THEORY EXAMS BELOW THIS LINE ----
+
+  // ---- END OF THEORY EXAM LIST ----
+
+];
