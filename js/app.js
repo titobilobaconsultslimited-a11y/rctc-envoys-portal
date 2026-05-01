@@ -302,8 +302,8 @@ function renderSitHeader(studentMatric) {
           <img src="Media/YP20.jpg" alt="YP20 Logo" class="header-logo">
         </div>
         <div class="header-text">
-          <h1>Stewards in Training</h1>
-          <h2>Envoys Campus — SIT Examination Portal</h2>
+          <h1>Envoys Stewards Training</h1>
+          <h2>Envoys Campus — EST Examination Portal</h2>
         </div>
       </div>
       <div class="header-nav">

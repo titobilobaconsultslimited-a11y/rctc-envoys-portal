@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RCTC SIT — Admin Dashboard</title>
+  <title>RCTC EST — Admin Dashboard</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
     .admin-header-bar {
@@ -144,7 +144,7 @@
         <div style="width:100%;max-width:380px;">
           <div class="login-card">
             <h3>🔒 Admin Login</h3>
-            <p style="font-size:0.82rem;color:var(--gray);margin-bottom:16px;">Stewards in Training Dashboard</p>
+            <p style="font-size:0.82rem;color:var(--gray);margin-bottom:16px;">Envoys Stewards Training Dashboard</p>
             <div class="form-group">
               <label for="adminUser">Username</label>
               <input type="text" id="adminUser" placeholder="sit-admin" autocomplete="off">
@@ -156,7 +156,7 @@
             <div id="adminLoginError" class="error-msg hidden"></div>
             <button onclick="doAdminLogin()" class="btn btn-primary btn-full">Login as Admin</button>
             <div class="admin-link" style="margin-top:14px;">
-              <a href="sit-login.html">&larr; SIT Student Login</a>
+              <a href="sit-login.html">&larr; EST Student Login</a>
             </div>
           </div>
         </div>
@@ -171,8 +171,8 @@
       <!-- Header Row -->
       <div class="admin-header-bar">
         <div>
-          <h2>📊 SIT Examination Results Dashboard</h2>
-          <p>Redeemed Christian Theology College — Envoys Campus, Stewards in Training</p>
+          <h2>📊 EST Examination Results Dashboard</h2>
+          <p>Redeemed Christian Theology College — Envoys Campus, Envoys Stewards Training</p>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           <button onclick="showSection('analytics')" class="btn btn-navy btn-sm">📈 Analytics</button>
@@ -189,7 +189,7 @@
       <div class="exam-lock-section">
         <div class="exam-lock-header" onclick="toggleLockSection()">
           <div>
-            <h3>&#128197; SIT Exam Timetable Control</h3>
+            <h3>&#128197; EST Exam Timetable Control</h3>
             <div class="exam-lock-summary" id="lockSummary">Loading&hellip;</div>
           </div>
           <div class="exam-lock-bulk">
@@ -211,7 +211,7 @@
         </div>
         <div class="form-group">
           <label for="filterMatric">Filter by Matric No.</label>
-          <input type="text" id="filterMatric" placeholder="e.g. SIT2026001" oninput="applyFilters()">
+          <input type="text" id="filterMatric" placeholder="e.g. ENV/PC/25/0001/ST" oninput="applyFilters()">
         </div>
         <div class="form-group">
           <label for="filterGrade">Filter by Result</label>
@@ -230,7 +230,7 @@
       <!-- Results Table -->
       <div class="results-table-wrap">
         <div class="table-header">
-          <h3 id="tableTitle">All SIT Results</h3>
+          <h3 id="tableTitle">All EST Results</h3>
           <span id="tableCount" class="badge badge-navy">0 records</span>
         </div>
 
@@ -261,8 +261,8 @@
 
       <div class="admin-header-bar">
         <div>
-          <h2>✍️ SIT Theory Results Dashboard</h2>
-          <p>Redeemed Christian Theology College — Envoys Campus, Stewards in Training</p>
+          <h2>✍️ EST Theory Results Dashboard</h2>
+          <p>Redeemed Christian Theology College — Envoys Campus, Envoys Stewards Training</p>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           <button onclick="showSection('mcq')" class="btn btn-outline btn-sm">&#8592; MCQ Results</button>
@@ -301,7 +301,7 @@
         </div>
         <div class="form-group">
           <label for="tFilterMatric">Filter by Matric No.</label>
-          <input type="text" id="tFilterMatric" placeholder="e.g. SIT2026001" oninput="applyTheoryFilters()">
+          <input type="text" id="tFilterMatric" placeholder="e.g. ENV/PC/25/0001/ST" oninput="applyTheoryFilters()">
         </div>
         <div style="display:flex;align-items:flex-end;gap:8px;">
           <button onclick="clearTheoryFilters()" class="btn btn-outline btn-sm">Clear Filters</button>
@@ -349,7 +349,7 @@
     <main class="admin-main">
       <div class="admin-header-bar">
         <div>
-          <h2>📈 SIT Analytics — Participation Tracker</h2>
+          <h2>📈 EST Analytics — Participation Tracker</h2>
           <p>See which students have written each exam and who is yet to take it.</p>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
@@ -404,8 +404,8 @@
   <!-- CLEAR DATA CONFIRM MODAL -->
   <div class="modal-overlay hidden" id="clearModal">
     <div class="modal">
-      <h3>⚠️ Clear All SIT Exam Data?</h3>
-      <p>This will permanently delete ALL SIT exam results from the system. This action cannot be undone. Are you sure?</p>
+      <h3>⚠️ Clear All EST Exam Data?</h3>
+      <p>This will permanently delete ALL EST exam results from the system. This action cannot be undone. Are you sure?</p>
       <div class="modal-actions">
         <button onclick="document.getElementById('clearModal').classList.add('hidden')" class="btn btn-outline">Cancel</button>
         <button onclick="confirmClearAll()" class="btn btn-danger">Yes, Delete All</button>
@@ -480,8 +480,8 @@
             <img src="Media/YP20.jpg" alt="YP20 Logo" class="header-logo">
           </div>
           <div class="header-text">
-            <h1>Stewards in Training</h1>
-            <h2>Envoys Campus — SIT Admin</h2>
+            <h1>Envoys Stewards Training</h1>
+            <h2>Envoys Campus — EST Admin</h2>
           </div>
         </div>
       </div>`;
