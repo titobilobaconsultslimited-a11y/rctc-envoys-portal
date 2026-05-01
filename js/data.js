@@ -2331,11 +2331,11 @@ const SIT_ADMIN = {
 // },
 const SIT_EXAMS = [
 
-  // ---- STARTER PACK MODULE 1 ----
+  // ---- STEWARDS IN TRAINING EXAM ----
   {
     id: 1,
     code: "SIT MOD 1",
-    title: "Starter Pack Module 1",
+    title: "Stewards in Training Exam",
     icon: "🎖️",
     duration: 60,
     questions: [
