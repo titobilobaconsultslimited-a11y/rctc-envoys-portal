@@ -29,6 +29,11 @@ const STUDENTS = {
   "276594": "Tofunmi Oguntibeju",
   "276613": "Adekoya Korede",
   "270297": "Lydia Omooba",
+  "270586": "Ogunmefun Omowumi Abigail",
+  "276596": "Oladimeji Felicia Feyisayo",
+  "270248": "Olonisola Elijah Akinbode",
+  "270294": "Oluwatimileyin Olutunde Josiah",
+  "276381": "Afolabi Deborah",
   // ---- ADD MORE STUDENTS BELOW THIS LINE ----
 
   // ---- END OF STUDENT LIST ----
@@ -1769,6 +1774,40 @@ const SOD_THEORY_EXAMS = [
 const SIT_STUDENTS = {
   // ---- ADD STUDENTS BELOW THIS LINE ----
   "SIT2026001": "Oluwatobi Kolapo",
+  "SIT2026002": "Temiloluwa Hassan",
+  "SIT2026003": "Adedapo Blessing",
+  "SIT2026004": "Akintola Oluwafolakemi",
+  "SIT2026005": "Daniel Dossou",
+  "SIT2026006": "Olasope Temilola",
+  "SIT2026007": "Odusina Oluwadamilola",
+  "SIT2026008": "Ojomo Racheal",
+  "SIT2026009": "Obioha Success",
+  "SIT2026010": "Simisola Kehinde",
+  "SIT2026011": "Olubunmi Bakare",
+  "SIT2026012": "Gbemisola Adeola",
+  "SIT2026013": "Anyaokei Blessing",
+  "SIT2026014": "Jessy Ifeta",
+  "SIT2026015": "Sodeeq Kafayat",
+  "SIT2026016": "Bukola Isaiah",
+  "SIT2026017": "Rhoda Famose",
+  "SIT2026018": "Adurotioluwa Precious",
+  "SIT2026019": "Olufisayo Akinwale",
+  "SIT2026020": "Okita Samuel",
+  "SIT2026021": "Olajide Ayokunmi",
+  "SIT2026022": "Olamide Ojo",
+  "SIT2026023": "Iretioluwa Akinjo",
+  "SIT2026024": "Olarinoye Oluwasholafunmi",
+  "SIT2026025": "Oluwatosin Obadina",
+  "SIT2026026": "Funke Obatuyi",
+  "SIT2026027": "Joy Adewoyin",
+  "SIT2026028": "Isaac Oyebamiji",
+  "SIT2026029": "King Adedayo",
+  "SIT2026030": "Okpara Chimaobi Peter",
+  "SIT2026031": "Mosunmoluwa Dokun",
+  "SIT2026032": "Ayomide Kolawole",
+  "SIT2026033": "Olajire Titilayo",
+  "SIT2026034": "Tega Emmanuel",
+  "SIT2026035": "Matthew Victoria",
   // ---- END OF STUDENT LIST ----
 };
 
