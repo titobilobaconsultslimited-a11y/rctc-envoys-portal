@@ -769,16 +769,56 @@ const EXAMS = [
     icon: "",
     duration: 60,
     questions: [
-      { q: "A church order of service refers to:", options: ["The church membership directory listing members in order of seniority","The structured sequence of acts and elements that make up a corporate worship gathering","The personal weekly schedule of the senior pastor","The annual church programme and calendar of events"], answer: 1 },
-      { q: "Acts 2:42 describes early church corporate worship as including:", options: ["A structured formal liturgy identical to modern church services","The apostles' teaching, fellowship, breaking of bread, and prayer","Music, offering, and preaching as the three essential elements","Silence, meditation, and extended corporate fasting"], answer: 1 },
-      { q: "The purpose of the call to worship in a service is:", options: ["To formally welcome visiting guests to the church building","To transition the congregation from everyday life to intentional corporate focus on God","To introduce and welcome the preacher or speaker of the day","To signal the official beginning of the musical worship portion of the service"], answer: 1 },
-      { q: "The sermon in corporate worship primarily serves to:", options: ["Provide academic theological education comparable to formal seminary classes","Proclaim and exposit Scripture for the transformation and edification of the hearers","Entertain the congregation with inspiring personal stories and examples","Satisfy the teaching requirements set by the church's denominational governing body"], answer: 1 },
-      { q: "The Lord's Supper (Holy Communion) observed in a service commemorates:", options: ["The miraculous feeding of the five thousand","Christ's Last Supper with His disciples, and proclaims His death and return","The final resurrection victory of Christians over physical death","The descent of the Holy Spirit upon the disciples at Pentecost"], answer: 1 },
-      { q: "An altar call or gospel invitation in a service gives people an opportunity to:", options: ["Contribute to the financial needs of the church and its ministry","Publicly respond to the gospel or the Word of God that has been preached","Mark the conclusion of the corporate worship music portion of the service","Be formally introduced to the congregation as new church members"], answer: 1 },
-      { q: "The benediction at the close of a service is:", options: ["A farewell greeting encouraging people to return the following week","A formal blessing pronounced over the congregation as they are sent into the world","A final appeal for financial giving before the congregation is dismissed","A concise recapitulation of the sermon's three or four main points"], answer: 1 },
-      { q: "Congregational prayer in a corporate service fulfils the biblical pattern of:", options: ["Bringing collected individual private devotions into a public setting","The corporate priestly ministry of all believers interceding together before God","A formal denominational liturgical requirement that must be satisfied","Demonstrating the advanced spiritual maturity and gifting of the prayer leader"], answer: 1 },
-      { q: "The public reading of Scripture in a corporate service is important because:", options: ["It satisfies a longstanding church custom and cultural tradition","God's Word read publicly is itself a proclamation — living, active, and powerful","It helps the congregation locate and follow along in their personal Bibles","It demonstrates the literacy and academic preparation of the church's leadership"], answer: 1 },
-      { q: "The regulative principle of worship holds that:", options: ["Contemporary worship should follow culturally relevant and current trends","Whatever Scripture does not explicitly forbid is permissible in corporate worship","Only what Scripture positively commands should be included in corporate worship","Church tradition and history ultimately regulate the order and content of service"], answer: 2 }
+      { q: "Who is the Expanded Order of Service specifically designed for?", options: ["The congregation","Ministers only","Only the Choir","Church Administrators"], answer: 1 },
+      { q: "Marriage is described as an honorable statute ordained by whom?", options: ["Apostle Paul","The Church","God Himself","The Government"], answer: 2 },
+      { q: "According to the manual, when was marriage ordained?", options: ["After the Great Flood","Before the fall of man","On the day of Pentecost","During the ministry of Jesus"], answer: 1 },
+      { q: "Marriage symbolizes the union between Christ and who?", options: ["Israel","The disciples","The Church","The world"], answer: 2 },
+      { q: "Where did Jesus perform His first miracle at a wedding?", options: ["Jerusalem","Cana of Galilee","Bethany","Nazareth"], answer: 1 },
+      { q: "What is the first principal reason given for marriage?", options: ["Procreation","Mutual fellowship","Financial stability","Social status"], answer: 1 },
+      { q: "The second principal reason for marriage is to check the sinful life of:", options: ["Pride","Anger","Adultery","Laziness"], answer: 2 },
+      { q: "One of the purposes of marriage is to rear children to do what?", options: ["Become successful businessmen","Fear the Lord and glorify His holy name","Rule over the nations","Nurse their parents in old age"], answer: 1 },
+      { q: "During the Joining, where should the couple hold each other?", options: ["At the palm","At the waist","At the wrist","By the shoulders"], answer: 2 },
+      { q: "What is given by the man to the woman as an everlasting testament during the Joining?", options: ["A gold ring","A new copy of the Holy Bible","A certificate","A house key"], answer: 1 },
+      { q: "How long should the opening prayer for a marriage ceremony last?", options: ["1 minute","3 minutes","5 minutes","10 minutes"], answer: 1 },
+      { q: "The Bride and Groom should be seated/within the church premises at least how many minutes before the service starts?", options: ["5 minutes","10 minutes","15 minutes","30 minutes"], answer: 2 },
+      { q: "Who is responsible for unveiling the Bride?", options: ["The mother","The officiating minister","The Groom","The father"], answer: 1 },
+      { q: "When should the Bride and her father begin to file in for the Processional Hymn?", options: ["Before the hymn starts","From the beginning of the first verse","During the second verse","At the end of the hymn"], answer: 1 },
+      { q: "How many people in total are required to sign the marriage register?", options: ["2","4","6","8"], answer: 2 },
+      { q: "Which family representative signs the marriage register?", options: ["One from each family","Two from each family","Three from each family","None"], answer: 1 },
+      { q: "What is the recommended duration for the wedding sermon?", options: ["5–10 minutes","15–20 minutes","30–45 minutes","1 hour"], answer: 1 },
+      { q: "At what point should wedding dresses be certified okay by the Pastor?", options: ["One day before","At least two weeks before","Three months before","On the wedding day"], answer: 1 },
+      { q: "What is the policy regarding the collection of offerings during an RCCG wedding?", options: ["It is mandatory","There shall be no collection of offerings","It is done after the sermon","It is only for the poor"], answer: 1 },
+      { q: "Who is authorized to perform the Joining in an RCCG wedding?", options: ["Any deacon","Any ordained full pastor formally dressed","The Choir master","The Church Secretary"], answer: 1 },
+      { q: "Marriage rehearsals should be conducted at least how long before the wedding?", options: ["One day","Three days","One week","Two weeks"], answer: 2 },
+      { q: "The Bride should go for a pregnancy test at most how long before the wedding?", options: ["24 hours","Within a week","Two weeks","One month"], answer: 1 },
+      { q: "Is the 'sanctification of rings' allowed during the wedding solemnization?", options: ["Yes, it is mandatory","Only if the couple requests it","No, it is not allowed","Only at the Headquarters"], answer: 2 },
+      { q: "According to the Naming Ceremony order, what is the duration of the service?", options: ["30 minutes","1 hour","2 hours","45 minutes"], answer: 1 },
+      { q: "In a Naming Ceremony, who are the baby's gifts given to?", options: ["The Pastor","The Father","The Mother (intact)","The Church office"], answer: 2 },
+      { q: "Which Psalm is NOT listed as a Bible reading for a Naming Ceremony?", options: ["Psalm 127","Psalm 128","Psalm 23","Luke 1:57-60"], answer: 2 },
+      { q: "When should a Child Dedication service be held?", options: ["On the child's birthday","During the monthly thanksgiving service","At the naming ceremony","Every Sunday"], answer: 1 },
+      { q: "During a Child Dedication, is anointing with oil required?", options: ["Yes","Only for boys","No","Only if the child is sick"], answer: 2 },
+      { q: "Which of the following is a Bible lesson recommended for a Wake-Keep?", options: ["Genesis 1:1","1 Thessalonians 4:13-18","Proverbs 31:10","Psalm 150"], answer: 1 },
+      { q: "What is the maximum recommended time for a burial service sermon?", options: ["15 minutes","20 minutes","30 minutes","45 minutes"], answer: 2 },
+      { q: "In the burial order of service, who follows the ministers when conveying the corpse to the cemetery?", options: ["The family","The corpse","The choir","The congregation"], answer: 1 },
+      { q: "When laying the foundation of a church, how many stones are laid at each corner?", options: ["One","Two","Three","Seven"], answer: 2 },
+      { q: "How long before a foundation laying ceremony must an application be sent to the National Headquarters?", options: ["One week","Two weeks","One month","Three months"], answer: 2 },
+      { q: "Where are the foundation stones laid if a church building is already being used for worship but lacked a previous ceremony?", options: ["Outside the gate","Four corners of the inside of the building","At the altar only","On the roof"], answer: 1 },
+      { q: "Which hymn is specifically recommended for dedicating a church building?", options: ["O Happy Day","Pleasant are thy courts above","I am Thine O Lord","The Church is one foundation"], answer: 1 },
+      { q: "In the dedication of a private house, where does the short service initially hold?", options: ["In the living room","At the kitchen","Outside the house building","In the master bedroom"], answer: 2 },
+      { q: "Which Psalm is read for the dedication of musical instruments?", options: ["Psalm 23","Psalm 87","Psalm 150","Psalm 127"], answer: 2 },
+      { q: "Which scripture is read for the Holy Communion service regarding the bread and wine?", options: ["1 Corinthians 11:23-24","Matthew 5:1-12","Revelation 21:1","Psalm 24"], answer: 0 },
+      { q: "In the Engagement Programme, which family enters first after the opening prayer?", options: ["The Bride's family","The Groom's family","Both families enter together","The Pastor's family"], answer: 1 },
+      { q: "What Bible reading is suggested for an Engagement Programme?", options: ["Psalm 1","Proverbs 31:10-31","John 3:16","Exodus 20"], answer: 1 },
+      { q: "According to the marriage pledge, the man agrees to nurse his wife in which circumstances?", options: ["Plenty only","Sound health only","Plenty and poverty, sound health and illness","Only when she is obedient"], answer: 2 },
+      { q: "Who officially presents the marriage certificate to the couple?", options: ["The Parish Secretary","The Pastor (on behalf of the General Overseer)","The Bride's father","The Groom's best man"], answer: 1 },
+      { q: "What is the purpose of the bottle used in the foundation laying of a church?", options: ["To store holy water","To seal the branch name written on a sheet of paper","For communion wine","For the collection of offerings"], answer: 1 },
+      { q: "Which hymn is RCCG number 36?", options: ["O Perfect Love","To God be the Glory","Now Thank We All Our God","Oh for a Thousand Tongues to Sing"], answer: 1 },
+      { q: "In the burial service at the grave yard, 'Part A' should be read at what point?", options: ["Before leaving the church","At the graveside or vault side","After the interment","During the wake-keep"], answer: 1 },
+      { q: "What is 'Part B' of the burial service words read after?", options: ["The profile reading","The sermon","The corpse has been lowered into the vault","The processional hymn"], answer: 2 },
+      { q: "The names of the couples in the programme booklet should be:", options: ["Surnames only","First names only","Written in full (first, second, and surnames)","Nicknames only"], answer: 2 },
+      { q: "Marriage commitments should be made with the couple facing:", options: ["The Pastor","The Congregation","Each other","The Altar"], answer: 2 },
+      { q: "Information for the marriage certificate should reach the Provincial office how long before the wedding?", options: ["One week","One month","Three months","Six months"], answer: 2 },
+      { q: "Who gives the foundation stones to the minister during the laying of a house foundation stone?", options: ["The Pastor","The Builder","The Landlord","The Church elders"], answer: 1 }
     ]
   },
 
@@ -2071,6 +2111,33 @@ const SIT_EXAMS = [
       { q: "The Great White Throne Judgment is for:", options: ["The angels who fell", "All the wicked dead from Adam to the end of the millennium", "Believers who did not tithe", "Church leaders who failed in ministry"], answer: 1 },
       { q: "The judgment seat of Christ (for believers) takes place:", options: ["After the millennial reign", "At the moment of death", "During the 7-year period between rapture and the second advent", "At the Great White Throne"], answer: 2 },
       { q: "According to 2 Peter 3:10-13, after the final judgment God will create:", options: ["A new Heaven and a new Earth", "A restored version of the current earth", "An improved Garden of Eden", "A spiritual realm only"], answer: 0 },
+
+    ]
+  },
+
+  // ---- STEWARDS REFRESHER COURSE ----
+  {
+    id: 2,
+    code: "SIT SRC",
+    title: "Stewards Refresher Course",
+    icon: "🛎️",
+    duration: 60,
+    questions: [
+
+      // ---- ADD STEWARDS REFRESHER QUESTIONS BELOW THIS LINE ----
+
+      { q: "A steward is best described as:", options: ["An owner of resources", "A manager entrusted with another's resources", "A volunteer in the church", "A church leader"], answer: 1 },
+      { q: "According to Luke 16:10, faithfulness in stewardship begins with:", options: ["Large and great responsibilities", "That which is least", "Financial giving only", "Leadership positions"], answer: 1 },
+      { q: "Which parable of Jesus directly addresses the principles of stewardship and accountability?", options: ["The Parable of the Prodigal Son", "The Parable of the Talents — Matthew 25:14-30", "The Parable of the Lost Sheep", "The Parable of the Sower"], answer: 1 },
+      { q: "In 1 Corinthians 4:2, what primary quality is required of stewards?", options: ["Generosity", "Intelligence", "Faithfulness", "Experience"], answer: 2 },
+      { q: "According to Genesis 1:26-28, the original stewardship mandate given to man was to:", options: ["Build the church", "Rule over and care for all of creation", "Pay tithes and offerings", "Study and teach the scriptures"], answer: 1 },
+      { q: "The principle of tithing as an act of stewardship is first recorded in:", options: ["Malachi 3:10", "Genesis 14:20 — Abram gave a tenth to Melchizedek", "Leviticus 27:30", "Numbers 18:21"], answer: 1 },
+      { q: "A steward who hid his talent in the ground (Matthew 25:24-30) was judged because he was:", options: ["Dishonest", "Wicked and lazy", "Disobedient to his master's instructions", "Unfaithful with money"], answer: 1 },
+      { q: "According to Romans 14:12, every steward will ultimately:", options: ["Be rewarded without judgment", "Give an account of himself to God", "Be judged only by the church", "Escape judgment through grace"], answer: 1 },
+      { q: "Which of the following best describes the spirit of a true steward?", options: ["Ownership and control", "Service, accountability, and humility", "Authority over others", "Financial prosperity"], answer: 1 },
+      { q: "The ultimate purpose of faithful stewardship is to:", options: ["Accumulate personal wealth", "Gain recognition in the church", "Glorify God and advance His kingdom — Matthew 25:21", "Receive a position of leadership"], answer: 2 },
+
+      // ---- END OF STEWARDS REFRESHER QUESTIONS ----
 
     ]
   },
