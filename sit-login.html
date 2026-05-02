@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RCTC Envoys â€” Envoys Stewards Training Exam Portal Login</title>
+  <title>RCTC Envoys — Envoys Stewards Training Exam Portal Login</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
     .divider { display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--gray);font-size:0.82rem; }
@@ -56,7 +56,7 @@
       </div>
       <h1>Envoys Stewards Training</h1>
       <h2>Envoys Campus</h2>
-      <p>Envoys Stewards Training â€” Examination Portal</p>
+      <p>Envoys Stewards Training — Examination Portal</p>
     </div>
 
     <!-- SIT Student Login Card -->
@@ -64,12 +64,12 @@
       <div style="text-align:center;margin-bottom:4px;">
         <span class="sit-badge">Envoys Stewards Training</span>
       </div>
-      <h3>ðŸŒ± EST Student Login</h3>
+      <h3>🌱 EST Student Login</h3>
 
       <!-- Login Type Tabs -->
       <div class="login-tabs">
-        <button class="login-tab-btn active" id="tabBtnMatric"   onclick="switchLoginTab('matric')">ðŸªª I Have a Matric No.</button>
-        <button class="login-tab-btn"         id="tabBtnWalkin"  onclick="switchLoginTab('walkin')">ðŸš¶ Walk-in / No ID</button>
+        <button class="login-tab-btn active" id="tabBtnMatric"   onclick="switchLoginTab('matric')">🪪 I Have a Matric No.</button>
+        <button class="login-tab-btn"         id="tabBtnWalkin"  onclick="switchLoginTab('walkin')">🚶 Walk-in / No ID</button>
       </div>
 
       <!-- TAB 1: Matric Login -->
@@ -100,7 +100,7 @@
           <input type="text" id="walkinName" placeholder="e.g. John Doe">
         </div>
         <div class="form-group">
-          <label for="walkinMatric">Matric No. <span style="color:var(--gray);font-size:0.8rem;">(optional â€” auto-generated if blank)</span></label>
+          <label for="walkinMatric">Matric No. <span style="color:var(--gray);font-size:0.8rem;">(optional — auto-generated if blank)</span></label>
           <input type="text" id="walkinMatric" placeholder="Leave blank to auto-generate" style="text-transform:uppercase;">
         </div>
         <div id="walkinError" class="error-msg hidden"></div>
@@ -112,7 +112,7 @@
       <div class="divider">or</div>
 
       <div class="admin-link" style="margin-bottom:10px;">
-        <a href="sit-admin.html">ðŸ”’ SIT Admin Dashboard</a>
+        <a href="sit-admin.html">🔒 SIT Admin Dashboard</a>
       </div>
 
       <div class="admin-link">
@@ -189,7 +189,7 @@
         return;
       }
 
-      // Not in SIT_STUDENTS â€” check Supabase stewards table
+      // Not in SIT_STUDENTS — check Supabase stewards table
       const sw = await dbCheckStewardAccess(matric);
       btn.disabled = false; btn.textContent = 'Login \u2192';
 
@@ -204,7 +204,7 @@
         return;
       }
 
-      // Found in stewards table â€” allow login
+      // Found in stewards table — allow login
       store.sessionSet('rctc_sit_student', matric);
       window.location.href = 'sit-dashboard.html';
     }
@@ -245,7 +245,7 @@
             showError('walkinError', 'Access not granted. Contact the administrator.');
             return;
           }
-          // Matric exists and is valid â€” log them in
+          // Matric exists and is valid — log them in
           btn.disabled = false; btn.textContent = 'Continue as Walk-in \u2192';
           store.sessionSet('rctc_sit_student', matric);
           window.location.href = 'sit-dashboard.html';
