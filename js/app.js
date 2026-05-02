@@ -264,7 +264,7 @@ function getCurrentSitStudent() {
 
 function requireSitStudentAuth() {
   const matric = getCurrentSitStudent();
-  if (!matric || !SIT_STUDENTS[matric]) {
+  if (!matric) {
     window.location.href = 'sit-login.html';
     return null;
   }
@@ -273,6 +273,7 @@ function requireSitStudentAuth() {
 
 function sitStudentLogout() {
   store.sessionRemove('rctc_sit_student');
+  store.sessionRemove('rctc_sit_student_name');
   window.location.href = 'sit-login.html';
 }
 
@@ -291,7 +292,7 @@ function clearSitExamProgress() {
 
 // ---- RENDER SIT HEADER ----
 function renderSitHeader(studentMatric) {
-  const name = studentMatric ? SIT_STUDENTS[studentMatric] : '';
+  const name = studentMatric ? (SIT_STUDENTS[studentMatric] || store.sessionGet('rctc_sit_student_name') || studentMatric) : '';
   const headerEl = document.getElementById('siteHeader');
   if (!headerEl) return;
   headerEl.innerHTML = `

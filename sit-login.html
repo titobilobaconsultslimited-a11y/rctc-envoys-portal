@@ -192,6 +192,7 @@
           return;
         }
         btn.disabled = false; btn.textContent = 'Login \u2192';
+        store.sessionSet('rctc_sit_student_name', SIT_STUDENTS[matric]);
         store.sessionSet('rctc_sit_student', matric);
         window.location.href = 'sit-dashboard.html';
         return;
@@ -213,6 +214,7 @@
       }
 
       // Found in stewards table — allow login
+      store.sessionSet('rctc_sit_student_name', sw.full_name || matric);
       store.sessionSet('rctc_sit_student', matric);
       window.location.href = 'sit-dashboard.html';
     }
@@ -255,6 +257,7 @@
           }
           // Matric exists and is valid — log them in
           btn.disabled = false; btn.textContent = 'Continue as Walk-in \u2192';
+          store.sessionSet('rctc_sit_student_name', (sw && sw.full_name) || name || matric);
           store.sessionSet('rctc_sit_student', matric);
           window.location.href = 'sit-dashboard.html';
           return;
@@ -273,6 +276,7 @@
         return;
       }
 
+      store.sessionSet('rctc_sit_student_name', name);
       store.sessionSet('rctc_sit_student', finalMatric);
       window.location.href = 'sit-dashboard.html';
     }

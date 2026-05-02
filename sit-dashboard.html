@@ -36,7 +36,7 @@
     const matric = requireSitStudentAuth();
     if (!matric) throw new Error('Not authenticated');
 
-    const studentName = SIT_STUDENTS[matric];
+    const studentName = SIT_STUDENTS[matric] || store.sessionGet('rctc_sit_student_name') || matric;
     renderSitHeader(matric);
 
     // ---- ASYNC INIT ----
