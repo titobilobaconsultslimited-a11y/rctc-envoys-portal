@@ -132,6 +132,70 @@
     }
 
     /* ============================================================
+       RESPONSIVE — NEW FEATURE ELEMENTS
+       ============================================================ */
+
+    /* Tablet (≤ 768px) */
+    @media (max-width: 768px) {
+      .admin-tabs { gap: 2px; }
+      .admin-tab-btn { padding: 8px 12px; font-size: 0.78rem; }
+
+      .mgmt-section { padding: 16px 12px; }
+
+      /* Steward / question tables: horizontal scroll */
+      .mgmt-section .results-table-wrap,
+      #stewardListWrap,
+      #questionListWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+      /* Question row: stack actions below text */
+      .question-row { flex-direction: column; gap: 8px; }
+      .question-actions { justify-content: flex-start; width: 100%; }
+
+      /* Toast: full-width on tablet */
+      .toast-container { right: 10px; left: 10px; width: auto; }
+      .toast { max-width: 100%; }
+
+      /* Analytics tables */
+      #analyticsSection table,
+      #analyticsTheorySection table { font-size: 0.75rem; }
+      #analyticsSection td, #analyticsSection th,
+      #analyticsTheorySection td, #analyticsTheorySection th { padding: 6px 8px; }
+    }
+
+    /* Phone (≤ 600px) */
+    @media (max-width: 600px) {
+      /* Tabs: shrink font, allow wrap */
+      .admin-tabs { margin-top: 12px; }
+      .admin-tab-btn { padding: 7px 8px; font-size: 0.72rem; flex: 1; text-align: center; }
+
+      /* Results table: hide less-critical columns */
+      .results-table th:nth-child(4),
+      .results-table td:nth-child(4) { display: none; } /* Type column */
+      .results-table th:nth-child(6),
+      .results-table td:nth-child(6) { display: none; } /* Date column */
+
+      /* Question add/edit form */
+      .form-row-2 { grid-template-columns: 1fr; }
+
+      /* Question actions: wrap tighter */
+      .question-actions .btn-sm { padding: 4px 8px; font-size: 0.72rem; }
+
+      /* Toast: full bleed at top */
+      .toast-container { top: 8px; right: 6px; left: 6px; }
+      .toast { font-size: 0.82rem; padding: 10px 14px; }
+
+      /* Steward toggle label: shorter */
+      .toggle-label span { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    }
+
+    /* Small phone (≤ 400px) */
+    @media (max-width: 400px) {
+      .admin-tab-btn { font-size: 0.66rem; padding: 6px 5px; }
+      .mgmt-section { padding: 12px 10px; }
+      .question-actions { gap: 4px; }
+    }
+
+    /* ============================================================
        ADMIN TAB NAVIGATION
        ============================================================ */
     .admin-tabs {

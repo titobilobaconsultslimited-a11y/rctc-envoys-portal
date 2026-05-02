@@ -42,6 +42,14 @@
     .login-tab-btn.active { background: var(--navy); color: #fff; }
     .login-tab-panel { display: none; }
     .login-tab-panel.active { display: block; }
+
+    @media (max-width: 480px) {
+      .login-tabs { gap: 0; }
+      .login-tab-btn { padding: 8px 6px; font-size: 0.75rem; }
+    }
+    @media (max-width: 360px) {
+      .login-tab-btn { font-size: 0.68rem; padding: 7px 4px; }
+    }
   </style>
 </head>
 <body class="login-body">
