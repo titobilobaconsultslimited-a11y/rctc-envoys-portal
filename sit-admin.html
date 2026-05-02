@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RCTC EST â€” Admin Dashboard</title>
+  <title>RCTC EST — Admin Dashboard</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
     .admin-header-bar {
@@ -323,7 +323,7 @@
       <div class="admin-login-overlay">
         <div style="width:100%;max-width:380px;">
           <div class="login-card">
-            <h3>ðŸ”’ Admin Login</h3>
+            <h3>🔒 Admin Login</h3>
             <p style="font-size:0.82rem;color:var(--gray);margin-bottom:16px;">Envoys Stewards Training Dashboard</p>
             <div class="form-group">
               <label for="adminUser">Username</label>
@@ -331,7 +331,7 @@
             </div>
             <div class="form-group">
               <label for="adminPass">Password</label>
-              <input type="password" id="adminPass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
+              <input type="password" id="adminPass" placeholder="••••••••">
             </div>
             <div id="adminLoginError" class="error-msg hidden"></div>
             <button onclick="doAdminLogin()" class="btn btn-primary btn-full">Login as Admin</button>
@@ -351,12 +351,12 @@
       <!-- Header Row -->
       <div class="admin-header-bar">
         <div>
-          <h2>ðŸ“Š EST Examination Results Dashboard</h2>
-          <p>Redeemed Christian Theology College â€” Envoys Campus, Envoys Stewards Training</p>
+          <h2>📊 EST Examination Results Dashboard</h2>
+          <p>Redeemed Christian Theology College — Envoys Campus, Envoys Stewards Training</p>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <button onclick="showSection('theory')" class="btn btn-navy btn-sm">âœï¸ Theory Results</button>
-          <button onclick="downloadAllCSV()" class="btn btn-success">â¬‡ Download CSV</button>
+          <button onclick="showSection('theory')" class="btn btn-navy btn-sm">✍️ Theory Results</button>
+          <button onclick="downloadAllCSV()" class="btn btn-success">⬇ Download CSV</button>
           <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
         </div>
       </div>
@@ -382,13 +382,13 @@
 
       <!-- TAB NAVIGATION -->
       <div class="admin-tabs">
-        <button class="admin-tab-btn active" id="tabBtnResults"   onclick="switchAdminTab('results')">ðŸ“Š Results</button>
-        <button class="admin-tab-btn"         id="tabBtnStewards" onclick="switchAdminTab('stewards')">ðŸ‘¥ Steward Management</button>
-        <button class="admin-tab-btn"         id="tabBtnQuestions" onclick="switchAdminTab('questions')">ðŸ“ Question Manager</button>
-        <button class="admin-tab-btn"         id="tabBtnAnalytics" onclick="switchAdminTab('analytics')">ðŸ“ˆ Analytics</button>
+        <button class="admin-tab-btn active" id="tabBtnResults"   onclick="switchAdminTab('results')">📊 Results</button>
+        <button class="admin-tab-btn"         id="tabBtnStewards" onclick="switchAdminTab('stewards')">👥 Steward Management</button>
+        <button class="admin-tab-btn"         id="tabBtnQuestions" onclick="switchAdminTab('questions')">📝 Question Manager</button>
+        <button class="admin-tab-btn"         id="tabBtnAnalytics" onclick="switchAdminTab('analytics')">📈 Analytics</button>
       </div>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â• TAB PANEL: RESULTS â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ═══════════ TAB PANEL: RESULTS ═══════════ -->
       <div id="tabResultsPanel">
         <!-- Toolbar: Filters -->
         <div class="admin-toolbar" style="margin-top:20px;">
@@ -412,7 +412,7 @@
           </div>
           <div style="display:flex;align-items:flex-end;gap:8px;">
             <button onclick="clearFilters()" class="btn btn-outline btn-sm">Clear Filters</button>
-            <button onclick="downloadFilteredCSV()" class="btn btn-navy btn-sm">â¬‡ Export Filtered</button>
+            <button onclick="downloadFilteredCSV()" class="btn btn-navy btn-sm">⬇ Export Filtered</button>
           </div>
         </div>
 
@@ -429,30 +429,30 @@
             </table>
           </div>
           <div id="noResults" class="no-results hidden">
-            <div class="no-icon">ðŸ“­</div>
+            <div class="no-icon">📝­</div>
             <p>No exam results found matching your filters.</p>
           </div>
         </div>
 
         <!-- Clear all MCQ data -->
         <div style="margin-top:24px;text-align:right;">
-          <button onclick="clearAllData()" class="clear-data-btn">ðŸ—‘ Clear All MCQ Exam Data</button>
+          <button onclick="clearAllData()" class="clear-data-btn">🗑 Clear All MCQ Exam Data</button>
         </div>
       </div><!-- end #tabResultsPanel -->
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â• TAB PANEL: STEWARD MANAGEMENT â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ═══════════ TAB PANEL: STEWARD MANAGEMENT ═══════════ -->
       <div id="tabStewardsPanel" class="hidden">
 
         <!-- Section A: Add Single Steward -->
         <div class="mgmt-section" style="margin-top:20px;">
-          <h3 class="section-title">ðŸ‘¤ Add Single Steward</h3>
+          <h3 class="section-title">👤 Add Single Steward</h3>
           <div class="form-row-2">
             <div class="form-group">
               <label>Full Name <span class="req">*</span></label>
               <input type="text" id="swFullName" placeholder="e.g. John Doe">
             </div>
             <div class="form-group">
-              <label>Matric No. <span class="req-note">(optional â€” auto-generated if blank)</span></label>
+              <label>Matric No. <span class="req-note">(optional — auto-generated if blank)</span></label>
               <input type="text" id="swMatricNo" placeholder="e.g. STW-1234" style="text-transform:uppercase;">
             </div>
           </div>
@@ -461,13 +461,13 @@
 
         <!-- Section B: Bulk Add via CSV -->
         <div class="mgmt-section">
-          <h3 class="section-title">ðŸ“‹ Bulk Add via CSV</h3>
+          <h3 class="section-title">📋 Bulk Add via CSV</h3>
           <p style="font-size:0.82rem;color:var(--gray);margin-bottom:12px;">
-            Upload a CSV with columns: <code>full_name</code>, <code>matric_no</code>. The <code>matric_no</code> column is optional â€” leave blank to auto-generate.
+            Upload a CSV with columns: <code>full_name</code>, <code>matric_no</code>. The <code>matric_no</code> column is optional — leave blank to auto-generate.
           </p>
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
             <input type="file" id="swCsvFile" accept=".csv" style="font-size:0.85rem;">
-            <button onclick="processBulkCSV()" class="btn btn-navy btn-sm" id="swBulkBtn">ðŸ“¤ Upload &amp; Add</button>
+            <button onclick="processBulkCSV()" class="btn btn-navy btn-sm" id="swBulkBtn">📤 Upload &amp; Add</button>
           </div>
           <div id="bulkUploadResult" style="margin-top:12px;"></div>
         </div>
@@ -475,8 +475,8 @@
         <!-- Section C: Stewards List -->
         <div class="mgmt-section">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
-            <h3 class="section-title" style="margin:0;">ðŸ‘¥ Stewards List</h3>
-            <button onclick="exportStewardsCSV()" class="btn btn-outline btn-sm">â¬‡ Export CSV</button>
+            <h3 class="section-title" style="margin:0;">👥 Stewards List</h3>
+            <button onclick="exportStewardsCSV()" class="btn btn-outline btn-sm">⬇ Export CSV</button>
           </div>
           <div class="admin-toolbar" style="margin-bottom:12px;">
             <div class="form-group">
@@ -509,7 +509,7 @@
               <tbody id="stewardsBody"></tbody>
             </table>
             <div id="stewardsNoResults" class="no-results hidden">
-              <div class="no-icon">ðŸ‘¥</div>
+              <div class="no-icon">👥</div>
               <p>No stewards found. Add stewards above or they will appear after walk-in login.</p>
             </div>
           </div>
@@ -517,17 +517,17 @@
 
       </div><!-- end #tabStewardsPanel -->
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â• TAB PANEL: QUESTION MANAGER â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ═══════════ TAB PANEL: QUESTION MANAGER ═══════════ -->
       <div id="tabQuestionsPanel" class="hidden">
 
         <!-- Section A: Select Exam -->
         <div class="mgmt-section" style="margin-top:20px;">
-          <h3 class="section-title">ðŸ“ Exam Question Manager</h3>
+          <h3 class="section-title">📝 Exam Question Manager</h3>
           <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
             <div class="form-group" style="flex:1;min-width:220px;">
               <label>Select Exam</label>
               <select id="qmExamSelect" onchange="loadExamForQM()">
-                <option value="">â€” Select Exam â€”</option>
+                <option value="">— Select Exam —</option>
               </select>
             </div>
             <div id="qmQuestionCount" style="font-size:0.82rem;color:var(--gray);padding-bottom:4px;"></div>
@@ -575,7 +575,7 @@
             </div>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button onclick="saveQuestion()" class="btn btn-navy btn-sm" id="qmSaveBtn">ðŸ’¾ Save Question</button>
+            <button onclick="saveQuestion()" class="btn btn-navy btn-sm" id="qmSaveBtn">💾 Save Question</button>
             <button onclick="cancelEditQuestion()" class="btn btn-outline btn-sm" id="qmCancelBtn" style="display:none;">Cancel Edit</button>
           </div>
         </div>
@@ -583,15 +583,15 @@
         <!-- Section C: Questions List -->
         <div class="mgmt-section" id="qmListSection" style="display:none;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
-            <h3 class="section-title" style="margin:0;">ðŸ“‹ Questions <span id="qmListCount" class="badge badge-navy">0</span></h3>
-            <button onclick="openPreviewModal()" class="btn btn-outline btn-sm">ðŸ‘ Preview Exam</button>
+            <h3 class="section-title" style="margin:0;">📋 Questions <span id="qmListCount" class="badge badge-navy">0</span></h3>
+            <button onclick="openPreviewModal()" class="btn btn-outline btn-sm">👁 Preview Exam</button>
           </div>
           <div id="qmQuestionsList"></div>
         </div>
 
         <!-- Section D: Exam Settings -->
         <div class="mgmt-section" id="qmSettingsSection" style="display:none;">
-          <h3 class="section-title">âš™ï¸ Exam Settings</h3>
+          <h3 class="section-title">⚙️ Exam Settings</h3>
           <div class="form-row-2">
             <div class="form-group">
               <label>Time Limit (minutes)</label>
@@ -629,31 +629,31 @@
               </label>
             </label>
           </div>
-          <button onclick="saveExamSettings()" class="btn btn-navy btn-sm" id="qmSettingsBtn">ðŸ’¾ Save Settings</button>
+          <button onclick="saveExamSettings()" class="btn btn-navy btn-sm" id="qmSettingsBtn">💾 Save Settings</button>
         </div>
 
       </div><!-- end #tabQuestionsPanel -->
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â• TAB PANEL: ANALYTICS â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- ═══════════ TAB PANEL: ANALYTICS ═══════════ -->
       <div id="tabAnalyticsPanel" class="hidden">
         <div style="margin-bottom:16px;padding-top:16px;">
-          <h3 style="color:var(--navy);font-size:1rem;font-weight:700;margin:0 0 4px;">ðŸ“ˆ EST Analytics â€” Participation Tracker</h3>
+          <h3 style="color:var(--navy);font-size:1rem;font-weight:700;margin:0 0 4px;">📈 EST Analytics — Participation Tracker</h3>
           <p style="font-size:0.82rem;color:var(--gray);margin:0;">See which students have written each exam and who is yet to take it.</p>
         </div>
 
         <!-- Analytics Sub-Tabs -->
         <div style="display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--border);">
-          <button id="tabMcqBtn" onclick="switchAnalyticsTab('mcq')" style="padding:9px 22px;font-weight:700;font-size:0.88rem;border:none;background:var(--navy);color:#fff;border-radius:6px 6px 0 0;cursor:pointer;">ðŸ“‹ MCQ Exams</button>
-          <button id="tabTheoryBtn" onclick="switchAnalyticsTab('theory')" style="padding:9px 22px;font-weight:700;font-size:0.88rem;border:none;background:#e9ecef;color:var(--navy);border-radius:6px 6px 0 0;cursor:pointer;margin-left:4px;">âœï¸ Theory Exams</button>
+          <button id="tabMcqBtn" onclick="switchAnalyticsTab('mcq')" style="padding:9px 22px;font-weight:700;font-size:0.88rem;border:none;background:var(--navy);color:#fff;border-radius:6px 6px 0 0;cursor:pointer;">📋 MCQ Exams</button>
+          <button id="tabTheoryBtn" onclick="switchAnalyticsTab('theory')" style="padding:9px 22px;font-weight:700;font-size:0.88rem;border:none;background:#e9ecef;color:var(--navy);border-radius:6px 6px 0 0;cursor:pointer;margin-left:4px;">✍️ Theory Exams</button>
         </div>
 
         <!-- MCQ Analytics Tab -->
         <div id="analyticsTabMcq">
-          <p class="section-title" style="margin-bottom:12px;">ðŸ“‹ Per-Exam Participation (MCQ)</p>
+          <p class="section-title" style="margin-bottom:12px;">📋 Per-Exam Participation (MCQ)</p>
           <div id="analyticsExamTable" style="overflow-x:auto;margin-bottom:32px;"></div>
-          <p class="section-title" style="margin-bottom:12px;">ðŸ‘¤ Per-Student Completion (MCQ)</p>
+          <p class="section-title" style="margin-bottom:12px;">👤 Per-Student Completion (MCQ)</p>
           <div style="margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-            <input type="text" id="analyticsStudentFilter" placeholder="Filter by name or matricâ€¦"
+            <input type="text" id="analyticsStudentFilter" placeholder="Filter by name or matric…"
               oninput="renderStudentCompletion()"
               style="padding:7px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.85rem;min-width:220px;">
             <label style="font-size:0.82rem;display:flex;align-items:center;gap:6px;cursor:pointer;">
@@ -666,11 +666,11 @@
 
         <!-- Theory Analytics Tab -->
         <div id="analyticsTabTheory" class="hidden">
-          <p class="section-title" style="margin-bottom:12px;">ðŸ“‹ Per-Exam Participation (Theory)</p>
+          <p class="section-title" style="margin-bottom:12px;">📋 Per-Exam Participation (Theory)</p>
           <div id="analyticsTheoryExamTable" style="overflow-x:auto;margin-bottom:32px;"></div>
-          <p class="section-title" style="margin-bottom:12px;">ðŸ‘¤ Per-Student Completion (Theory)</p>
+          <p class="section-title" style="margin-bottom:12px;">👤 Per-Student Completion (Theory)</p>
           <div style="margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-            <input type="text" id="analyticsTheoryStudentFilter" placeholder="Filter by name or matricâ€¦"
+            <input type="text" id="analyticsTheoryStudentFilter" placeholder="Filter by name or matric…"
               oninput="renderTheoryStudentCompletion()"
               style="padding:7px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.85rem;min-width:220px;">
             <label style="font-size:0.82rem;display:flex;align-items:center;gap:6px;cursor:pointer;">
@@ -692,12 +692,12 @@
 
       <div class="admin-header-bar">
         <div>
-          <h2>âœï¸ EST Theory Results Dashboard</h2>
-          <p>Redeemed Christian Theology College â€” Envoys Campus, Envoys Stewards Training</p>
+          <h2>✍️ EST Theory Results Dashboard</h2>
+          <p>Redeemed Christian Theology College — Envoys Campus, Envoys Stewards Training</p>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           <button onclick="showSection('mcq')" class="btn btn-outline btn-sm">&#8592; MCQ Results</button>
-          <button onclick="showSection('analytics')" class="btn btn-navy btn-sm">ðŸ“ˆ Analytics</button>
+          <button onclick="showSection('analytics')" class="btn btn-navy btn-sm">📈 Analytics</button>
           <button onclick="downloadAllTheoryCSV()" class="btn btn-success">&#8595; Download CSV</button>
           <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
         </div>
@@ -769,7 +769,7 @@
 
       <!-- Clear theory data -->
       <div style="margin-top:24px;text-align:right;">
-        <button onclick="clearAllTheoryData()" class="clear-data-btn">ðŸ—‘ Clear All Theory Data</button>
+        <button onclick="clearAllTheoryData()" class="clear-data-btn">🗑 Clear All Theory Data</button>
       </div>
 
     </main>
@@ -784,7 +784,7 @@
   <!-- CLEAR DATA CONFIRM MODAL -->
   <div class="modal-overlay hidden" id="clearModal">
     <div class="modal">
-      <h3>âš ï¸ Clear All EST Exam Data?</h3>
+      <h3>⚠️ Clear All EST Exam Data?</h3>
       <p>This will permanently delete ALL EST exam results from the system. This action cannot be undone. Are you sure?</p>
       <div class="modal-actions">
         <button onclick="document.getElementById('clearModal').classList.add('hidden')" class="btn btn-outline">Cancel</button>
@@ -834,7 +834,7 @@
   <!-- CLEAR THEORY DATA CONFIRM MODAL -->
   <div class="modal-overlay hidden" id="clearTheoryModal">
     <div class="modal">
-      <h3>âš ï¸ Clear All Theory Data?</h3>
+      <h3>⚠️ Clear All Theory Data?</h3>
       <p>This will permanently delete ALL theory exam results. This action cannot be undone.</p>
       <div class="modal-actions">
         <button onclick="document.getElementById('clearTheoryModal').classList.add('hidden')" class="btn btn-outline">Cancel</button>
@@ -846,7 +846,7 @@
   <!-- DELETE QUESTION CONFIRM MODAL -->
   <div class="modal-overlay hidden" id="deleteQuestionModal">
     <div class="modal">
-      <h3>ðŸ—‘ Delete Question?</h3>
+      <h3>🗑 Delete Question?</h3>
       <p>This question will be permanently deleted from Supabase. This cannot be undone.</p>
       <input type="hidden" id="deleteQuestionId">
       <div class="modal-actions">
@@ -860,8 +860,8 @@
   <div class="modal-overlay hidden" id="previewExamModal">
     <div class="modal" style="max-width:700px;max-height:82vh;overflow-y:auto;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:sticky;top:0;background:#fff;padding-bottom:12px;border-bottom:1px solid var(--border);">
-        <h3 style="margin:0;">ðŸ‘ Exam Preview</h3>
-        <button onclick="document.getElementById('previewExamModal').classList.add('hidden')" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--navy);">âœ•</button>
+        <h3 style="margin:0;">👁 Exam Preview</h3>
+        <button onclick="document.getElementById('previewExamModal').classList.add('hidden')" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--navy);">✕</button>
       </div>
       <div id="previewExamContent"></div>
     </div>
@@ -873,7 +873,7 @@
   <script src="js/app.js"></script>
   <script>
     // ============================================================
-    // SIT ADMIN DASHBOARD â€” FULL LOGIC
+    // SIT ADMIN DASHBOARD — FULL LOGIC
     // ============================================================
 
     document.getElementById('siteHeader').innerHTML = `
@@ -885,7 +885,7 @@
           </div>
           <div class="header-text">
             <h1>Envoys Stewards Training</h1>
-            <h2>Envoys Campus â€” EST Admin</h2>
+            <h2>Envoys Campus — EST Admin</h2>
           </div>
         </div>
       </div>`;
@@ -1006,7 +1006,7 @@
     async function renderExamLockSection() {
       var locks       = await dbGetSitLocks();
       var lockedCount = SIT_EXAMS.filter(function(e){ return locks[e.id] === true; }).length;
-      document.getElementById('lockSummary').textContent = (SIT_EXAMS.length - lockedCount) + ' Open  â€¢  ' + lockedCount + ' Locked';
+      document.getElementById('lockSummary').textContent = (SIT_EXAMS.length - lockedCount) + ' Open  •  ' + lockedCount + ' Locked';
       if (!SIT_EXAMS.length) {
         document.getElementById('examLockBody').innerHTML = '<p style="text-align:center;padding:20px;color:var(--gray);font-size:0.85rem;">No SIT exams have been added yet.</p>';
         return;
@@ -1031,7 +1031,7 @@
       var examIds = Array.from(new Set(allResults.map(function(r){ return r.examId; }))).sort(function(a,b){return a-b;});
       examIds.forEach(function(id) {
         var r = allResults.find(function(x){ return x.examId === id; });
-        if (r) { var o = document.createElement('option'); o.value = id; o.textContent = r.examCode + ' â€” ' + r.examTitle; sel.appendChild(o); }
+        if (r) { var o = document.createElement('option'); o.value = id; o.textContent = r.examCode + ' — ' + r.examTitle; sel.appendChild(o); }
       });
     }
 
@@ -1086,7 +1086,7 @@
       var html = '<div style="padding:12px 16px;">';
       results.forEach(function(r) {
         html += '<div style="margin-bottom:14px;">'
-          + '<strong style="color:var(--navy);font-size:0.88rem;">' + r.examCode + ' â€” ' + r.examTitle + '</strong>'
+          + '<strong style="color:var(--navy);font-size:0.88rem;">' + r.examCode + ' — ' + r.examTitle + '</strong>'
           + '<span style="font-size:0.78rem;color:var(--gray);margin-left:8px;">' + formatDate(r.dateTaken) + '</span>'
           + '<span style="font-size:0.78rem;margin-left:8px;font-weight:600;color:' + (r.percentage>=50?'var(--success)':'var(--danger)') + ';">' + r.score + '/' + r.total + ' (' + r.percentage + '%)</span>';
         var answers = r.answers;
@@ -1096,8 +1096,8 @@
             + answers.map(function(a,i) {
               return '<tr>'
                 + '<td style="max-width:300px;word-break:break-word;">' + escHtml(a.question || ('Q'+(i+1))) + '</td>'
-                + '<td style="color:' + (a.isCorrect?'var(--success)':'var(--danger)') + ';">' + escHtml(a.selectedAnswer||a.studentAnswer||'â€”') + '</td>'
-                + '<td>' + escHtml(a.correctAnswer||'â€”') + '</td>'
+                + '<td style="color:' + (a.isCorrect?'var(--success)':'var(--danger)') + ';">' + escHtml(a.selectedAnswer||a.studentAnswer||'—') + '</td>'
+                + '<td>' + escHtml(a.correctAnswer||'—') + '</td>'
                 + '<td style="text-align:center;">' + (a.marksEarned||0) + '/' + (a.totalMarks||1) + '</td>'
                 + '</tr>';
             }).join('')
@@ -1157,7 +1157,7 @@
         var safeId = s.matric.replace(/[^a-zA-Z0-9]/g,'_');
         var yearCells = SIT_EXAMS.map(function(exam) {
           var r = s.years[exam.id];
-          if (!r) return '<td style="text-align:center;color:#bbb;">â€”</td><td style="text-align:center;color:#bbb;">â€”</td>';
+          if (!r) return '<td style="text-align:center;color:#bbb;">—</td><td style="text-align:center;color:#bbb;">—</td>';
           var cls = r.percentage>=50?'score-pass':'score-fail';
           return '<td style="text-align:center;"><span class="score-cell" title="taken on '+formatDate(r.dateTaken)+'">'+r.score+'/'+r.total+'</span></td>'
                + '<td style="text-align:center;"><span class="score-cell '+cls+'">'+r.percentage+'%</span></td>';
@@ -1200,8 +1200,8 @@
         var obj = { 'Matric No.': matric, 'Student Name': name, 'Type': getStudentType(matric) };
         SIT_EXAMS.forEach(function(exam) {
           var r = years[exam.id];
-          obj[exam.title+' Score'] = r ? r.score+'/'+r.total : 'â€”';
-          obj[exam.title+' %']     = r ? r.percentage+'%' : 'â€”';
+          obj[exam.title+' Score'] = r ? r.score+'/'+r.total : '—';
+          obj[exam.title+' %']     = r ? r.percentage+'%' : '—';
         });
         return obj;
       });
@@ -1226,7 +1226,7 @@
     function openResetModal(examId) {
       resetTargetExamId = examId;
       var exam = SIT_EXAMS.find(function(e){return e.id===examId;});
-      document.getElementById('resetModalExamName').textContent = exam ? exam.code+' â€” '+exam.title : 'Exam #'+examId;
+      document.getElementById('resetModalExamName').textContent = exam ? exam.code+' — '+exam.title : 'Exam #'+examId;
       var sel = document.getElementById('resetStudentSelect');
       sel.innerHTML = '<option value="__all__">&#128293; Reset ALL students for this exam</option>';
       allResults.filter(function(r){return r.examId===examId;}).forEach(function(r) {
@@ -1299,7 +1299,7 @@
         return '<tr>'
           + '<td><span class="rank-num">'+(idx+1)+'</span></td>'
           + '<td><code style="font-size:0.8rem;font-weight:600;">'+s.matric_no+'</code></td>'
-          + '<td>'+(s.full_name||'â€”')+'</td>'
+          + '<td>'+(s.full_name||'—')+'</td>'
           + '<td><span class="badge '+getTypeBadgeClass(s.type)+'">'+s.type+'</span></td>'
           + '<td style="text-align:center;"><label class="toggle-switch" title="'+(s.access_granted?'Access Granted':'Access Revoked')+'"><input type="checkbox" '+(s.access_granted?'checked':'')+' onchange="toggleStewardAccess(this,\''+safeM+'\')"><span class="toggle-slider"></span></label></td>'
           + '<td style="font-size:0.78rem;color:var(--gray);">'+(s.created_at?formatDate(new Date(s.created_at)):'Pre-registered')+'</td>'
@@ -1353,11 +1353,11 @@
       btn.disabled=true; btn.textContent='Processing\u2026';
       var text  = await file.text();
       var lines = text.trim().split('\n');
-      if (lines.length < 2) { btn.disabled=false; btn.textContent='ðŸ“¤ Upload & Add'; showToast('CSV has no data rows.','error'); return; }
+      if (lines.length < 2) { btn.disabled=false; btn.textContent='📤 Upload & Add'; showToast('CSV has no data rows.','error'); return; }
       var headers   = lines[0].toLowerCase().split(',').map(function(h){return h.trim().replace(/["'\r]/g,'');});
       var nameIdx   = headers.indexOf('full_name');
       var matricIdx = headers.indexOf('matric_no');
-      if (nameIdx===-1) { btn.disabled=false; btn.textContent='ðŸ“¤ Upload & Add'; showToast('CSV must have a "full_name" column.','error'); return; }
+      if (nameIdx===-1) { btn.disabled=false; btn.textContent='📤 Upload & Add'; showToast('CSV must have a "full_name" column.','error'); return; }
       var added=0, skipped=0, skippedList=[];
       for (var i=1; i<lines.length; i++) {
         var cols      = lines[i].split(',').map(function(c){return c.trim().replace(/["'\r]/g,'');});
@@ -1372,7 +1372,7 @@
         var res = await dbAddSitSteward({ matric_no: finalMatric, full_name: name, walk_in: false, added_by: 'bulk' });
         if (!res.error) added++; else { skipped++; skippedList.push(finalMatric); }
       }
-      btn.disabled=false; btn.textContent='ðŸ“¤ Upload & Add';
+      btn.disabled=false; btn.textContent='📤 Upload & Add';
       document.getElementById('swCsvFile').value='';
       var msg = added+' added, '+skipped+' skipped.'+(skippedList.length?' Skipped: '+skippedList.slice(0,5).join(', ')+(skippedList.length>5?'\u2026':''):'');
       var cls = added>0?'success':'info';
@@ -1401,7 +1401,7 @@
     async function initQuestionManager() {
       var select = document.getElementById('qmExamSelect');
       if (select.options.length <= 1) {
-        SIT_EXAMS.forEach(function(e) { var o=document.createElement('option'); o.value=e.id; o.textContent=e.code+' â€” '+e.title; select.appendChild(o); });
+        SIT_EXAMS.forEach(function(e) { var o=document.createElement('option'); o.value=e.id; o.textContent=e.code+' — '+e.title; select.appendChild(o); });
       }
     }
 
@@ -1541,7 +1541,7 @@
     function openPreviewModal() {
       if (!currentQMQuestions.length) { showToast('No questions to preview. Add questions first.','error'); return; }
       var exam  = SIT_EXAMS.find(function(e){return e.id===currentQMExamId;});
-      var title = exam ? exam.code+' â€” '+exam.title : 'Exam Preview';
+      var title = exam ? exam.code+' — '+exam.title : 'Exam Preview';
       document.getElementById('previewExamContent').innerHTML =
         '<div style="background:var(--navy);color:#fff;padding:16px;border-radius:8px;margin-bottom:20px;">'
         + '<h4 style="margin:0 0 4px;color:#fff;font-size:1rem;">'+escHtml(title)+'</h4>'
@@ -1595,7 +1595,7 @@
     function populateTheoryExamFilter() {
       var sel=document.getElementById('tFilterExam'); sel.innerHTML='<option value="">All Theory Exams</option>';
       Array.from(new Set(allTheoryResults.map(function(r){return r.examId;}))).sort(function(a,b){return a-b;}).forEach(function(id) {
-        var r=allTheoryResults.find(function(x){return x.examId===id;}); if(r){var o=document.createElement('option');o.value=id;o.textContent=r.examCode+' â€” '+r.examTitle;sel.appendChild(o);}
+        var r=allTheoryResults.find(function(x){return x.examId===id;}); if(r){var o=document.createElement('option');o.value=id;o.textContent=r.examCode+' — '+r.examTitle;sel.appendChild(o);}
       });
     }
     function renderTheoryStats() {
@@ -1616,13 +1616,13 @@
       noEl.classList.add('hidden');
       document.getElementById('theoryResultsHead').innerHTML='<tr><th>#</th><th>Matric</th><th>Student Name</th><th>Exam</th><th style="text-align:center;">Score</th><th style="text-align:center;">%</th><th>Date</th><th>Answers</th></tr>';
       tbody.innerHTML=results.map(function(r,idx){
-        return '<tr><td><span class="rank-num">'+(idx+1)+'</span></td><td><code style="font-size:0.8rem;font-weight:600;">'+r.matric+'</code></td><td>'+(r.name||SIT_STUDENTS[r.matric]||'â€”')+'</td><td><span style="font-size:0.8rem;font-weight:700;">'+r.examCode+'</span><br><span style="font-size:0.75rem;color:var(--gray);">'+r.examTitle+'</span></td><td style="text-align:center;">'+r.score+'/'+r.total+'</td><td style="text-align:center;"><span class="score-cell '+(r.percentage>=50?'score-pass':'score-fail')+'">'+r.percentage+'%</span></td><td style="font-size:0.78rem;color:var(--gray);">'+formatDate(r.dateTaken)+'</td><td><button class="btn btn-sm btn-outline" onclick="viewAnswers('+r.id+')">View</button></td></tr>';
+        return '<tr><td><span class="rank-num">'+(idx+1)+'</span></td><td><code style="font-size:0.8rem;font-weight:600;">'+r.matric+'</code></td><td>'+(r.name||SIT_STUDENTS[r.matric]||'—')+'</td><td><span style="font-size:0.8rem;font-weight:700;">'+r.examCode+'</span><br><span style="font-size:0.75rem;color:var(--gray);">'+r.examTitle+'</span></td><td style="text-align:center;">'+r.score+'/'+r.total+'</td><td style="text-align:center;"><span class="score-cell '+(r.percentage>=50?'score-pass':'score-fail')+'">'+r.percentage+'%</span></td><td style="font-size:0.78rem;color:var(--gray);">'+formatDate(r.dateTaken)+'</td><td><button class="btn btn-sm btn-outline" onclick="viewAnswers('+r.id+')">View</button></td></tr>';
       }).join('');
     }
     function viewAnswers(resultId) {
       var result=allTheoryResults.find(function(r){return r.id===resultId;}); if(!result)return;
       var panel=document.getElementById('theoryAnswerPanel');
-      document.getElementById('answerPanelTitle').textContent=(result.name||result.matric)+' â€” '+result.examTitle;
+      document.getElementById('answerPanelTitle').textContent=(result.name||result.matric)+' — '+result.examTitle;
       var answers=result.answers||[];
       document.getElementById('answerPanelBody').innerHTML=!answers.length?'<p style="color:var(--gray);">No answer data available.</p>':answers.map(function(a,i){
         if(a.selectedAnswer!==undefined)return '<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);"><div style="font-weight:700;margin-bottom:4px;">Q'+(i+1)+'. '+a.question+'</div><div style="font-size:0.85rem;">Selected: <strong>'+a.selectedAnswer+'</strong> | Correct: <strong>'+a.correctAnswer+'</strong> | <span style="color:'+(a.isCorrect?'var(--success)':'var(--danger)')+';font-weight:700;">'+(a.isCorrect?'\u2713 Correct':'\u2717 Wrong')+'</span> | <span style="font-weight:700;">'+a.marksEarned+'/'+a.totalMarks+' marks</span></div></div>';
@@ -1635,7 +1635,7 @@
     function buildTheoryCSVData(visibleIds) {
       var results=visibleIds?allTheoryResults.filter(function(r){return visibleIds.has(r.id);}):allTheoryResults;
       var headers=['Matric No.','Student Name','Exam Code','Exam Title','Score','Total','%','Date'];
-      var rows=results.map(function(r){return{'Matric No.':r.matric,'Student Name':r.name||SIT_STUDENTS[r.matric]||'â€”','Exam Code':r.examCode,'Exam Title':r.examTitle,'Score':r.score,'Total':r.total,'%':r.percentage+'%','Date':formatDate(r.dateTaken)};});
+      var rows=results.map(function(r){return{'Matric No.':r.matric,'Student Name':r.name||SIT_STUDENTS[r.matric]||'—','Exam Code':r.examCode,'Exam Title':r.examTitle,'Score':r.score,'Total':r.total,'%':r.percentage+'%','Date':formatDate(r.dateTaken)};});
       return{headers:headers,rows:rows};
     }
     function downloadAllTheoryCSV()     { if(!allTheoryResults.length){alert('No SIT theory results to export.');return;} var d=buildTheoryCSVData(null); downloadCSV('RCTC_SIT_Theory_All_'+new Date().toISOString().slice(0,10)+'.csv',d.rows,d.headers); }
@@ -1643,14 +1643,14 @@
       var cells=document.querySelectorAll('#theoryResultsBody tr td:nth-child(2) code'); if(!cells.length){alert('No results visible to export.');return;}
       var vis=new Set(Array.from(cells).map(function(c){return c.textContent;}));
       var filtered=allTheoryResults.filter(function(r){return vis.has(r.matric);}); if(!filtered.length){alert('No results to export.');return;}
-      var d=buildTheoryCSVData(null); d.rows=filtered.map(function(r){return{'Matric No.':r.matric,'Student Name':r.name||SIT_STUDENTS[r.matric]||'â€”','Exam Code':r.examCode,'Exam Title':r.examTitle,'Score':r.score,'Total':r.total,'%':r.percentage+'%','Date':formatDate(r.dateTaken)};});
+      var d=buildTheoryCSVData(null); d.rows=filtered.map(function(r){return{'Matric No.':r.matric,'Student Name':r.name||SIT_STUDENTS[r.matric]||'—','Exam Code':r.examCode,'Exam Title':r.examTitle,'Score':r.score,'Total':r.total,'%':r.percentage+'%','Date':formatDate(r.dateTaken)};});
       downloadCSV('RCTC_SIT_Theory_Filtered_'+new Date().toISOString().slice(0,10)+'.csv',d.rows,d.headers);
     }
     var theoryResetTargetId=null;
     function openTheoryResetModal(examId) {
       theoryResetTargetId=examId;
       var exam=SIT_THEORY_EXAMS.find(function(e){return e.id===examId;});
-      document.getElementById('theoryResetModalExamName').textContent=exam?exam.code+' â€” '+exam.title:'Exam #'+examId;
+      document.getElementById('theoryResetModalExamName').textContent=exam?exam.code+' — '+exam.title:'Exam #'+examId;
       var sel=document.getElementById('theoryResetStudentSelect');
       sel.innerHTML='<option value="__all__">&#128293; Reset ALL students for this exam</option>';
       allTheoryResults.filter(function(r){return r.examId===examId;}).forEach(function(r){var o=document.createElement('option');o.value=r.matric;o.textContent=(SIT_STUDENTS[r.matric]||r.name)+' ('+r.matric+')';sel.appendChild(o);});
@@ -1708,7 +1708,7 @@
       if(!students.length){c.innerHTML='<p style="text-align:center;padding:20px;color:var(--gray);">No students match your filters.</p>';return;}
       c.innerHTML='<table class="results-table"><thead><tr><th>#</th><th>Matric</th><th>Student Name</th>'+SIT_EXAMS.map(function(e){return'<th style="text-align:center;font-size:0.78rem;">'+e.code+'</th>';}).join('')+'<th style="text-align:center;">Done</th></tr></thead><tbody>'
         +students.map(function(e,idx){
-          var m=e[0],n=e[1],cells=SIT_EXAMS.map(function(ex){var r=pivot[m]&&pivot[m][ex.id];return r?'<td style="text-align:center;" title="'+r.percentage+'%"><span style="color:var(--success);font-weight:700;">\u2713</span></td>':'<td style="text-align:center;"><span style="color:#ccc;">â€”</span></td>';}).join(''),done=SIT_EXAMS.filter(function(ex){return pivot[m]&&pivot[m][ex.id];}).length;
+          var m=e[0],n=e[1],cells=SIT_EXAMS.map(function(ex){var r=pivot[m]&&pivot[m][ex.id];return r?'<td style="text-align:center;" title="'+r.percentage+'%"><span style="color:var(--success);font-weight:700;">\u2713</span></td>':'<td style="text-align:center;"><span style="color:#ccc;">—</span></td>';}).join(''),done=SIT_EXAMS.filter(function(ex){return pivot[m]&&pivot[m][ex.id];}).length;
           return '<tr><td><span class="rank-num">'+(idx+1)+'</span></td><td><code style="font-size:0.78rem;">'+m+'</code></td><td style="font-size:0.85rem;">'+n+'</td>'+cells+'<td style="text-align:center;font-weight:700;">'+done+'/'+SIT_EXAMS.length+'</td></tr>';
         }).join('')+'</tbody></table>';
     }
@@ -1734,7 +1734,7 @@
       if(!students.length){c.innerHTML='<p style="text-align:center;padding:20px;color:var(--gray);">No students match your filters.</p>';return;}
       c.innerHTML='<table class="results-table"><thead><tr><th>#</th><th>Matric</th><th>Student Name</th>'+SIT_THEORY_EXAMS.map(function(e){return'<th style="text-align:center;font-size:0.78rem;">'+e.code+'</th>';}).join('')+'<th style="text-align:center;">Done</th></tr></thead><tbody>'
         +students.map(function(e,idx){
-          var m=e[0],n=e[1],cells=SIT_THEORY_EXAMS.map(function(ex){var r=pivot[m]&&pivot[m][ex.id];return r?'<td style="text-align:center;" title="'+r.percentage+'%"><span style="color:var(--success);font-weight:700;">\u2713</span></td>':'<td style="text-align:center;"><span style="color:#ccc;">â€”</span></td>';}).join(''),done=SIT_THEORY_EXAMS.filter(function(ex){return pivot[m]&&pivot[m][ex.id];}).length;
+          var m=e[0],n=e[1],cells=SIT_THEORY_EXAMS.map(function(ex){var r=pivot[m]&&pivot[m][ex.id];return r?'<td style="text-align:center;" title="'+r.percentage+'%"><span style="color:var(--success);font-weight:700;">\u2713</span></td>':'<td style="text-align:center;"><span style="color:#ccc;">—</span></td>';}).join(''),done=SIT_THEORY_EXAMS.filter(function(ex){return pivot[m]&&pivot[m][ex.id];}).length;
           return '<tr><td><span class="rank-num">'+(idx+1)+'</span></td><td><code style="font-size:0.78rem;">'+m+'</code></td><td style="font-size:0.85rem;">'+n+'</td>'+cells+'<td style="text-align:center;font-weight:700;">'+done+'/'+SIT_THEORY_EXAMS.length+'</td></tr>';
         }).join('')+'</tbody></table>';
     }
