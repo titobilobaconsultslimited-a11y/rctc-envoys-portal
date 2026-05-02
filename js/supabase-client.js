@@ -494,3 +494,176 @@ async function dbSetAllSitTheoryLocks(examIds, locked) {
     .upsert(rows, { onConflict: 'exam_id,portal' });
   if (error) console.error('dbSetAllSitTheoryLocks:', error);
 }
+
+// ============================================================
+// SIT STEWARD MANAGEMENT
+// ============================================================
+
+async function dbGetSitStewards() {
+  const { data, error } = await db
+    .from('stewards')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) { console.error('dbGetSitStewards:', error); return []; }
+  return data || [];
+}
+
+async function dbAddSitSteward(steward) {
+  const { data, error } = await db
+    .from('stewards')
+    .insert({
+      matric_no:      steward.matric_no,
+      full_name:      steward.full_name,
+      walk_in:        steward.walk_in || false,
+      access_granted: steward.access_granted !== undefined ? steward.access_granted : true,
+      added_by:       steward.added_by || 'admin-manual',
+      created_at:     new Date().toISOString()
+    })
+    .select()
+    .single();
+  if (error) return { error };
+  return { data };
+}
+
+async function dbCheckStewardExists(matricNo) {
+  const { data, error } = await db
+    .from('stewards')
+    .select('matric_no')
+    .eq('matric_no', matricNo)
+    .maybeSingle();
+  if (error) return false;
+  return !!data;
+}
+
+async function dbUpdateStewardAccess(matricNo, accessGranted) {
+  const { error } = await db
+    .from('stewards')
+    .update({ access_granted: accessGranted })
+    .eq('matric_no', matricNo);
+  if (error) { console.error('dbUpdateStewardAccess:', error); return false; }
+  return true;
+}
+
+async function dbCheckStewardAccess(matricNo) {
+  const { data, error } = await db
+    .from('stewards')
+    .select('access_granted, full_name, walk_in, added_by')
+    .eq('matric_no', matricNo)
+    .maybeSingle();
+  if (error) return null;
+  return data;
+}
+
+async function dbSitWalkInLogin(fullName, matricNo) {
+  const { data, error } = await db
+    .from('stewards')
+    .insert({
+      matric_no:      matricNo,
+      full_name:      fullName,
+      walk_in:        true,
+      access_granted: true,
+      added_by:       'walk-in',
+      created_at:     new Date().toISOString()
+    })
+    .select()
+    .single();
+  if (error) return { error };
+  return { data };
+}
+
+// ============================================================
+// SIT EXAM QUESTION MANAGER
+// ============================================================
+
+async function dbGetSitExamSettings(localExamId) {
+  const { data, error } = await db
+    .from('sit_exam_settings')
+    .select('*')
+    .eq('local_exam_id', localExamId)
+    .maybeSingle();
+  if (error) { console.error('dbGetSitExamSettings:', error); return null; }
+  return data;
+}
+
+async function dbUpdateSitExamSettings(localExamId, settings) {
+  const row = {
+    local_exam_id:     localExamId,
+    time_limit:        settings.timeLimit,
+    pass_mark:         settings.passMark,
+    instructions:      settings.instructions,
+    shuffle_questions: settings.shuffleQuestions,
+    shuffle_options:   settings.shuffleOptions,
+    is_published:      settings.isPublished
+  };
+  const { error } = await db
+    .from('sit_exam_settings')
+    .upsert(row, { onConflict: 'local_exam_id' });
+  if (error) { console.error('dbUpdateSitExamSettings:', error); return false; }
+  return true;
+}
+
+async function dbGetSitQuestionsForExam(localExamId) {
+  const { data, error } = await db
+    .from('sit_questions')
+    .select('*')
+    .eq('local_exam_id', localExamId)
+    .order('question_number', { ascending: true });
+  if (error) { console.error('dbGetSitQuestionsForExam:', error); return []; }
+  return data || [];
+}
+
+async function dbAddSitQuestion(question) {
+  const { data, error } = await db
+    .from('sit_questions')
+    .insert({
+      local_exam_id:   question.examId,
+      question_number: question.questionNumber,
+      question_text:   question.questionText,
+      option_a:        question.optionA,
+      option_b:        question.optionB,
+      option_c:        question.optionC,
+      option_d:        question.optionD,
+      correct_answer:  question.correctAnswer,
+      marks:           question.marks || 1
+    })
+    .select()
+    .single();
+  if (error) return { error };
+  return { data };
+}
+
+async function dbUpdateSitQuestion(id, question) {
+  const { error } = await db
+    .from('sit_questions')
+    .update({
+      question_text:  question.questionText,
+      option_a:       question.optionA,
+      option_b:       question.optionB,
+      option_c:       question.optionC,
+      option_d:       question.optionD,
+      correct_answer: question.correctAnswer,
+      marks:          question.marks || 1
+    })
+    .eq('id', id);
+  if (error) { console.error('dbUpdateSitQuestion:', error); return false; }
+  return true;
+}
+
+async function dbDeleteSitQuestion(id) {
+  const { error } = await db.from('sit_questions').delete().eq('id', id);
+  if (error) { console.error('dbDeleteSitQuestion:', error); return false; }
+  return true;
+}
+
+async function dbMoveSitQuestion(id, direction, localExamId) {
+  const questions = await dbGetSitQuestionsForExam(localExamId);
+  const idx = questions.findIndex(q => q.id === id);
+  if (idx === -1) return;
+  const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+  if (swapIdx < 0 || swapIdx >= questions.length) return;
+  const a = questions[idx], b = questions[swapIdx];
+  await Promise.all([
+    db.from('sit_questions').update({ question_number: b.question_number }).eq('id', a.id),
+    db.from('sit_questions').update({ question_number: a.question_number }).eq('id', b.id)
+  ]);
+}

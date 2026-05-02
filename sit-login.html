@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RCTC Envoys — Envoys Stewards Training Exam Portal Login</title>
+  <title>RCTC Envoys â€” Envoys Stewards Training Exam Portal Login</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
     .divider { display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--gray);font-size:0.82rem; }
@@ -20,6 +20,28 @@
       margin-bottom: 8px;
       text-transform: uppercase;
     }
+    .login-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+    }
+    .login-tab-btn {
+      flex: 1;
+      padding: 9px 12px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      border: none;
+      background: #f0f3f7;
+      color: var(--navy);
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .login-tab-btn:hover { background: #e2e8f0; }
+    .login-tab-btn.active { background: var(--navy); color: #fff; }
+    .login-tab-panel { display: none; }
+    .login-tab-panel.active { display: block; }
   </style>
 </head>
 <body class="login-body">
@@ -34,7 +56,7 @@
       </div>
       <h1>Envoys Stewards Training</h1>
       <h2>Envoys Campus</h2>
-      <p>Envoys Stewards Training — Examination Portal</p>
+      <p>Envoys Stewards Training â€” Examination Portal</p>
     </div>
 
     <!-- SIT Student Login Card -->
@@ -42,29 +64,55 @@
       <div style="text-align:center;margin-bottom:4px;">
         <span class="sit-badge">Envoys Stewards Training</span>
       </div>
-      <h3>🌱 EST Student Login</h3>
+      <h3>ðŸŒ± EST Student Login</h3>
 
-      <div class="form-group">
-        <label for="matricNo">Steward ID Code</label>
-        <input
-          type="text"
-          id="matricNo"
-          placeholder="e.g. ENV/PC/25/0001/ST"
-          autocomplete="off"
-          spellcheck="false"
-        >
+      <!-- Login Type Tabs -->
+      <div class="login-tabs">
+        <button class="login-tab-btn active" id="tabBtnMatric"   onclick="switchLoginTab('matric')">ðŸªª I Have a Matric No.</button>
+        <button class="login-tab-btn"         id="tabBtnWalkin"  onclick="switchLoginTab('walkin')">ðŸš¶ Walk-in / No ID</button>
       </div>
 
-      <div id="loginError" class="error-msg hidden"></div>
+      <!-- TAB 1: Matric Login -->
+      <div class="login-tab-panel active" id="tabMatric">
+        <div class="form-group">
+          <label for="matricNo">Matric No. (Steward ID Code)</label>
+          <input
+            type="text"
+            id="matricNo"
+            placeholder="e.g. ENV/PC/25/0001/ST"
+            autocomplete="off"
+            spellcheck="false"
+          >
+        </div>
+        <div id="loginError" class="error-msg hidden"></div>
+        <button onclick="doSitLogin()" class="btn btn-primary btn-full btn-lg" id="loginBtn">
+          Login &rarr;
+        </button>
+      </div>
 
-      <button onclick="doSitLogin()" class="btn btn-primary btn-full btn-lg">
-        Login &rarr;
-      </button>
+      <!-- TAB 2: Walk-in Login -->
+      <div class="login-tab-panel" id="tabWalkin">
+        <p style="font-size:0.82rem;color:var(--gray);margin-bottom:14px;">
+          Don't have a Matric No.? Enter your name to get a temporary access code and proceed.
+        </p>
+        <div class="form-group">
+          <label for="walkinName">Full Name <span style="color:var(--danger);">*</span></label>
+          <input type="text" id="walkinName" placeholder="e.g. John Doe">
+        </div>
+        <div class="form-group">
+          <label for="walkinMatric">Matric No. <span style="color:var(--gray);font-size:0.8rem;">(optional â€” auto-generated if blank)</span></label>
+          <input type="text" id="walkinMatric" placeholder="Leave blank to auto-generate" style="text-transform:uppercase;">
+        </div>
+        <div id="walkinError" class="error-msg hidden"></div>
+        <button onclick="doWalkinLogin()" class="btn btn-primary btn-full btn-lg" id="walkinBtn">
+          Continue as Walk-in &rarr;
+        </button>
+      </div>
 
       <div class="divider">or</div>
 
       <div class="admin-link" style="margin-bottom:10px;">
-        <a href="sit-admin.html">🔒 SIT Admin Dashboard</a>
+        <a href="sit-admin.html">ðŸ”’ SIT Admin Dashboard</a>
       </div>
 
       <div class="admin-link">
@@ -79,7 +127,9 @@
 
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/data.js"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/app.js"></script>
   <script>
     // Auto-redirect if already logged in
@@ -87,9 +137,19 @@
       window.location.href = 'sit-dashboard.html';
     }
 
+    // ---- Tab switching ----
+    function switchLoginTab(tab) {
+      document.getElementById('tabMatric').classList.toggle('active', tab === 'matric');
+      document.getElementById('tabWalkin').classList.toggle('active', tab === 'walkin');
+      document.getElementById('tabBtnMatric').classList.toggle('active', tab === 'matric');
+      document.getElementById('tabBtnWalkin').classList.toggle('active', tab === 'walkin');
+      hideError('loginError');
+      hideError('walkinError');
+    }
+
+    // ---- Matric No. Login ----
     const matricInput = document.getElementById('matricNo');
 
-    // Auto-uppercase as user types
     matricInput.addEventListener('input', function () {
       const pos = this.selectionStart;
       this.value = this.value.toUpperCase();
@@ -100,23 +160,112 @@
       if (e.key === 'Enter') doSitLogin();
     });
 
-    function doSitLogin() {
+    async function doSitLogin() {
       hideError('loginError');
       const matric = matricInput.value.trim().toUpperCase();
 
       if (!matric) {
-        showError('loginError', 'Please enter your SIT matric number.');
+        showError('loginError', 'Please enter your Matric No.');
         matricInput.focus();
         return;
       }
 
-      if (!SIT_STUDENTS[matric]) {
-        showError('loginError', 'Matric number not recognised. Please check and try again, or contact your administrator.');
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = true;
+      btn.textContent = 'Checking\u2026';
+
+      // Check registered students first
+      if (SIT_STUDENTS[matric]) {
+        // Check Supabase for access override
+        const sw = await dbCheckStewardAccess(matric);
+        if (sw && sw.access_granted === false) {
+          btn.disabled = false; btn.textContent = 'Login \u2192';
+          showError('loginError', 'Access not granted. Contact the administrator.');
+          return;
+        }
+        btn.disabled = false; btn.textContent = 'Login \u2192';
+        store.sessionSet('rctc_sit_student', matric);
+        window.location.href = 'sit-dashboard.html';
+        return;
+      }
+
+      // Not in SIT_STUDENTS â€” check Supabase stewards table
+      const sw = await dbCheckStewardAccess(matric);
+      btn.disabled = false; btn.textContent = 'Login \u2192';
+
+      if (!sw) {
+        showError('loginError', 'Matric No. not recognised. Try Walk-in login if you don\'t have a registered ID.');
         matricInput.select();
         return;
       }
 
+      if (sw.access_granted === false) {
+        showError('loginError', 'Access not granted. Contact the administrator.');
+        return;
+      }
+
+      // Found in stewards table â€” allow login
       store.sessionSet('rctc_sit_student', matric);
+      window.location.href = 'sit-dashboard.html';
+    }
+
+    // ---- Walk-in Login ----
+    document.getElementById('walkinMatric').addEventListener('input', function() {
+      const pos = this.selectionStart;
+      this.value = this.value.toUpperCase();
+      this.setSelectionRange(pos, pos);
+    });
+
+    async function doWalkinLogin() {
+      hideError('walkinError');
+      const name   = document.getElementById('walkinName').value.trim();
+      const matric = document.getElementById('walkinMatric').value.trim().toUpperCase();
+
+      if (!name) {
+        showError('walkinError', 'Please enter your full name.');
+        document.getElementById('walkinName').focus();
+        return;
+      }
+
+      const btn = document.getElementById('walkinBtn');
+      btn.disabled = true; btn.textContent = 'Processing\u2026';
+
+      // If matric provided, ensure it doesn't already exist
+      if (matric) {
+        if (SIT_STUDENTS[matric]) {
+          btn.disabled = false; btn.textContent = 'Continue as Walk-in \u2192';
+          showError('walkinError', 'That Matric No. belongs to a registered student. Please use the "I Have a Matric No." tab.');
+          return;
+        }
+        const exists = await dbCheckStewardExists(matric);
+        if (exists) {
+          const sw = await dbCheckStewardAccess(matric);
+          if (sw && sw.access_granted === false) {
+            btn.disabled = false; btn.textContent = 'Continue as Walk-in \u2192';
+            showError('walkinError', 'Access not granted. Contact the administrator.');
+            return;
+          }
+          // Matric exists and is valid â€” log them in
+          btn.disabled = false; btn.textContent = 'Continue as Walk-in \u2192';
+          store.sessionSet('rctc_sit_student', matric);
+          window.location.href = 'sit-dashboard.html';
+          return;
+        }
+      }
+
+      // Generate matric if not provided
+      const finalMatric = matric || ('STW-WALKIN-' + String(Date.now()).slice(-4));
+
+      // Insert into Supabase
+      const res = await dbSitWalkInLogin(name, finalMatric);
+      btn.disabled = false; btn.textContent = 'Continue as Walk-in \u2192';
+
+      if (res.error) {
+        showError('walkinError', 'Could not register walk-in. Please try again or contact the administrator.');
+        return;
+      }
+
+      store.sessionSet('rctc_sit_student', finalMatric);
       window.location.href = 'sit-dashboard.html';
     }
   </script>
