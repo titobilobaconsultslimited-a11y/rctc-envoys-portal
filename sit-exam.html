@@ -34,7 +34,8 @@
       <h3>🎉 Examination Complete!</h3>
       <div class="result-score-big" id="resultContent"></div>
       <p id="resultSubTitle" style="text-align:center;font-size:0.85rem;color:var(--gray);margin-bottom:20px;"></p>
-      <div class="modal-actions" style="justify-content:center;">
+      <div class="modal-actions" style="justify-content:center;flex-wrap:wrap;gap:12px;">
+        <button onclick="downloadExamCertificate()" class="btn btn-outline btn-lg" style="border-color:var(--navy);color:var(--navy);">&#127891; Download Certificate</button>
         <button onclick="goToDashboard()" class="btn btn-primary btn-lg">Back to Dashboard</button>
       </div>
     </div>
@@ -69,6 +70,7 @@
     let questions, totalQ, DURATION_SECS;
     let startTime, answers = {};
     let currentQ = 0, timerInterval = null, submitted = false;
+    let lastCertData = null;
 
     // ---- Async init ----
     (async () => {
@@ -252,6 +254,18 @@
 
       clearSitExamProgress();
 
+      lastCertData = {
+        studentName: SIT_STUDENTS[matric] || store.sessionGet('rctc_sit_student_name') || matric,
+        matric,
+        examCode:    exam.code,
+        examTitle:   exam.title,
+        score,
+        total,
+        pct,
+        grade:       grade.label,
+        dateTaken:   now
+      };
+
       document.getElementById('resultContent').innerHTML = `
         <div class="big-pct">${pct}%</div>
         <div class="big-raw">${score} out of ${total} correct</div>
@@ -261,6 +275,10 @@
         : `${exam.title} — submitted successfully.`;
       document.getElementById('resultModal').classList.remove('hidden');
       document.getElementById('btnSubmit').disabled = true;
+    }
+
+    function downloadExamCertificate() {
+      if (lastCertData) generateSitCertificate(lastCertData);
     }
 
     function goToDashboard() { window.location.href = 'sit-dashboard.html'; }

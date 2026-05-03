@@ -112,7 +112,8 @@
       <h3>✅ Theory Section Complete!</h3>
       <div class="result-score-big" id="resultContent"></div>
       <p id="resultSubTitle" style="text-align:center;font-size:0.85rem;color:var(--gray);margin-bottom:20px;"></p>
-      <div class="modal-actions" style="justify-content:center;">
+      <div class="modal-actions" style="justify-content:center;flex-wrap:wrap;gap:12px;">
+        <button onclick="downloadTheoryCertificate()" class="btn btn-outline btn-lg" style="border-color:var(--navy);color:var(--navy);">&#127891; Download Certificate</button>
         <button onclick="goToDashboard()" class="btn btn-primary btn-lg">Back to Dashboard</button>
       </div>
     </div>
@@ -138,6 +139,7 @@
     let currentQ      = 0;
     let timerInterval = null;
     let submitted     = false;
+    let lastCertData  = null;
 
     // ---- INIT ----
     (async () => {
@@ -429,6 +431,18 @@
         <div class="big-raw">${totalScore} out of ${totalPossible} marks</div>
         <div class="grade-tag ${grade.cls}">${grade.label}</div>`;
 
+      lastCertData = {
+        studentName: SIT_STUDENTS[matric] || store.sessionGet('rctc_sit_student_name') || matric,
+        matric,
+        examCode:    exam.code,
+        examTitle:   exam.title,
+        score:       totalScore,
+        total:       totalPossible,
+        pct,
+        grade:       grade.label,
+        dateTaken:   now
+      };
+
       document.getElementById('resultSubTitle').textContent = timedOut
         ? 'Time expired — your answers have been automatically submitted.'
         : `${exam.title} — submitted successfully.`;
@@ -436,6 +450,10 @@
       document.getElementById('resultModal').classList.remove('hidden');
       const btnSubmit = document.getElementById('btnSubmit');
       if (btnSubmit) btnSubmit.disabled = true;
+    }
+
+    function downloadTheoryCertificate() {
+      if (lastCertData) generateSitCertificate(lastCertData);
     }
 
     function goToDashboard() {

@@ -313,3 +313,130 @@ function renderSitHeader(studentMatric) {
       </div>
     </div>`;
 }
+
+// ============================================================
+// SIT CERTIFICATE GENERATOR
+// Draws a certificate of completion onto an HTML5 Canvas and
+// triggers a PNG download for the student.
+// ============================================================
+function generateSitCertificate({ studentName, matric, examCode, examTitle, score, total, pct, grade, dateTaken }) {
+  const W = 1200, H = 850;
+  const canvas  = document.createElement('canvas');
+  canvas.width  = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // ---- Cream background ----
+  ctx.fillStyle = '#fdfaf4';
+  ctx.fillRect(0, 0, W, H);
+
+  // ---- Outer navy border ----
+  ctx.strokeStyle = '#0d2a5e';
+  ctx.lineWidth   = 14;
+  ctx.strokeRect(22, 22, W - 44, H - 44);
+
+  // ---- Inner gold border ----
+  ctx.strokeStyle = '#b8922a';
+  ctx.lineWidth   = 4;
+  ctx.strokeRect(40, 40, W - 80, H - 80);
+
+  // ---- Gold corner accents ----
+  const corners = [[58, 58], [W - 58, 58], [58, H - 58], [W - 58, H - 58]];
+  ctx.fillStyle = '#b8922a';
+  corners.forEach(([x, y]) => {
+    ctx.beginPath();
+    ctx.arc(x, y, 10, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // ---- Organisation name ----
+  ctx.fillStyle    = '#0d2a5e';
+  ctx.font         = 'bold 24px Arial, sans-serif';
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText('REDEMPTION CITY TRAINING CENTRE — ENVOYS CAMPUS', W / 2, 108);
+
+  // ---- Programme subtitle ----
+  ctx.fillStyle = '#b8922a';
+  ctx.font      = '19px Arial, sans-serif';
+  ctx.fillText('Stewards in Training (S.I.T.) Programme', W / 2, 137);
+
+  // ---- Gold divider ----
+  ctx.strokeStyle = '#b8922a';
+  ctx.lineWidth   = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(160, 157); ctx.lineTo(W - 160, 157);
+  ctx.stroke();
+
+  // ---- Certificate title ----
+  ctx.fillStyle = '#0d2a5e';
+  ctx.font      = 'bold 58px Georgia, serif';
+  ctx.fillText('Certificate of Completion', W / 2, 238);
+
+  // ---- "This is to certify that" ----
+  ctx.fillStyle = '#555';
+  ctx.font      = 'italic 22px Georgia, serif';
+  ctx.fillText('This is to certify that', W / 2, 297);
+
+  // ---- Student name (scale font for long names) ----
+  ctx.font = studentName.length > 32 ? 'bold 38px Georgia, serif' : 'bold 48px Georgia, serif';
+  ctx.fillStyle = '#0d2a5e';
+  ctx.fillText(studentName, W / 2, 360);
+
+  // ---- Underline name ----
+  const nameWidth = ctx.measureText(studentName).width;
+  ctx.strokeStyle = '#b8922a';
+  ctx.lineWidth   = 2;
+  ctx.beginPath();
+  ctx.moveTo(W / 2 - nameWidth / 2, 372);
+  ctx.lineTo(W / 2 + nameWidth / 2, 372);
+  ctx.stroke();
+
+  // ---- "has successfully completed" ----
+  ctx.fillStyle = '#555';
+  ctx.font      = 'italic 22px Georgia, serif';
+  ctx.fillText('has successfully completed the examination', W / 2, 418);
+
+  // ---- Exam code & title ----
+  const fullTitle = `${examCode}  —  ${examTitle}`;
+  ctx.font      = fullTitle.length > 52 ? 'bold 26px Georgia, serif' : 'bold 32px Georgia, serif';
+  ctx.fillStyle = '#0d2a5e';
+  ctx.fillText(fullTitle, W / 2, 470);
+
+  // ---- Score & grade ----
+  ctx.fillStyle = '#333';
+  ctx.font      = '22px Arial, sans-serif';
+  ctx.fillText(`Score: ${score} / ${total}  (${pct}%)     Grade: ${grade}`, W / 2, 524);
+
+  // ---- Date ----
+  const dateStr = new Date(dateTaken).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  ctx.fillStyle = '#444';
+  ctx.font      = '20px Arial, sans-serif';
+  ctx.fillText(`Date of Completion: ${dateStr}`, W / 2, 570);
+
+  // ---- Bottom divider ----
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth   = 1;
+  ctx.beginPath();
+  ctx.moveTo(160, 614); ctx.lineTo(W - 160, 614);
+  ctx.stroke();
+
+  // ---- Certificate ID & student ID ----
+  const year   = new Date(dateTaken).getFullYear();
+  const certId = `RCTC-SIT-${matric.replace(/[\/\s]/g, '')}-${examCode.replace(/\s/g, '')}-${year}`;
+  ctx.fillStyle = '#888';
+  ctx.font      = '14px Arial, sans-serif';
+  ctx.fillText(`Certificate ID: ${certId}`, W / 2, 644);
+  ctx.fillText(`Student ID: ${matric}`, W / 2, 664);
+
+  // ---- Footer ----
+  ctx.fillStyle = '#0d2a5e';
+  ctx.font      = 'bold 13px Arial, sans-serif';
+  ctx.fillText('Redemption City Training Centre  |  Envoys Campus  |  S.I.T. Programme', W / 2, 706);
+
+  // ---- Trigger PNG download ----
+  const link    = document.createElement('a');
+  link.download = `RCTC-SIT-Certificate-${examCode.replace(/\s/g, '-')}-${studentName.replace(/\s+/g, '-')}.png`;
+  link.href     = canvas.toDataURL('image/png');
+  link.click();
+}

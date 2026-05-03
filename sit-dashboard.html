@@ -39,6 +39,10 @@
     const studentName = SIT_STUDENTS[matric] || store.sessionGet('rctc_sit_student_name') || matric;
     renderSitHeader(matric);
 
+    // ---- Certificate data caches (populated in async init) ----
+    const _mcqCertCache    = {};
+    const _theoryCertCache = {};
+
     // ---- ASYNC INIT ----
     (async () => {
       const [studentResults, locks, theoryResults, theoryLocks] = await Promise.all([
@@ -84,12 +88,15 @@
           if (taken) {
             const pct   = Math.round((taken.score / taken.total) * 100);
             const grade = getGrade(pct);
+            // Cache cert data so downloadDashCert can look it up safely
+            _mcqCertCache[exam.id] = { examCode: exam.code, examTitle: exam.title, score: taken.score, total: taken.total, pct, grade: grade.label, dateTaken: taken.dateTaken };
             footerHTML = `
               <div class="score-display">
                 <div class="score-pct">${pct}%</div>
                 <div class="score-label">${taken.score}/${taken.total} correct &mdash; <span class="${grade.cls}" style="font-weight:700">${grade.label}</span></div>
               </div>
-              <button class="btn btn-outline btn-full btn-sm" disabled>&#10003; Completed</button>`;
+              <button class="btn btn-outline btn-full btn-sm" disabled>&#10003; Completed</button>
+              <button class="btn btn-full btn-sm" style="margin-top:8px;background:#0d2a5e;color:#fff;" onclick="downloadDashCert(${exam.id}, 'mcq')">&#127891; Download Certificate</button>`;
           } else if (examLocked) {
             footerHTML = `
               <button class="btn btn-full" style="background:#6c757d;color:#fff;cursor:not-allowed;opacity:0.85;" disabled>
@@ -139,12 +146,15 @@
           if (taken) {
             const pct   = taken.percentage;
             const grade = getGrade(pct);
+            // Cache cert data so downloadDashCert can look it up safely
+            _theoryCertCache[exam.id] = { examCode: exam.code, examTitle: exam.title, score: taken.score, total: taken.total, pct, grade: grade.label, dateTaken: taken.dateTaken };
             footerHTML = `
               <div class="score-display">
                 <div class="score-pct">${pct}%</div>
                 <div class="score-label">${taken.score}/${taken.total} marks &mdash; <span class="${grade.cls}" style="font-weight:700">${grade.label}</span></div>
               </div>
-              <button class="btn btn-outline btn-full btn-sm" disabled>&#10003; Completed</button>`;
+              <button class="btn btn-outline btn-full btn-sm" disabled>&#10003; Completed</button>
+              <button class="btn btn-full btn-sm" style="margin-top:8px;background:#0d2a5e;color:#fff;" onclick="downloadDashCert(${exam.id}, 'theory')">&#127891; Download Certificate</button>`;
           } else if (examLocked) {
             footerHTML = `
               <button class="btn btn-full" style="background:#6c757d;color:#fff;cursor:not-allowed;opacity:0.85;" disabled>
@@ -197,6 +207,23 @@
         return;
       }
       window.location.href = `sit-theory.html?id=${examId}`;
+    }
+
+    function downloadDashCert(examId, type) {
+      const cache = type === 'mcq' ? _mcqCertCache : _theoryCertCache;
+      const data  = cache[examId];
+      if (!data) return;
+      generateSitCertificate({
+        studentName: SIT_STUDENTS[matric] || store.sessionGet('rctc_sit_student_name') || matric,
+        matric,
+        examCode:    data.examCode,
+        examTitle:   data.examTitle,
+        score:       data.score,
+        total:       data.total,
+        pct:         data.pct,
+        grade:       data.grade,
+        dateTaken:   data.dateTaken
+      });
     }
 
   </script>
