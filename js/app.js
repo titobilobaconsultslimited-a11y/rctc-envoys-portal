@@ -320,123 +320,166 @@ function renderSitHeader(studentMatric) {
 // triggers a PNG download for the student.
 // ============================================================
 function generateSitCertificate({ studentName, matric, examCode, examTitle, score, total, pct, grade, dateTaken }) {
-  const W = 1200, H = 850;
-  const canvas  = document.createElement('canvas');
-  canvas.width  = W;
-  canvas.height = H;
-  const ctx = canvas.getContext('2d');
+  const W = 1200, H = 880;
 
-  // ---- Cream background ----
-  ctx.fillStyle = '#fdfaf4';
-  ctx.fillRect(0, 0, W, H);
+  // ---- Load both logos, then draw once both are ready ----
+  const logo1 = new Image();
+  const logo2 = new Image();
+  logo1.src = 'Media/envoys logo.png';
+  logo2.src = 'Media/YP20.jpg';
 
-  // ---- Outer navy border ----
-  ctx.strokeStyle = '#0d2a5e';
-  ctx.lineWidth   = 14;
-  ctx.strokeRect(22, 22, W - 44, H - 44);
+  let loaded = 0;
+  const onLoad = () => {
+    loaded++;
+    if (loaded < 2) return;
+    _drawAndDownload();
+  };
+  logo1.onload = onLoad;
+  logo2.onload = onLoad;
+  // If either logo fails to load, still draw without it
+  logo1.onerror = onLoad;
+  logo2.onerror = onLoad;
 
-  // ---- Inner gold border ----
-  ctx.strokeStyle = '#b8922a';
-  ctx.lineWidth   = 4;
-  ctx.strokeRect(40, 40, W - 80, H - 80);
+  function _drawAndDownload() {
+    const canvas  = document.createElement('canvas');
+    canvas.width  = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
 
-  // ---- Gold corner accents ----
-  const corners = [[58, 58], [W - 58, 58], [58, H - 58], [W - 58, H - 58]];
-  ctx.fillStyle = '#b8922a';
-  corners.forEach(([x, y]) => {
+    // ---- Cream background ----
+    ctx.fillStyle = '#fdfaf4';
+    ctx.fillRect(0, 0, W, H);
+
+    // ---- Outer navy border ----
+    ctx.strokeStyle = '#0d2a5e';
+    ctx.lineWidth   = 14;
+    ctx.strokeRect(22, 22, W - 44, H - 44);
+
+    // ---- Inner gold border ----
+    ctx.strokeStyle = '#b8922a';
+    ctx.lineWidth   = 4;
+    ctx.strokeRect(40, 40, W - 80, H - 80);
+
+    // ---- Gold corner accents ----
+    const corners = [[58, 58], [W - 58, 58], [58, H - 58], [W - 58, H - 58]];
+    ctx.fillStyle = '#b8922a';
+    corners.forEach(([x, y]) => {
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // ---- Logos (centred side by side) ----
+    const logoH  = 72;
+    const logoW  = logoH; // square crop for both
+    const gap    = 20;
+    const totalLogoW = logoW * 2 + gap;
+    const logoY  = 58;
+    const logo1X = W / 2 - totalLogoW / 2;
+    const logo2X = logo1X + logoW + gap;
+
+    // Draw with rounded clip for each logo
+    [{ img: logo1, x: logo1X }, { img: logo2, x: logo2X }].forEach(({ img, x }) => {
+      if (!img.naturalWidth) return; // failed to load
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(x + logoW / 2, logoY + logoH / 2, logoH / 2, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(img, x, logoY, logoW, logoH);
+      ctx.restore();
+    });
+
+    // ---- Organisation name ----
+    const headerTopY = logoY + logoH + 22;
+    ctx.fillStyle    = '#0d2a5e';
+    ctx.font         = 'bold 23px Arial, sans-serif';
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Envoys Stewards Training  |  Envoys HQ Campus', W / 2, headerTopY);
+
+    // ---- Programme subtitle ----
+    ctx.fillStyle = '#b8922a';
+    ctx.font      = '18px Arial, sans-serif';
+    ctx.fillText('Stewards Training Programme', W / 2, headerTopY + 28);
+
+    // ---- Gold divider ----
+    ctx.strokeStyle = '#b8922a';
+    ctx.lineWidth   = 1.5;
     ctx.beginPath();
-    ctx.arc(x, y, 10, 0, Math.PI * 2);
-    ctx.fill();
-  });
+    ctx.moveTo(160, headerTopY + 48); ctx.lineTo(W - 160, headerTopY + 48);
+    ctx.stroke();
 
-  // ---- Organisation name ----
-  ctx.fillStyle    = '#0d2a5e';
-  ctx.font         = 'bold 24px Arial, sans-serif';
-  ctx.textAlign    = 'center';
-  ctx.textBaseline = 'alphabetic';
-  ctx.fillText('REDEMPTION CITY TRAINING CENTRE — ENVOYS CAMPUS', W / 2, 108);
+    // ---- Certificate title ----
+    const titleY = headerTopY + 118;
+    ctx.fillStyle = '#0d2a5e';
+    ctx.font      = 'bold 58px Georgia, serif';
+    ctx.fillText('Certificate of Completion', W / 2, titleY);
 
-  // ---- Programme subtitle ----
-  ctx.fillStyle = '#b8922a';
-  ctx.font      = '19px Arial, sans-serif';
-  ctx.fillText('Stewards in Training (S.I.T.) Programme', W / 2, 137);
+    // ---- "This is to certify that" ----
+    ctx.fillStyle = '#555';
+    ctx.font      = 'italic 22px Georgia, serif';
+    ctx.fillText('This is to certify that', W / 2, titleY + 58);
 
-  // ---- Gold divider ----
-  ctx.strokeStyle = '#b8922a';
-  ctx.lineWidth   = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(160, 157); ctx.lineTo(W - 160, 157);
-  ctx.stroke();
+    // ---- Student name ----
+    ctx.font      = studentName.length > 32 ? 'bold 38px Georgia, serif' : 'bold 48px Georgia, serif';
+    ctx.fillStyle = '#0d2a5e';
+    ctx.fillText(studentName, W / 2, titleY + 120);
 
-  // ---- Certificate title ----
-  ctx.fillStyle = '#0d2a5e';
-  ctx.font      = 'bold 58px Georgia, serif';
-  ctx.fillText('Certificate of Completion', W / 2, 238);
+    // ---- Underline name ----
+    const nameWidth = ctx.measureText(studentName).width;
+    ctx.strokeStyle = '#b8922a';
+    ctx.lineWidth   = 2;
+    ctx.beginPath();
+    ctx.moveTo(W / 2 - nameWidth / 2, titleY + 132);
+    ctx.lineTo(W / 2 + nameWidth / 2, titleY + 132);
+    ctx.stroke();
 
-  // ---- "This is to certify that" ----
-  ctx.fillStyle = '#555';
-  ctx.font      = 'italic 22px Georgia, serif';
-  ctx.fillText('This is to certify that', W / 2, 297);
+    // ---- "has successfully completed" ----
+    ctx.fillStyle = '#555';
+    ctx.font      = 'italic 22px Georgia, serif';
+    ctx.fillText('has successfully completed the examination', W / 2, titleY + 177);
 
-  // ---- Student name (scale font for long names) ----
-  ctx.font = studentName.length > 32 ? 'bold 38px Georgia, serif' : 'bold 48px Georgia, serif';
-  ctx.fillStyle = '#0d2a5e';
-  ctx.fillText(studentName, W / 2, 360);
+    // ---- Exam code & title ----
+    const fullTitle = `${examCode}  —  ${examTitle}`;
+    ctx.font      = fullTitle.length > 52 ? 'bold 26px Georgia, serif' : 'bold 32px Georgia, serif';
+    ctx.fillStyle = '#0d2a5e';
+    ctx.fillText(fullTitle, W / 2, titleY + 228);
 
-  // ---- Underline name ----
-  const nameWidth = ctx.measureText(studentName).width;
-  ctx.strokeStyle = '#b8922a';
-  ctx.lineWidth   = 2;
-  ctx.beginPath();
-  ctx.moveTo(W / 2 - nameWidth / 2, 372);
-  ctx.lineTo(W / 2 + nameWidth / 2, 372);
-  ctx.stroke();
+    // ---- Score & grade ----
+    ctx.fillStyle = '#333';
+    ctx.font      = '22px Arial, sans-serif';
+    ctx.fillText(`Score: ${score} / ${total}  (${pct}%)     Grade: ${grade}`, W / 2, titleY + 282);
 
-  // ---- "has successfully completed" ----
-  ctx.fillStyle = '#555';
-  ctx.font      = 'italic 22px Georgia, serif';
-  ctx.fillText('has successfully completed the examination', W / 2, 418);
+    // ---- Date ----
+    const dateStr = new Date(dateTaken).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    ctx.fillStyle = '#444';
+    ctx.font      = '20px Arial, sans-serif';
+    ctx.fillText(`Date of Completion: ${dateStr}`, W / 2, titleY + 326);
 
-  // ---- Exam code & title ----
-  const fullTitle = `${examCode}  —  ${examTitle}`;
-  ctx.font      = fullTitle.length > 52 ? 'bold 26px Georgia, serif' : 'bold 32px Georgia, serif';
-  ctx.fillStyle = '#0d2a5e';
-  ctx.fillText(fullTitle, W / 2, 470);
+    // ---- Bottom divider ----
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth   = 1;
+    ctx.beginPath();
+    ctx.moveTo(160, titleY + 370); ctx.lineTo(W - 160, titleY + 370);
+    ctx.stroke();
 
-  // ---- Score & grade ----
-  ctx.fillStyle = '#333';
-  ctx.font      = '22px Arial, sans-serif';
-  ctx.fillText(`Score: ${score} / ${total}  (${pct}%)     Grade: ${grade}`, W / 2, 524);
+    // ---- Certificate ID & student ID ----
+    const year   = new Date(dateTaken).getFullYear();
+    const certId = `EST-SIT-${matric.replace(/[\/\s]/g, '')}-${examCode.replace(/\s/g, '')}-${year}`;
+    ctx.fillStyle = '#888';
+    ctx.font      = '14px Arial, sans-serif';
+    ctx.fillText(`Certificate ID: ${certId}`, W / 2, titleY + 400);
+    ctx.fillText(`Student ID: ${matric}`, W / 2, titleY + 420);
 
-  // ---- Date ----
-  const dateStr = new Date(dateTaken).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-  ctx.fillStyle = '#444';
-  ctx.font      = '20px Arial, sans-serif';
-  ctx.fillText(`Date of Completion: ${dateStr}`, W / 2, 570);
+    // ---- Footer ----
+    ctx.fillStyle = '#0d2a5e';
+    ctx.font      = 'bold 13px Arial, sans-serif';
+    ctx.fillText('Envoys Stewards Training  |  Envoys HQ Campus  |  Stewards Training Programme', W / 2, titleY + 462);
 
-  // ---- Bottom divider ----
-  ctx.strokeStyle = '#ccc';
-  ctx.lineWidth   = 1;
-  ctx.beginPath();
-  ctx.moveTo(160, 614); ctx.lineTo(W - 160, 614);
-  ctx.stroke();
-
-  // ---- Certificate ID & student ID ----
-  const year   = new Date(dateTaken).getFullYear();
-  const certId = `RCTC-SIT-${matric.replace(/[\/\s]/g, '')}-${examCode.replace(/\s/g, '')}-${year}`;
-  ctx.fillStyle = '#888';
-  ctx.font      = '14px Arial, sans-serif';
-  ctx.fillText(`Certificate ID: ${certId}`, W / 2, 644);
-  ctx.fillText(`Student ID: ${matric}`, W / 2, 664);
-
-  // ---- Footer ----
-  ctx.fillStyle = '#0d2a5e';
-  ctx.font      = 'bold 13px Arial, sans-serif';
-  ctx.fillText('Redemption City Training Centre  |  Envoys Campus  |  S.I.T. Programme', W / 2, 706);
-
-  // ---- Trigger PNG download ----
-  const link    = document.createElement('a');
-  link.download = `RCTC-SIT-Certificate-${examCode.replace(/\s/g, '-')}-${studentName.replace(/\s+/g, '-')}.png`;
-  link.href     = canvas.toDataURL('image/png');
-  link.click();
+    // ---- Trigger PNG download ----
+    const link    = document.createElement('a');
+    link.download = `EST-SIT-Certificate-${examCode.replace(/\s/g, '-')}-${studentName.replace(/\s+/g, '-')}.png`;
+    link.href     = canvas.toDataURL('image/png');
+    link.click();
+  } // end _drawAndDownload
 }
