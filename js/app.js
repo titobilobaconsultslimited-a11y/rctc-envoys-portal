@@ -369,14 +369,12 @@ function generateSitCertificate({ studentName, matric, examCode, examTitle, scor
       ctx.fill();
     });
 
-    // ---- Logos (centred side by side) ----
+    // ---- Logos (left and right) ----
     const logoH  = 72;
-    const logoW  = logoH; // square crop for both
-    const gap    = 20;
-    const totalLogoW = logoW * 2 + gap;
+    const logoW  = logoH;
     const logoY  = 58;
-    const logo1X = W / 2 - totalLogoW / 2;
-    const logo2X = logo1X + logoW + gap;
+    const logo1X = 68;           // left side
+    const logo2X = W - 68 - logoW; // right side
 
     // Draw with rounded clip for each logo
     [{ img: logo1, x: logo1X }, { img: logo2, x: logo2X }].forEach(({ img, x }) => {
