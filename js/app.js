@@ -393,10 +393,11 @@ function generateSitCertificate({ studentName, matric, examCode, examTitle, scor
       ctx.fill();
     });
 
-    // ---- Logos (left and right, flanking the header text) ----
-    const logoH  = 72;
-    const logoW  = logoH;
-    const logoY  = 58;
+    // ---- Logos (left and right, flanking the header text — same row) ----
+    const logoH      = 72;
+    const logoW      = logoH;
+    const headerTopY = 100;                        // org name baseline — shared row with logos
+    const logoY      = headerTopY - logoH + 14;    // vertically centre logos on the text row (= 42)
     const logo1X = 220;              // near where "Envoys Stewards Training" begins
     const logo2X = W - 220 - logoW; // near where "Campus" ends
 
@@ -412,7 +413,6 @@ function generateSitCertificate({ studentName, matric, examCode, examTitle, scor
     });
 
     // ---- Organisation name ----
-    const headerTopY = logoY + logoH + 22;
     ctx.fillStyle    = '#0d2a5e';
     ctx.font         = 'bold 23px Arial, sans-serif';
     ctx.textAlign    = 'center';
