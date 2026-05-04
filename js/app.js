@@ -493,10 +493,32 @@ function generateSitCertificate({ studentName, matric, examCode, examTitle, scor
     ctx.fillText(`Certificate ID: ${certId}`, W / 2, titleY + 400);
     ctx.fillText(`Student ID: ${matric}`, W / 2, titleY + 420);
 
+    // ---- Signature block (centre-bottom) ----
+    const sigX = W / 2;
+    const sigY = titleY + 455;
+    // Signature line
+    ctx.strokeStyle = '#0d2a5e';
+    ctx.lineWidth   = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(sigX - 130, sigY); ctx.lineTo(sigX + 130, sigY);
+    ctx.stroke();
+    // "Signed" label in italic
+    ctx.fillStyle = '#555';
+    ctx.font      = 'italic 15px Georgia, serif';
+    ctx.fillText('Signed', sigX, sigY + 18);
+    // Name in bold navy
+    ctx.fillStyle = '#0d2a5e';
+    ctx.font      = 'bold 17px Georgia, serif';
+    ctx.fillText('Pst Simi Olaiya', sigX, sigY + 38);
+    // Title in smaller grey
+    ctx.fillStyle = '#666';
+    ctx.font      = '14px Arial, sans-serif';
+    ctx.fillText('Stewards Pastor', sigX, sigY + 56);
+
     // ---- Footer ----
     ctx.fillStyle = '#0d2a5e';
     ctx.font      = 'bold 13px Arial, sans-serif';
-    ctx.fillText('Envoys Stewards Training  |  Envoys HQ Campus  |  Stewards Training Programme', W / 2, titleY + 462);
+    ctx.fillText('Envoys Stewards Training  |  Envoys HQ Campus  |  Stewards Training Programme', W / 2, titleY + 530);
 
     // ---- Trigger PNG download ----
     const link    = document.createElement('a');
