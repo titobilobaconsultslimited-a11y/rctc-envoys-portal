@@ -124,6 +124,19 @@
       transition: var(--transition);
     }
     .btn-exam-reset:hover { background: #d68910; }
+    .btn-exam-preview {
+      padding: 4px 11px;
+      border-radius: var(--radius-sm);
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      background: #0d2a5e;
+      color: #fff;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+    .btn-exam-preview:hover { background: #1a3e7a; }
     .lock-chevron { font-size: 0.75rem; margin-left: 6px; }
 
     @media (max-width: 600px) {
@@ -1085,6 +1098,7 @@
           + '<span class="elr-status ' + (lk ? 'st-locked' : 'st-open') + '">' + (lk ? '&#128274; Locked' : '&#128275; Open') + '</span>'
           + '<button class="btn-exam-tog ' + (lk ? 'do-unlock' : 'do-lock') + '" onclick="toggleSingleExamLock(' + exam.id + ')">' + (lk ? 'Unlock' : 'Lock') + '</button>'
           + '<button class="btn-exam-reset" onclick="openResetModal(' + exam.id + ')">&#128260; Reset</button>'
+          + '<button class="btn-exam-preview" onclick="previewExamFromData(' + exam.id + ')">&#128270; Preview</button>'
           + '</div>';
       }).join('');
     }
@@ -1618,6 +1632,31 @@
               var val = q['option_'+l.toLowerCase()];
               var isCor = q.correct_answer===l;
               return '<div style="padding:8px 12px;border:2px solid '+(isCor?'var(--success)':'var(--border)')+';border-radius:6px;margin-bottom:6px;font-size:0.88rem;background:'+(isCor?'#f0fff4':'')+';"><strong>'+l+'.</strong> '+escHtml(val)+(isCor?' <span style="color:var(--success);font-size:0.75rem;">(\u2713 Correct)</span>':'')+'</div>';
+            }).join('')
+            + '</div>';
+        }).join('');
+      document.getElementById('previewExamModal').classList.remove('hidden');
+    }
+
+    function previewExamFromData(examId) {
+      var exam = SIT_EXAMS.find(function(e){return e.id===examId;});
+      if (!exam) { showToast('Exam not found.','error'); return; }
+      if (!exam.questions || !exam.questions.length) { showToast('This exam has no questions in data.js.','info'); return; }
+      var qCount = exam.questions.length;
+      document.getElementById('previewExamContent').innerHTML =
+        '<div style="background:var(--navy);color:#fff;padding:16px;border-radius:8px;margin-bottom:20px;">'
+        + '<h4 style="margin:0 0 4px;color:#fff;font-size:1rem;">'+escHtml(exam.icon+' '+exam.code+' \u2014 '+exam.title)+'</h4>'
+        + '<p style="margin:0;font-size:0.82rem;opacity:0.8;">'+qCount+' questions \u2022 '+exam.duration+' minutes \u2022 Source: data.js</p>'
+        + '</div>'
+        + exam.questions.map(function(q, idx) {
+          var options = q.options || [];
+          var correctIdx = q.answer;
+          return '<div style="margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);">'
+            + '<div style="font-weight:700;margin-bottom:10px;color:var(--navy);">Q'+(idx+1)+'. '+escHtml(q.q)+'</div>'
+            + options.map(function(opt, i) {
+              var lbl = ['A','B','C','D'][i];
+              var isCor = i === correctIdx;
+              return '<div style="padding:8px 12px;border:2px solid '+(isCor?'var(--success)':'var(--border)')+';border-radius:6px;margin-bottom:6px;font-size:0.88rem;background:'+(isCor?'#f0fff4':'')+';"><strong>'+lbl+'.</strong> '+escHtml(opt)+(isCor?' <span style="color:var(--success);font-size:0.75rem;">(\u2713 Correct)</span>':'')+'</div>';
             }).join('')
             + '</div>';
         }).join('');

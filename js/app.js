@@ -258,8 +258,29 @@ function renderSodHeader(studentMatric) {
 // ============================================================
 
 // ---- SIT AUTH HELPERS ----
+const SIT_AUTH_KEY   = 'rctc_sit_auth';
+const SIT_AUTH_TTL   = 12 * 60 * 60 * 1000; // 12 hours
+
+function setSitStudentAuth(matric, name) {
+  const payload = { matric, name: name || '', expiry: Date.now() + SIT_AUTH_TTL };
+  store.set(SIT_AUTH_KEY, payload);
+  store.sessionSet('rctc_sit_student', matric);
+  store.sessionSet('rctc_sit_student_name', name || '');
+}
+
 function getCurrentSitStudent() {
-  return store.sessionGet('rctc_sit_student');
+  // Fast path — sessionStorage (same tab, not refreshed)
+  const sess = store.sessionGet('rctc_sit_student');
+  if (sess) return sess;
+  // Fallback — localStorage with expiry (survives refresh / tab close)
+  const auth = store.get(SIT_AUTH_KEY);
+  if (auth && auth.matric && auth.expiry > Date.now()) {
+    // Restore sessionStorage so subsequent calls are fast
+    store.sessionSet('rctc_sit_student', auth.matric);
+    store.sessionSet('rctc_sit_student_name', auth.name || '');
+    return auth.matric;
+  }
+  return null;
 }
 
 function requireSitStudentAuth() {
@@ -274,6 +295,8 @@ function requireSitStudentAuth() {
 function sitStudentLogout() {
   store.sessionRemove('rctc_sit_student');
   store.sessionRemove('rctc_sit_student_name');
+  store.remove(SIT_AUTH_KEY);
+  clearSitExamProgress();
   window.location.href = 'sit-login.html';
 }
 
@@ -292,7 +315,8 @@ function clearSitExamProgress() {
 
 // ---- RENDER SIT HEADER ----
 function renderSitHeader(studentMatric) {
-  const name = studentMatric ? (SIT_STUDENTS[studentMatric] || store.sessionGet('rctc_sit_student_name') || studentMatric) : '';
+  const _auth = store.get(SIT_AUTH_KEY);
+  const name = studentMatric ? (SIT_STUDENTS[studentMatric] || store.sessionGet('rctc_sit_student_name') || (_auth && _auth.name) || studentMatric) : '';
   const headerEl = document.getElementById('siteHeader');
   if (!headerEl) return;
   headerEl.innerHTML = `

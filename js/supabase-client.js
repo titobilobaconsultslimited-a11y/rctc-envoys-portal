@@ -326,13 +326,31 @@ async function dbGetAllSitResults() {
   return (data || []).map(_mapResult);
 }
 
+function _sitLocalResultsKey(matric) { return 'rctc_sit_local_' + matric; }
+function _saveSitLocalResult(result) {
+  try {
+    const key = _sitLocalResultsKey(result.matric);
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+    if (!existing.find(r => r.examId === result.examId)) existing.push(result);
+    localStorage.setItem(key, JSON.stringify(existing));
+  } catch(e) {}
+}
+function _getSitLocalResults(matric) {
+  try { return JSON.parse(localStorage.getItem(_sitLocalResultsKey(matric)) || '[]'); } catch(e) { return []; }
+}
+
 async function dbGetSitStudentResults(matric) {
   const { data, error } = await db
     .from('sit_exam_results')
     .select('*')
     .eq('matric', matric);
-  if (error) { console.error('dbGetSitStudentResults:', error); return []; }
-  return (data || []).map(_mapResult);
+  const supabaseRows = error ? [] : (data || []).map(_mapResult);
+  if (error) console.error('dbGetSitStudentResults:', error);
+  // Merge with localStorage backup — keeps results visible if Supabase is slow/unavailable
+  const localRows = _getSitLocalResults(matric);
+  const savedExamIds = new Set(supabaseRows.map(r => r.examId));
+  const localOnly = localRows.filter(r => !savedExamIds.has(r.examId));
+  return [...supabaseRows, ...localOnly];
 }
 
 async function dbHasSitStudentTakenExam(matric, examId) {
@@ -342,11 +360,16 @@ async function dbHasSitStudentTakenExam(matric, examId) {
     .eq('matric', matric)
     .eq('exam_id', examId)
     .maybeSingle();
-  if (error) { console.error('dbHasSitStudentTakenExam:', error); return null; }
-  return data ? _mapResult(data) : null;
+  if (!error && data) return _mapResult(data);
+  if (error) console.error('dbHasSitStudentTakenExam:', error);
+  // Fallback to localStorage backup
+  const local = _getSitLocalResults(matric).find(r => r.examId === examId);
+  return local || null;
 }
 
 async function dbSaveSitResult(result) {
+  // Always save locally first so results are never lost if Supabase is unreachable
+  _saveSitLocalResult(result);
   const { error } = await db
     .from('sit_exam_results')
     .insert({

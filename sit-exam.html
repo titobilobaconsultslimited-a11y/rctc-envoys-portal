@@ -30,13 +30,18 @@
 
   <!-- RESULT MODAL -->
   <div class="modal-overlay hidden" id="resultModal">
-    <div class="modal">
+    <div class="modal" style="max-width:680px;max-height:90vh;overflow-y:auto;">
       <h3>🎉 Examination Complete!</h3>
       <div class="result-score-big" id="resultContent"></div>
       <p id="resultSubTitle" style="text-align:center;font-size:0.85rem;color:var(--gray);margin-bottom:20px;"></p>
       <div class="modal-actions" style="justify-content:center;flex-wrap:wrap;gap:12px;">
         <button onclick="downloadExamCertificate()" class="btn btn-outline btn-lg" style="border-color:var(--navy);color:var(--navy);">&#127891; Download Certificate</button>
+        <button onclick="toggleAnswerReview()" class="btn btn-outline btn-lg" id="reviewToggleBtn" style="border-color:var(--gold,#b8922a);color:var(--gold,#b8922a);">&#128270; Review Answers</button>
         <button onclick="goToDashboard()" class="btn btn-primary btn-lg">Back to Dashboard</button>
+      </div>
+      <div id="answerReviewSection" style="display:none;margin-top:24px;border-top:2px solid var(--border,#ddd);padding-top:20px;">
+        <h4 style="color:var(--navy);margin-bottom:16px;font-size:0.95rem;">Answer Review</h4>
+        <div id="answerReviewBody"></div>
       </div>
     </div>
   </div>
@@ -266,6 +271,27 @@
         dateTaken:   now
       };
 
+      // Build per-question answer review
+      document.getElementById('answerReviewBody').innerHTML = questions.map((q, idx) => {
+        const chosen  = answers[idx];
+        const correct = q.answer;
+        const isPassed = chosen === correct;
+        const chosenLabel  = chosen  !== undefined ? (['A','B','C','D'][chosen]  + '. ' + q.options[chosen])  : '<em style="color:#888;">Not answered</em>';
+        const correctLabel = ['A','B','C','D'][correct] + '. ' + q.options[correct];
+        return `<div style="margin-bottom:18px;padding:14px 16px;border-radius:8px;background:${isPassed?'#f0fff4':'#fff8f8'};border:1.5px solid ${isPassed?'#27ae60':'#e74c3c'};">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-weight:700;font-size:0.82rem;color:var(--navy);">Q${idx+1}.</span>
+            <span style="font-size:0.88rem;color:var(--navy);flex:1;">${q.q}</span>
+            <span style="font-size:1.2rem;">${isPassed?'✅':'❌'}</span>
+          </div>
+          <div style="font-size:0.82rem;margin-top:4px;">
+            <span style="color:#555;">Your answer: </span>
+            <strong style="color:${isPassed?'#27ae60':'#e74c3c'};">${chosenLabel}</strong>
+          </div>
+          ${!isPassed ? `<div style="font-size:0.82rem;margin-top:4px;"><span style="color:#555;">Correct answer: </span><strong style="color:#27ae60;">${correctLabel}</strong></div>` : ''}
+        </div>`;
+      }).join('');
+
       document.getElementById('resultContent').innerHTML = `
         <div class="big-pct">${pct}%</div>
         <div class="big-raw">${score} out of ${total} correct</div>
@@ -279,6 +305,14 @@
 
     function downloadExamCertificate() {
       if (lastCertData) generateSitCertificate(lastCertData);
+    }
+
+    function toggleAnswerReview() {
+      const section = document.getElementById('answerReviewSection');
+      const btn     = document.getElementById('reviewToggleBtn');
+      const visible = section.style.display !== 'none';
+      section.style.display = visible ? 'none' : '';
+      btn.textContent = visible ? '🔍 Review Answers' : '🔼 Hide Review';
     }
 
     function goToDashboard() { window.location.href = 'sit-dashboard.html'; }

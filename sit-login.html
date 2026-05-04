@@ -141,8 +141,18 @@
   <script src="js/app.js"></script>
   <script>
     // Auto-redirect if already logged in
-    if (store.sessionGet('rctc_sit_student')) {
+    if (getCurrentSitStudent()) {
       window.location.href = 'sit-dashboard.html';
+    }
+
+    // After login: resume in-progress exam or go to dashboard
+    function redirectAfterLogin() {
+      const progress = getSitExamProgress();
+      if (progress && progress.examId) {
+        window.location.href = 'sit-exam.html?id=' + progress.examId;
+      } else {
+        window.location.href = 'sit-dashboard.html';
+      }
     }
 
     // ---- Tab switching ----
@@ -192,9 +202,8 @@
           return;
         }
         btn.disabled = false; btn.textContent = 'Login \u2192';
-        store.sessionSet('rctc_sit_student_name', SIT_STUDENTS[matric]);
-        store.sessionSet('rctc_sit_student', matric);
-        window.location.href = 'sit-dashboard.html';
+        setSitStudentAuth(matric, SIT_STUDENTS[matric]);
+        redirectAfterLogin();
         return;
       }
 
@@ -214,9 +223,8 @@
       }
 
       // Found in stewards table — allow login
-      store.sessionSet('rctc_sit_student_name', sw.full_name || matric);
-      store.sessionSet('rctc_sit_student', matric);
-      window.location.href = 'sit-dashboard.html';
+      setSitStudentAuth(matric, sw.full_name || matric);
+      redirectAfterLogin();
     }
 
     // ---- Walk-in Login ----
@@ -257,9 +265,8 @@
           }
           // Matric exists and is valid — log them in
           btn.disabled = false; btn.textContent = 'Continue as Walk-in \u2192';
-          store.sessionSet('rctc_sit_student_name', (sw && sw.full_name) || name || matric);
-          store.sessionSet('rctc_sit_student', matric);
-          window.location.href = 'sit-dashboard.html';
+          setSitStudentAuth(matric, (sw && sw.full_name) || name || matric);
+          redirectAfterLogin();
           return;
         }
       }
@@ -276,9 +283,8 @@
         return;
       }
 
-      store.sessionSet('rctc_sit_student_name', name);
-      store.sessionSet('rctc_sit_student', finalMatric);
-      window.location.href = 'sit-dashboard.html';
+      setSitStudentAuth(finalMatric, name);
+      redirectAfterLogin();
     }
   </script>
 

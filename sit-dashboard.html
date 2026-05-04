@@ -17,6 +17,17 @@
     <!-- Welcome Banner -->
     <div class="dashboard-welcome" id="welcomeBanner"></div>
 
+    <!-- Resume In-Progress Exam Banner (shown if student was mid-exam) -->
+    <div id="resumeBanner" style="display:none;background:#fff3cd;border:2px solid #f0ad4e;border-radius:10px;padding:16px 20px;margin-bottom:20px;align-items:center;gap:16px;flex-wrap:wrap;">
+      <span style="font-size:1.5rem;">⚠️</span>
+      <div style="flex:1;">
+        <strong style="color:#7a4e00;font-size:0.95rem;">You have an in-progress exam!</strong>
+        <p id="resumeBannerMsg" style="color:#7a4e00;font-size:0.85rem;margin:2px 0 0;"></p>
+      </div>
+      <button id="resumeBannerBtn" class="btn btn-primary" style="background:#e67e22;border-color:#e67e22;flex-shrink:0;">▶ Resume Exam</button>
+      <button onclick="discardInProgressExam()" class="btn btn-outline" style="border-color:#e67e22;color:#e67e22;flex-shrink:0;font-size:0.82rem;">✖ Discard</button>
+    </div>
+
     <!-- Exam Grid -->
     <p class="section-title">📚 Available Examinations</p>
     <div class="exam-grid" id="examGrid"></div>
@@ -66,6 +77,29 @@
           <div class="stat-pill"><strong>${completedCount}</strong>Completed</div>
           <div class="stat-pill"><strong>${pendingCount}</strong>Remaining</div>
         </div>`;
+
+      // ---- Detect in-progress exam and show resume banner ----
+      const progress = getSitExamProgress();
+      if (progress && progress.examId) {
+        const inProgressExam    = SIT_EXAMS.find(e => e.id === progress.examId);
+        const alreadySubmitted  = studentResults.find(r => r.examId === progress.examId);
+        if (inProgressExam && !alreadySubmitted) {
+          const elapsed  = Math.floor((Date.now() - progress.startTime) / 1000);
+          const totalSec = (inProgressExam.duration || 60) * 60;
+          const remSec   = Math.max(0, totalSec - elapsed);
+          const remMin   = Math.floor(remSec / 60);
+          const remSecR  = remSec % 60;
+          const timeLeft = remSec > 0 ? `${remMin}m ${String(remSecR).padStart(2,'0')}s remaining` : 'Time may have expired';
+          document.getElementById('resumeBannerMsg').textContent =
+            `${inProgressExam.code} — ${inProgressExam.title}. ${timeLeft}.`;
+          document.getElementById('resumeBannerBtn').onclick = () => {
+            window.location.href = 'sit-exam.html?id=' + inProgressExam.id;
+          };
+          document.getElementById('resumeBanner').style.display = 'flex';
+        } else if (alreadySubmitted) {
+          clearSitExamProgress();
+        }
+      }
 
       // ---- BUILD MCQ EXAM CARDS ----
       const grid = document.getElementById('examGrid');
@@ -198,6 +232,13 @@
       clearSitExamProgress();
       saveSitExamProgress(examId, Date.now(), {});
       window.location.href = `sit-exam.html?id=${examId}`;
+    }
+
+    function discardInProgressExam() {
+      if (confirm('Discard the in-progress exam? Your answers will be lost and you will need to start fresh.')) {
+        clearSitExamProgress();
+        document.getElementById('resumeBanner').style.display = 'none';
+      }
     }
 
     async function startTheory(examId) {
