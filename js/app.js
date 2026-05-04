@@ -393,12 +393,12 @@ function generateSitCertificate({ studentName, matric, examCode, examTitle, scor
       ctx.fill();
     });
 
-    // ---- Logos (left and right) ----
+    // ---- Logos (left and right, flanking the header text) ----
     const logoH  = 72;
     const logoW  = logoH;
     const logoY  = 58;
-    const logo1X = 68;           // left side
-    const logo2X = W - 68 - logoW; // right side
+    const logo1X = 220;              // near where "Envoys Stewards Training" begins
+    const logo2X = W - 220 - logoW; // near where "Campus" ends
 
     // Draw with rounded clip for each logo
     [{ img: logo1, x: logo1X }, { img: logo2, x: logo2X }].forEach(({ img, x }) => {
