@@ -346,23 +346,27 @@ function renderSitHeader(studentMatric) {
 function generateSitCertificate({ studentName, matric, examCode, examTitle, score, total, pct, grade, dateTaken }) {
   const W = 1200, H = 880;
 
-  // ---- Load both logos, then draw once both are ready ----
+  // ---- Load logos + signature, then draw once all are ready ----
   const logo1 = new Image();
   const logo2 = new Image();
-  logo1.src = 'Media/envoys logo.png';
-  logo2.src = 'Media/YP20.jpg';
+  const sigImg = new Image();
+  logo1.src  = 'Media/envoys logo.png';
+  logo2.src  = 'Media/YP20.jpg';
+  sigImg.src = 'Media/pst simi signature.png';
 
   let loaded = 0;
   const onLoad = () => {
     loaded++;
-    if (loaded < 2) return;
+    if (loaded < 3) return;
     _drawAndDownload();
   };
-  logo1.onload = onLoad;
-  logo2.onload = onLoad;
-  // If either logo fails to load, still draw without it
-  logo1.onerror = onLoad;
-  logo2.onerror = onLoad;
+  logo1.onload  = onLoad;
+  logo2.onload  = onLoad;
+  sigImg.onload = onLoad;
+  // If any image fails to load, still draw without it
+  logo1.onerror  = onLoad;
+  logo2.onerror  = onLoad;
+  sigImg.onerror = onLoad;
 
   function _drawAndDownload() {
     const canvas  = document.createElement('canvas');
@@ -494,26 +498,27 @@ function generateSitCertificate({ studentName, matric, examCode, examTitle, scor
     ctx.fillText(`Student ID: ${matric}`, W / 2, titleY + 420);
 
     // ---- Signature block (centre-bottom) ----
-    const sigX = W / 2;
-    const sigY = titleY + 455;
+    const sigX   = W / 2;
+    const sigY   = titleY + 455;
+    // Signature image (rendered above the line)
+    const sigImgW = 200, sigImgH = 70;
+    if (sigImg.naturalWidth) {
+      ctx.drawImage(sigImg, sigX - sigImgW / 2, sigY - sigImgH - 6, sigImgW, sigImgH);
+    }
     // Signature line
     ctx.strokeStyle = '#0d2a5e';
     ctx.lineWidth   = 1.5;
     ctx.beginPath();
     ctx.moveTo(sigX - 130, sigY); ctx.lineTo(sigX + 130, sigY);
     ctx.stroke();
-    // "Signed" label in italic
-    ctx.fillStyle = '#555';
-    ctx.font      = 'italic 15px Georgia, serif';
-    ctx.fillText('Signed', sigX, sigY + 18);
     // Name in bold navy
     ctx.fillStyle = '#0d2a5e';
     ctx.font      = 'bold 17px Georgia, serif';
-    ctx.fillText('Pst Simi Olaiya', sigX, sigY + 38);
+    ctx.fillText('Pst Simi Olaiya', sigX, sigY + 22);
     // Title in smaller grey
     ctx.fillStyle = '#666';
     ctx.font      = '14px Arial, sans-serif';
-    ctx.fillText('Stewards Pastor', sigX, sigY + 56);
+    ctx.fillText('Stewards Pastor', sigX, sigY + 40);
 
     // ---- Footer ----
     ctx.fillStyle = '#0d2a5e';
