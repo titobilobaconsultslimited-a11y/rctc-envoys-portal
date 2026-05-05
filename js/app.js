@@ -344,7 +344,7 @@ function renderSitHeader(studentMatric) {
 // triggers a PNG download for the student.
 // ============================================================
 function generateSitCertificate({ studentName, matric, examCode, examTitle, score, total, pct, grade, dateTaken }) {
-  const W = 1200, H = 880;
+  const W = 1200, H = 920;
 
   // ---- Load logos + signature, then draw once all are ready ----
   const logo1 = new Image();
@@ -499,7 +499,7 @@ function generateSitCertificate({ studentName, matric, examCode, examTitle, scor
 
     // ---- Signature block (centre-bottom) ----
     const sigX   = W / 2;
-    const sigY   = titleY + 455;
+    const sigY   = titleY + 515;
     // Signature image (rendered above the line)
     const sigImgW = 200, sigImgH = 70;
     if (sigImg.naturalWidth) {
@@ -523,7 +523,7 @@ function generateSitCertificate({ studentName, matric, examCode, examTitle, scor
     // ---- Footer ----
     ctx.fillStyle = '#0d2a5e';
     ctx.font      = 'bold 13px Arial, sans-serif';
-    ctx.fillText('Envoys Stewards Training  |  Envoys HQ Campus  |  Stewards Training Programme', W / 2, titleY + 530);
+    ctx.fillText('Envoys Stewards Training  |  Envoys HQ Campus  |  Stewards Training Programme', W / 2, titleY + 600);
 
     // ---- Trigger PNG download ----
     const link    = document.createElement('a');
