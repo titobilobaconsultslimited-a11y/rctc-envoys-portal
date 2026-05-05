@@ -474,10 +474,15 @@ function generateSitCertificate({ studentName, matric, examCode, examTitle, scor
     // ---- Score & grade ----
     ctx.fillStyle = '#333';
     ctx.font      = '22px Arial, sans-serif';
-    ctx.fillText(`Score: ${score} / ${total}  (${pct}%)     Grade: ${grade}`, W / 2, titleY + 282);
+    ctx.fillText(`Grade: ${grade}`, W / 2, titleY + 282);
 
     // ---- Date ----
-    const dateStr = new Date(dateTaken).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    const _d = new Date(dateTaken);
+    const _day = _d.getDate();
+    const _ord = _day === 1 || _day === 21 || _day === 31 ? 'st' : _day === 2 || _day === 22 ? 'nd' : _day === 3 || _day === 23 ? 'rd' : 'th';
+    const _month = _d.toLocaleDateString('en-GB', { month: 'long' });
+    const _year = _d.getFullYear();
+    const dateStr = `${_day}${_ord} ${_month}, ${_year}`;
     ctx.fillStyle = '#444';
     ctx.font      = '20px Arial, sans-serif';
     ctx.fillText(`Date of Completion: ${dateStr}`, W / 2, titleY + 326);
