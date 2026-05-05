@@ -352,7 +352,7 @@ function generateSitCertificate({ studentName, matric, examCode, examTitle, scor
   const sigImg = new Image();
   logo1.src  = 'Media/envoys logo.png';
   logo2.src  = 'Media/YP20.jpg';
-  sigImg.src = 'Media/pst simi signature.png';
+  sigImg.src = 'Media/pst simi signature2.png';
 
   let loaded = 0;
   const onLoad = () => {
