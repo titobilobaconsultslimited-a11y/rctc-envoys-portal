@@ -131,6 +131,95 @@
       .admin-toolbar { flex-direction: column; }
       .admin-toolbar .form-group { min-width: 100%; }
     }
+
+    /* ---- Admin Tab Navigation ---- */
+    .admin-tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 2px solid var(--border);
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .admin-tab-btn {
+      padding: 9px 16px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: none;
+      background: #f1f5f9;
+      color: var(--navy);
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .admin-tab-btn:hover { background: #e2e8f0; }
+    .admin-tab-btn.active { background: var(--navy); color: #fff; }
+
+    /* ---- Management Sections ---- */
+    .mgmt-section {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-top: 16px;
+    }
+    .section-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 0 0 14px;
+    }
+
+    /* ---- Exam Preview ---- */
+    .preview-exam-item {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .preview-exam-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      background: #f8fafc;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .preview-exam-header:hover { background: #e9eef5; }
+    .preview-exam-body {
+      padding: 14px 18px;
+      display: none;
+      border-top: 1.5px solid var(--border);
+    }
+    .preview-exam-body.open { display: block; }
+    .preview-q-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.84rem;
+    }
+    .preview-q-item:last-child { border-bottom: none; }
+    .preview-q-text { font-weight: 600; color: var(--navy); margin-bottom: 5px; }
+    .preview-q-opt { padding: 2px 8px; border-radius: 4px; display: inline-block; margin: 2px; font-size: 0.8rem; }
+    .preview-q-opt.correct { background: #d4edda; color: #155724; font-weight: 700; }
+    .preview-q-opt.wrong   { background: #f8f9fa; color: #555; }
+
+    /* ---- Analytics ---- */
+    .analytics-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    .analytics-table th { background: var(--navy); color: #fff; padding: 8px 10px; text-align: left; font-weight: 700; font-size: 0.78rem; }
+    .analytics-table td { padding: 7px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    .analytics-table tr:last-child td { border-bottom: none; }
+    .analytics-table tr:hover td { background: #f8fafc; }
+    .dot-taken   { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--success); }
+    .dot-pending { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #ddd; }
+
+    @media (max-width: 768px) {
+      .admin-tab-btn { padding: 8px 10px; font-size: 0.76rem; }
+    }
+    @media (max-width: 480px) {
+      .admin-tab-btn { padding: 7px 7px; font-size: 0.7rem; flex: 1; text-align: center; }
+    }
   </style>
 </head>
 <body>
@@ -199,69 +288,146 @@
         <div class="exam-lock-body" id="examLockBody"></div>
       </div>
 
-      <!-- Toolbar: Filters -->
-      <div class="admin-toolbar">
-        <div class="form-group">
-          <label for="filterExam">Filter by Exam</label>
-          <select id="filterExam" onchange="applyFilters()">
-            <option value="">All Exams</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="filterMatric">Filter by Matric No.</label>
-          <input type="text" id="filterMatric" placeholder="e.g. 276379" oninput="applyFilters()">
-        </div>
-        <div class="form-group">
-          <label for="filterGrade">Filter by Result</label>
-          <select id="filterGrade" onchange="applyFilters()">
-            <option value="">All Results</option>
-            <option value="pass">Pass (≥50%)</option>
-            <option value="fail">Fail (&lt;50%)</option>
-          </select>
-        </div>
-        <div style="display:flex;align-items:flex-end;gap:8px;">
-          <button onclick="clearFilters()" class="btn btn-outline btn-sm">Clear Filters</button>
-          <button onclick="downloadFilteredCSV()" class="btn btn-navy btn-sm">⬇ Export Filtered</button>
-        </div>
+      <!-- TAB NAVIGATION -->
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" id="tabBtnResults"   onclick="switchAdminTab('results')">📊 Results</button>
+        <button class="admin-tab-btn"        id="tabBtnStudents"  onclick="switchAdminTab('students')">👥 Student Management</button>
+        <button class="admin-tab-btn"        id="tabBtnPreview"   onclick="switchAdminTab('preview')">🔍 Exam Preview</button>
+        <button class="admin-tab-btn"        id="tabBtnAnalytics" onclick="switchAdminTab('analytics')">📈 Analytics</button>
       </div>
 
-      <!-- Results Table -->
-      <div class="results-table-wrap">
-        <div class="table-header">
-          <h3 id="tableTitle">All Results</h3>
-          <span id="tableCount" class="badge badge-navy">0 records</span>
+      <!-- ═══════════ TAB PANEL: RESULTS ═══════════ -->
+      <div id="tabResultsPanel" style="padding-top:16px;">
+
+        <!-- Toolbar: Filters -->
+        <div class="admin-toolbar">
+          <div class="form-group">
+            <label for="filterExam">Filter by Exam</label>
+            <select id="filterExam" onchange="applyFilters()">
+              <option value="">All Exams</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="filterMatric">Filter by Matric No.</label>
+            <input type="text" id="filterMatric" placeholder="e.g. 276379" oninput="applyFilters()">
+          </div>
+          <div class="form-group">
+            <label for="filterGrade">Filter by Result</label>
+            <select id="filterGrade" onchange="applyFilters()">
+              <option value="">All Results</option>
+              <option value="pass">Pass (≥50%)</option>
+              <option value="fail">Fail (&lt;50%)</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:8px;">
+            <button onclick="clearFilters()" class="btn btn-outline btn-sm">Clear Filters</button>
+            <button onclick="downloadFilteredCSV()" class="btn btn-navy btn-sm">⬇ Export Filtered</button>
+          </div>
         </div>
 
-        <div style="overflow-x:auto;">
-          <table class="results-table" id="resultsTable">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Matric No.</th>
-                <th>Student Name</th>
-                <th>Exam Code</th>
-                <th>Exam Title</th>
-                <th>Score</th>
-                <th>%</th>
-                <th>Result</th>
-                <th>Date</th>
-                <th>Time</th>
-              </tr>
-            </thead>
-            <tbody id="resultsBody"></tbody>
-          </table>
+        <!-- Results Table -->
+        <div class="results-table-wrap">
+          <div class="table-header">
+            <h3 id="tableTitle">All Results</h3>
+            <span id="tableCount" class="badge badge-navy">0 records</span>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="results-table" id="resultsTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Matric No.</th>
+                  <th>Student Name</th>
+                  <th>Exam Code</th>
+                  <th>Exam Title</th>
+                  <th>Score</th>
+                  <th>%</th>
+                  <th>Result</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+          <div id="noResults" class="no-results hidden">
+            <div class="no-icon">📭</div>
+            <p>No exam results found matching your filters.</p>
+          </div>
         </div>
 
-        <div id="noResults" class="no-results hidden">
-          <div class="no-icon">📭</div>
-          <p>No exam results found matching your filters.</p>
+        <!-- Clear all data -->
+        <div style="margin-top:24px;text-align:right;">
+          <button onclick="clearAllData()" class="clear-data-btn">🗑 Clear All Exam Data</button>
         </div>
-      </div>
 
-      <!-- Clear all data -->
-      <div style="margin-top:24px;text-align:right;">
-        <button onclick="clearAllData()" class="clear-data-btn">🗑 Clear All Exam Data</button>
-      </div>
+      </div><!-- end #tabResultsPanel -->
+
+      <!-- ═══════════ TAB PANEL: STUDENT MANAGEMENT ═══════════ -->
+      <div id="tabStudentsPanel" class="hidden" style="padding-top:16px;">
+        <div class="mgmt-section">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+            <h3 class="section-title" style="margin:0;">👥 Registered Students</h3>
+            <input type="text" id="studentSearch" placeholder="Search name or matric…" oninput="filterStudentList()"
+              style="padding:6px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.82rem;min-width:200px;">
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="results-table" id="studentsTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Matric No.</th>
+                  <th>Full Name</th>
+                  <th style="text-align:center;">Exams Taken</th>
+                  <th style="text-align:center;">Passes</th>
+                  <th style="text-align:center;">Fails</th>
+                  <th style="text-align:center;">Avg Score</th>
+                  <th style="text-align:center;">Progress</th>
+                </tr>
+              </thead>
+              <tbody id="studentsBody"></tbody>
+            </table>
+            <div id="studentsNoResults" class="no-results hidden">
+              <div class="no-icon">👥</div>
+              <p>No students found.</p>
+            </div>
+          </div>
+        </div>
+      </div><!-- end #tabStudentsPanel -->
+
+      <!-- ═══════════ TAB PANEL: EXAM PREVIEW ═══════════ -->
+      <div id="tabPreviewPanel" class="hidden" style="padding-top:16px;">
+        <div style="margin-bottom:14px;">
+          <h3 style="color:var(--navy);font-size:1rem;font-weight:700;margin:0 0 4px;">🔍 Exam Preview</h3>
+          <p style="font-size:0.82rem;color:var(--gray);margin:0;">Click any exam to expand and view all questions with correct answers highlighted.</p>
+        </div>
+        <div id="previewExamList"></div>
+      </div><!-- end #tabPreviewPanel -->
+
+      <!-- ═══════════ TAB PANEL: ANALYTICS ═══════════ -->
+      <div id="tabAnalyticsPanel" class="hidden" style="padding-top:16px;">
+        <div style="margin-bottom:14px;">
+          <h3 style="color:var(--navy);font-size:1rem;font-weight:700;margin:0 0 4px;">📈 Analytics — Participation Tracker</h3>
+          <p style="font-size:0.82rem;color:var(--gray);margin:0;">See which students have written each exam and who is yet to take it.</p>
+        </div>
+        <div class="mgmt-section">
+          <p class="section-title" style="margin-bottom:12px;">📋 Per-Exam Participation</p>
+          <div id="analyticsExamTable" style="overflow-x:auto;"></div>
+        </div>
+        <div class="mgmt-section">
+          <p class="section-title" style="margin-bottom:12px;">👤 Per-Student Completion</p>
+          <div style="margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input type="text" id="analyticsStudentFilter" placeholder="Filter by name or matric…"
+              oninput="renderStudentCompletion()"
+              style="padding:7px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.85rem;min-width:220px;">
+            <label style="font-size:0.82rem;display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="checkbox" id="analyticsShowPending" onchange="renderStudentCompletion()" style="cursor:pointer;">
+              Show only students with pending exams
+            </label>
+          </div>
+          <div id="analyticsStudentTable" style="overflow-x:auto;"></div>
+        </div>
+      </div><!-- end #tabAnalyticsPanel -->
 
     </main>
   </div>
@@ -614,6 +780,179 @@
       renderStats();
       document.getElementById('clearModal').classList.add('hidden');
       document.getElementById('tableCount').textContent = '0 records';
+    }
+
+    // ============================================================
+    // TAB SWITCHING
+    // ============================================================
+    const _tabPanels = { results: 'tabResultsPanel', students: 'tabStudentsPanel', preview: 'tabPreviewPanel', analytics: 'tabAnalyticsPanel' };
+    const _tabBtns   = { results: 'tabBtnResults',   students: 'tabBtnStudents',   preview: 'tabBtnPreview',   analytics: 'tabBtnAnalytics' };
+
+    function switchAdminTab(tab) {
+      Object.keys(_tabPanels).forEach(k => {
+        document.getElementById(_tabPanels[k]).classList.toggle('hidden', k !== tab);
+        document.getElementById(_tabBtns[k]).classList.toggle('active', k === tab);
+      });
+      if (tab === 'students')  renderStudentManagement();
+      if (tab === 'preview')   renderExamPreview();
+      if (tab === 'analytics') { renderAnalyticsExamTable(); renderStudentCompletion(); }
+    }
+
+    // ============================================================
+    // STUDENT MANAGEMENT
+    // ============================================================
+    let _smRows = [];
+
+    function renderStudentManagement() {
+      _smRows = Object.entries(STUDENTS).map(([matric, name]) => {
+        const sr = allResults.filter(r => r.matric === matric);
+        const passes = sr.filter(r => r.percentage >= 50).length;
+        const fails  = sr.filter(r => r.percentage <  50).length;
+        const avgPct = sr.length ? Math.round(sr.reduce((s, r) => s + r.percentage, 0) / sr.length) : null;
+        return { matric, name, taken: sr.length, passes, fails, avgPct };
+      });
+      filterStudentList();
+    }
+
+    function filterStudentList() {
+      const q     = (document.getElementById('studentSearch').value || '').trim().toLowerCase();
+      const rows  = q ? _smRows.filter(r => r.name.toLowerCase().includes(q) || r.matric.includes(q)) : _smRows;
+      const tbody = document.getElementById('studentsBody');
+      const noEl  = document.getElementById('studentsNoResults');
+      if (!rows.length) { tbody.innerHTML = ''; noEl.classList.remove('hidden'); return; }
+      noEl.classList.add('hidden');
+      const totalExams = EXAMS.length;
+      tbody.innerHTML = rows.map((r, i) => {
+        const pct     = r.taken ? Math.round((r.taken / totalExams) * 100) : 0;
+        const avgDisp = r.avgPct !== null ? r.avgPct + '%' : '—';
+        const avgCls  = r.avgPct === null ? '' : r.avgPct >= 50 ? 'color:var(--success);font-weight:700;' : 'color:var(--danger);font-weight:700;';
+        return `<tr>
+          <td><span class="rank-num">${i + 1}</span></td>
+          <td><code style="font-size:0.8rem;font-weight:600;">${r.matric}</code></td>
+          <td style="font-weight:600;">${r.name}</td>
+          <td style="text-align:center;">${r.taken} / ${totalExams}</td>
+          <td style="text-align:center;color:var(--success);font-weight:700;">${r.passes}</td>
+          <td style="text-align:center;color:var(--danger);font-weight:700;">${r.fails}</td>
+          <td style="text-align:center;${avgCls}">${avgDisp}</td>
+          <td style="text-align:center;min-width:110px;">
+            <div style="background:#e9ecef;border-radius:20px;height:8px;overflow:hidden;">
+              <div style="height:8px;border-radius:20px;background:var(--navy);width:${pct}%;"></div>
+            </div>
+            <span style="font-size:0.72rem;color:var(--gray);">${pct}%</span>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    // ============================================================
+    // EXAM PREVIEW
+    // ============================================================
+    let _previewRendered = false;
+    const OPTION_LABELS  = ['A', 'B', 'C', 'D'];
+
+    function renderExamPreview() {
+      if (_previewRendered) return;
+      _previewRendered = true;
+      const container = document.getElementById('previewExamList');
+      container.innerHTML = EXAMS.map((exam, ei) => {
+        const qHtml = exam.questions.map((q, qi) => {
+          const opts = q.options.map((opt, oi) => {
+            const correct = oi === q.answer;
+            return `<span class="preview-q-opt ${correct ? 'correct' : 'wrong'}">${OPTION_LABELS[oi]}: ${opt}${correct ? ' ✓' : ''}</span>`;
+          }).join('');
+          return `<div class="preview-q-item">
+            <div class="preview-q-text">Q${qi + 1}. ${q.q}</div>
+            <div>${opts}</div>
+          </div>`;
+        }).join('');
+        return `<div class="preview-exam-item">
+          <div class="preview-exam-header" onclick="togglePreviewExam(${ei})">
+            <span style="font-size:1.1rem;">${exam.icon}</span>
+            <span class="elr-code">${exam.code}</span>
+            <span style="flex:1;font-size:0.88rem;font-weight:700;color:var(--navy);">${exam.title}</span>
+            <span class="badge badge-navy" style="font-size:0.72rem;">${exam.questions.length} Qs</span>
+            <span id="previewArrow_${ei}" style="font-size:0.75rem;color:var(--gray);margin-left:6px;">&#9654;</span>
+          </div>
+          <div class="preview-exam-body" id="previewBody_${ei}">${qHtml}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function togglePreviewExam(idx) {
+      const body  = document.getElementById('previewBody_' + idx);
+      const arrow = document.getElementById('previewArrow_' + idx);
+      const open  = body.classList.toggle('open');
+      arrow.innerHTML = open ? '&#9660;' : '&#9654;';
+    }
+
+    // ============================================================
+    // ANALYTICS
+    // ============================================================
+    function renderAnalyticsExamTable() {
+      const container     = document.getElementById('analyticsExamTable');
+      const studentMatrics = Object.keys(STUDENTS);
+      const total = studentMatrics.length;
+      const rows  = EXAMS.map(exam => {
+        const takers      = new Set(allResults.filter(r => r.examId === exam.id).map(r => r.matric));
+        const takenCount  = studentMatrics.filter(m => takers.has(m)).length;
+        const pending     = total - takenCount;
+        const pct         = Math.round((takenCount / total) * 100);
+        return { exam, takenCount, pending, pct };
+      });
+      container.innerHTML = `<table class="analytics-table">
+        <thead><tr>
+          <th>#</th><th>Code</th><th>Exam Title</th>
+          <th style="text-align:center;">Taken</th>
+          <th style="text-align:center;">Pending</th>
+          <th style="min-width:130px;">Coverage</th>
+        </tr></thead>
+        <tbody>${rows.map((row, i) => `<tr>
+          <td>${i + 1}</td>
+          <td><span class="badge badge-navy" style="font-size:0.7rem;">${row.exam.code}</span></td>
+          <td style="font-weight:600;">${row.exam.title}</td>
+          <td style="text-align:center;color:var(--success);font-weight:700;">${row.takenCount}</td>
+          <td style="text-align:center;color:${row.pending > 0 ? 'var(--danger)' : 'var(--gray)'};font-weight:700;">${row.pending}</td>
+          <td>
+            <div style="background:#e9ecef;border-radius:20px;height:7px;overflow:hidden;margin-bottom:2px;">
+              <div style="height:7px;border-radius:20px;background:var(--success);width:${row.pct}%;"></div>
+            </div>
+            <span style="font-size:0.72rem;color:var(--gray);">${row.pct}%</span>
+          </td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+    }
+
+    function renderStudentCompletion() {
+      const container   = document.getElementById('analyticsStudentTable');
+      const q           = (document.getElementById('analyticsStudentFilter').value || '').trim().toLowerCase();
+      const showPending = document.getElementById('analyticsShowPending').checked;
+      const totalExams  = EXAMS.length;
+      let rows = Object.entries(STUDENTS).map(([matric, name]) => {
+        const taken       = new Set(allResults.filter(r => r.matric === matric).map(r => r.examId));
+        return { matric, name, takenCount: taken.size, pendingCount: totalExams - taken.size, taken };
+      });
+      if (q)           rows = rows.filter(r => r.name.toLowerCase().includes(q) || r.matric.includes(q));
+      if (showPending) rows = rows.filter(r => r.pendingCount > 0);
+      if (!rows.length) {
+        container.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;padding:10px 0;">No students match your filter.</p>';
+        return;
+      }
+      container.innerHTML = `<table class="analytics-table">
+        <thead><tr>
+          <th>#</th><th>Matric</th><th>Name</th>
+          <th style="text-align:center;">Taken</th>
+          <th style="text-align:center;">Pending</th>
+          ${EXAMS.map(e => `<th style="text-align:center;font-size:0.65rem;white-space:nowrap;">${e.code}</th>`).join('')}
+        </tr></thead>
+        <tbody>${rows.map((r, i) => `<tr>
+          <td>${i + 1}</td>
+          <td><code style="font-size:0.78rem;">${r.matric}</code></td>
+          <td style="font-weight:600;white-space:nowrap;">${r.name}</td>
+          <td style="text-align:center;color:var(--success);font-weight:700;">${r.takenCount}</td>
+          <td style="text-align:center;color:${r.pendingCount > 0 ? 'var(--danger)' : 'var(--gray)'};font-weight:700;">${r.pendingCount}</td>
+          ${EXAMS.map(e => `<td style="text-align:center;"><span class="${r.taken.has(e.id) ? 'dot-taken' : 'dot-pending'}" title="${r.taken.has(e.id) ? 'Taken' : 'Pending'}"></span></td>`).join('')}
+        </tr>`).join('')}</tbody>
+      </table>`;
     }
   </script>
 </body>
