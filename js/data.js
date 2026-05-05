@@ -662,29 +662,6 @@ const EXAMS = [
   },
 
   // 
-  // 12. CHRISTIAN ETHICS
-  // 
-  {
-    id: 12,
-    code: "CHE 201",
-    title: "Christian Ethics",
-    icon: "",
-    duration: 60,
-    questions: [
-      { q: "Christian ethics is grounded primarily in:", options: ["Cultural norms and social consensus","Human reason and philosophical tradition alone","The character and revealed will of God as disclosed in Scripture","Democratic majority decision-making processes"], answer: 2 },
-      { q: "Deontological ethics focuses on:", options: ["The consequences and outcomes of an action","Duties, rules, and moral obligations that govern an action","The character and virtues of the person performing the action","The cultural and historical context in which the act is performed"], answer: 1 },
-      { q: "Virtue ethics emphasises:", options: ["Strictly following prescribed moral rules and legal duties","Calculating the greatest good for the greatest possible number","Developing excellent moral character (virtues) in the person","Adhering carefully to a mutually agreed social contract"], answer: 2 },
-      { q: "The 'sanctity of human life' principle is rooted in the fact that:", options: ["Legal systems grant inherent rights to all recognised persons","The evolutionary process has produced highly complex human organisms","All humans are created in the image of God (Imago Dei)","Human life has measurable social utility and economic value"], answer: 2 },
-      { q: "The 'Golden Rule' as stated by Jesus is found in:", options: ["Matthew 5:3","Matthew 7:12","Luke 4:18","John 3:16"], answer: 1 },
-      { q: "The concept of 'common grace' refers to:", options: ["A second opportunity for salvation after physical death","The regenerating grace shared among all true believers","God's blessings and restraint of evil extended to all people, regardless of their faith","The grace conferred on all recipients at the moment of water baptism"], answer: 2 },
-      { q: "Civil disobedience is ethically justified in Christian ethics when:", options: ["Christians personally disagree with a particular government policy","Human laws directly contradict clear and explicit commands of God","Church leaders formally authorise political resistance and protest","A clear majority of Christians in a nation agree to disobey"], answer: 1 },
-      { q: "Liberation theology primarily emphasises:", options: ["Individual personal spiritual growth and private devotion","God's preferential concern for the poor and oppressed, and the pursuit of social justice","Conservative political and economic values as the application of faith","Traditional evangelical missionary evangelism and church planting"], answer: 1 },
-      { q: "Situation ethics, associated with Joseph Fletcher, holds that:", options: ["Absolute moral rules and laws always determine what is right","Love (agape) is the only absolute moral norm; all other rules are relative and situational","Scripture alone determines the right course of action in every ethical situation","Only consequences and outcomes determine what is morally right"], answer: 1 },
-      { q: "The biblical basis for Christian environmental care (creation care) is:", options: ["Secular political environmentalism","The dominion mandate understood as responsible stewardship of God's creation","Modern eco-theology developed in the 20th century","There is no clear biblical basis for environmental concern"], answer: 1 }
-    ]
-  },
-
-  // 
   // 13. PASTORAL THEOLOGY
   // 
   {
@@ -767,52 +744,6 @@ const EXAMS = [
       { q: "2 Chronicles 20:21-22 — Jehoshaphat's battle victory through praise — teaches:", options: ["Music has no meaningful role in spiritual warfare","Praise and worship can function as a strategic spiritual weapon in times of conflict","Only trained Levitical musicians are qualified to lead warfare worship","The role of music is entirely restricted to private personal devotion"], answer: 1 },
       { q: "The 'new song' mentioned in the Psalms and in the book of Revelation refers to:", options: ["A contemporary worship style that replaces traditional hymns","A fresh, heartfelt expression of praise for God's new and ongoing acts of salvation","A song literally composed within the past ten years","Songs produced by the modern Christian worship music industry"], answer: 1 },
       { q: "Excellence in church music should be motivated by:", options: ["Competition with other churches and worship ministries","A desire for personal fame, recognition, and a musical career","Offering our best gifts as an act of worship and honour to God Himself","Attracting the largest possible audience to our services"], answer: 2 }
-    ]
-  },
-
-  // 
-  // 15. PHILOSOPHY
-  // 
-  {
-    id: 15,
-    code: "PHI 201",
-    title: "Philosophy",
-    icon: "",
-    duration: 60,
-    questions: [
-      { q: "Christian Apologetics is defined as:", options: ["Formally apologising on behalf of the Church for its historical failures","The rational defence and commendation of the Christian faith","The study of church history and the development of Christian tradition","A sub-discipline of systematic theology addressing God's nature"], answer: 1 },
-      { q: "The primary biblical text commanding believers to 'always be prepared to give a defence' for their hope is:", options: ["John 3:16","1 Peter 3:15","Romans 8:28","Matthew 28:19"], answer: 1 },
-      { q: "The Cosmological Argument for God's existence argues from:", options: ["The observable design and fine-tuning of the creation","The existence of universal moral awareness","The fact that the universe exists and requires an uncaused first cause","The universal human capacity for religious experience"], answer: 2 },
-      { q: "The Teleological Argument argues from:", options: ["The chain of cause and effect observable in the natural world","The universal existence of moral standards in all cultures","The evidence of design, order, and purpose observable throughout creation","Historical evidence for the bodily resurrection of Jesus"], answer: 2 },
-      { q: "The Moral Argument argues from:", options: ["The physical fine-tuning of the universe for life","The biological complexity of living organisms","Universal moral standards pointing to a transcendent moral Lawgiver","The testimony of transformed Christian lives throughout history"], answer: 2 },
-      { q: "Presuppositional apologetics holds that:", options: ["God's existence must first be proven through philosophical arguments","All worldviews rest on presuppositions, and the Christian rightly begins with God and His Word","Christianity and all other worldviews begin from the same neutral intellectual starting point","Physical evidence is sufficient on its own to bring a person to genuine saving faith"], answer: 1 },
-      { q: "The Ontological Argument for God's existence was classically formulated by:", options: ["Thomas Aquinas","William Paley","Anselm of Canterbury","C.S. Lewis"], answer: 2 },
-      { q: "C.S. Lewis's famous 'Trilemma' regarding Jesus argues that He must be one of:", options: ["A prophet, a priest, or a king","A liar, a lunatic, or the Lord","A historical figure, a legend, or a myth","Simply human, partly divine, or fully divine"], answer: 1 },
-      { q: "Epistemology is the branch of philosophy that studies:", options: ["The fundamental nature of reality and existence","The nature, sources, and limits of human knowledge and justified belief","The principles and foundations of ethical moral decision-making","The existence and attributes of God through rational argument"], answer: 1 },
-      { q: "A Christian worldview rests on the foundational conviction that:", options: ["All competing truth claims are ultimately equal and valid","Human reason is the supreme and final standard of all truth","God exists and has revealed Himself truly in Scripture and through Jesus Christ","Science alone provides a reliable and complete understanding of reality"], answer: 2 }
-    ]
-  },
-
-  // 
-  // 16. CONFLICT MANAGEMENT
-  // 
-  {
-    id: 16,
-    code: "COM 201",
-    title: "Conflict Management",
-    icon: "",
-    duration: 60,
-    questions: [
-      { q: "The biblical process for resolving interpersonal conflict is outlined in:", options: ["Romans 13:1-7","Matthew 18:15-20","Galatians 6:1-5","1 Corinthians 6:1-8"], answer: 1 },
-      { q: "According to Matthew 18:15, the first step in resolving a conflict is:", options: ["Taking the matter immediately to church leadership","Bringing two or three witnesses to confront together","Going privately and directly to the person who has wronged you","Seeking external legal arbitration or mediation"], answer: 2 },
-      { q: "The primary goal of biblical conflict resolution is:", options: ["To win the argument and establish that you were right","To punish the wrongdoer and enforce appropriate justice","To restore the broken relationship and achieve genuine reconciliation","To establish the authority and wisdom of church leadership"], answer: 2 },
-      { q: "Unresolved conflict in the local church is harmful because:", options: ["It damages the church's positive public image and reputation","It destroys Christian witness, grieves the Holy Spirit, and hinders the gospel mission","It fails to satisfy the requirements of denominational church unity policies","It opens the church to potential legal liability and lawsuits"], answer: 1 },
-      { q: "Biblical forgiveness in conflict resolution means:", options: ["Pretending the offense never happened","Immediately restoring full trust regardless of ongoing behaviour","A wilful choice to release bitterness and the debt of the offense, trusting God for justice","Never directly confronting the offender about the harm caused"], answer: 2 },
-      { q: "An effective mediator in a church conflict should be:", options: ["A qualified legal professional hired by the church for the purpose","A neutral, trusted person who helps both parties communicate and find resolution","The senior pastor who has final and uncontested authority over all decisions","A person who will naturally advocate for the most senior or influential party"], answer: 1 },
-      { q: "Ephesians 4:26-27 warns that unresolved anger can:", options: ["Demonstrate emotional maturity and the setting of healthy personal boundaries","Always indicate the presence of demonic possession or oppression","Give the devil a foothold in a person's life and relationships","Be permanently suppressed for the long-term sake of congregational peace"], answer: 2 },
-      { q: "James 4:1-2 teaches that conflicts and quarrels arise from:", options: ["Simple misunderstanding and poor personal communication","Covetous desires and selfish passions within the human heart","Demonic attack and direct spiritual warfare from outside","Failure to follow established church rules and governance procedures"], answer: 1 },
-      { q: "Listening carefully to the other party in a conflict is important because:", options: ["It signals a willingness to eventually concede and surrender your position","It gives you time to prepare a more effective counter-argument","It honours the other person and may reveal information that changes your understanding","It formally satisfies church governance requirements for a fair and just process"], answer: 2 },
-      { q: "Proverbs 15:1 teaches that:", options: ["A loud, forceful voice commands respect and decisively ends arguments","A gentle answer turns away wrath, while a harsh word stirs up more anger","Only foolish people respond gently and without force to provocation","Silence is invariably the wisest and best response to conflict"], answer: 1 }
     ]
   },
 
@@ -1209,69 +1140,6 @@ const EXAMS = [
       { q: "A possible use of 'The Competitor' style is:", options: ["When the stakes are low and relationship matters more","When all parties are willing to compromise","When important and vital decisions must be made urgently","When there is plenty of time to explore all options"], answer: 2 }
     ]
   },
-
-  //
-  // 25. ESCHATOLOGY (THE 330)
-  //
-  {
-    id: 25,
-    code: "THE 330",
-    title: "Eschatology",
-    icon: "🔮",
-    duration: 60,
-    questions: [
-      { q: "Eschatology is defined as the study of:", options: ["Ancient fossils","Future events or the doctrine of last things","Plant life","Marine biology"], answer: 1 },
-      { q: "How many prophetical verses are recorded in the New Testament?", options: ["500","1,423","5,000","7,957"], answer: 1 },
-      { q: "The destruction of Jerusalem by Emperor Titus occurred in which year?", options: ["4 B.C.","70 A.D.","100 A.D.","606 B.C."], answer: 1 },
-      { q: "According to J. Barton Payne, how many different prophecies are in the Bible?", options: ["100","737","1,000","2,500"], answer: 1 },
-      { q: "The name 'Jesus' is the Greek form of the name:", options: ["John","Joshua","Jacob","Jeremiah"], answer: 1 },
-      { q: "Jesus was born during the reign of which Roman Emperor?", options: ["Nero","Augustus Caesar","Julius Caesar","Tiberius"], answer: 1 },
-      { q: "The name 'Bethlehem' signifies:", options: ["City of Gold","House of bread","Valley of peace","Place of rest"], answer: 1 },
-      { q: "How many 'Great Covenants' of scriptures are listed in the study?", options: ["5","15","10","20"], answer: 1 },
-      { q: "Which covenant promised that man would have eternal seasons of fruitfulness?", options: ["Adamic","Solaric","Noahic","Salt"], answer: 1 },
-      { q: "The sign of the Abrahamic covenant was:", options: ["Baptism","Circumcision","Fasting","Prayer"], answer: 1 },
-      { q: "The 'Seventy Weeks' prophecy is primarily found in which book?", options: ["Revelation","Daniel","Isaiah","Ezekiel"], answer: 1 },
-      { q: "In Nebuchadnezzar's dream, the 'Head of Gold' signified the kingdom of:", options: ["Medo-Persia","Babylon","Grecia","Rome"], answer: 1 },
-      { q: "The 'Stone cut out without hands' represents:", options: ["The Roman Empire","The kingdom of heaven on earth","The British Empire","The Babylonian Empire"], answer: 1 },
-      { q: "How long was the Jewish captivity to Babylon intended to last?", options: ["40 years","70 years","100 years","400 years"], answer: 1 },
-      { q: "The first division of the Seventy Weeks (7 sevens) is how many years?", options: ["7 years","49 years","62 years","434 years"], answer: 1 },
-      { q: "The term 'Messiah is cut off' means:", options: ["Messiah is born","Messiah is crucified","Messiah is baptized","Messiah is crowned"], answer: 1 },
-      { q: "Which school of thought believes Christianity will convert the whole world before Christ returns?", options: ["Amillennialism","Postmillennialism","Premillennialism","Atheism"], answer: 1 },
-      { q: "The word 'Millennium' refers to a reign of how many years?", options: ["100","1,000","10,000","500"], answer: 1 },
-      { q: "What is the Greek word used for 'Rapture'?", options: ["Musterion","Harpazo","Apokalupsis","Gamos"], answer: 1 },
-      { q: "At the Rapture, Christ meets the saints in the:", options: ["Earth","Air","Grave","Temple"], answer: 1 },
-      { q: "How many types of crowns are awarded to Christians at the judgement seat?", options: ["2","5","10","30"], answer: 1 },
-      { q: "The 'Crown of Rejoicing' is also known as the:", options: ["Pastor's crown","Soul-winners crown","Martyr's crown","King's crown"], answer: 1 },
-      { q: "Where will the Marriage Supper of the Lamb be held?", options: ["Earth","Heaven (Atmospheric)","Hell","Jerusalem"], answer: 1 },
-      { q: "Who is identified as the 'Ancient of days' mentioned in Daniel 7:9?", options: ["Jesus","God the Father","Peter","Adam"], answer: 1 },
-      { q: "The name 'Antichrist' literally means:", options: ["For Christ","Against Christ","Like Christ","Servant of Christ"], answer: 1 },
-      { q: "What is the number of the name of the Antichrist?", options: ["444","666","777","999"], answer: 1 },
-      { q: "'Mystery Babylon' is identified as a symbol of:", options: ["Political power","Apostate religions / The Great Whore","Physical wall","New planet"], answer: 1 },
-      { q: "How long will the Great Tribulation last?", options: ["3.5 years","7 years","1,000 years","40 years"], answer: 1 },
-      { q: "Which two men are commonly agreed to be the 'Two Witnesses'?", options: ["Peter and Paul","Elijah and Enoch (or Moses)","Moses and Aaron","David and Solomon"], answer: 1 },
-      { q: "The 'First Resurrection' refers to the resurrection of:", options: ["The wicked","The just, blessed and holy","Only angels","Only babies"], answer: 1 },
-      { q: "The final judgement for all unbelievers is called:", options: ["Nations judgement","Great White Throne Judgement","Believers judgement","Ritual judgement"], answer: 1 },
-      { q: "'Armageddon' literally means:", options: ["Valley of death","Mount of Megiddo","Field of fire","Last city"], answer: 1 },
-      { q: "During the Millennium, Satan will be bound for how long?", options: ["100 years","1,000 years","7 years","Forever"], answer: 1 },
-      { q: "What city will be the world capital during the Millennium?", options: ["Rome","Jerusalem","New York","London"], answer: 1 },
-      { q: "Where will the judgement seat of Christ be situated?", options: ["Earth","Heaven/Air","Hell","Valley of Megiddo"], answer: 1 },
-      { q: "The 'Crown of Glory' is a reward for faithful:", options: ["Soul winners","God-called Pastors","Martyrs","Deacons"], answer: 1 },
-      { q: "The 'Crown of Life' is for those who endure:", options: ["Prosperity","Trials and love the Lord","Hard work","Old age"], answer: 1 },
-      { q: "The 'Great Whore' will be drunk with the blood of:", options: ["Animals","Saints and martyrs of Jesus","Kings","Enemies"], answer: 1 },
-      { q: "The Greek word 'Apokalupsis' means to:", options: ["Hide or cover","Unveil or uncover","End or finish","Pray or sing"], answer: 1 },
-      { q: "The 'War in Heaven' is fought between Satan and:", options: ["Gabriel","Michael","Raphael","Uriel"], answer: 1 },
-      { q: "In the first 3.5 years of Daniel's 70th week, how many Jews will be sealed?", options: ["12,000","144,000","1,000,000","All of them"], answer: 1 },
-      { q: "The 'Last Enemy' that shall be destroyed is:", options: ["Sin","Death","Hunger","Pain"], answer: 1 },
-      { q: "How many months will it take to bury the dead after the defeat of Gog?", options: ["1 month","7 months","12 months","3 years"], answer: 1 },
-      { q: "Which material is mentioned as being stronger than steel and able to burn?", options: ["Coal","Lignstone","Iron","Bronze"], answer: 1 },
-      { q: "What is the name of the place of confinement for fallen angels until judgement?", options: ["Hades","Tartarus","Gehenna","Sheol"], answer: 1 },
-      { q: "What will happen to the Beast and False Prophet after the battle of Armageddon?", options: ["Put in jail","Consigned to the lake of fire forever","Forgiven","Sent to the abyss"], answer: 1 },
-      { q: "The 'New Heaven and a New Earth' follow which judgement?", options: ["Judgement of Nations","Great White Throne Judgement","Judgement of Believers","Judgement of Sins"], answer: 1 },
-      { q: "'Bibliolatry' is defined as study of the Bible with the aid of:", options: ["Holy Spirit","Human intellect alone","Ancient maps","Foreign languages"], answer: 1 },
-      { q: "'Magog' is often identified by prophetic scholars as predominating in modern:", options: ["USA","Russia","China","Egypt"], answer: 1 },
-      { q: "How many times is the phrase 'thousand years' used in Revelation 20:1-7?", options: ["1","6","10","12"], answer: 1 }
-    ]
-  }
 
 ]; // END OF EXAMS ARRAY
 
