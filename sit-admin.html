@@ -403,8 +403,8 @@
             <h3>🔒 Admin Login</h3>
             <p style="font-size:0.82rem;color:var(--gray);margin-bottom:16px;">Envoys HQ Stewards Training Dashboard</p>
             <div class="form-group">
-              <label for="adminUser">Username</label>
-              <input type="text" id="adminUser" placeholder="sit-admin" autocomplete="off">
+              <label for="adminUser">Email</label>
+              <input type="email" id="adminUser" placeholder="admin@youremail.com" autocomplete="email">
             </div>
             <div class="form-group">
               <label for="adminPass">Password</label>
@@ -967,21 +967,31 @@
         </div>
       </div>`;
 
-    if (store.sessionGet('rctc_sit_admin')) {
-      showAdminDashboard();
-    }
+    (async () => {
+      if (store.sessionGet('rctc_sit_admin')) {
+        showAdminDashboard();
+      } else {
+        const { data } = await db.auth.getSession();
+        if (data?.session) {
+          store.sessionSet('rctc_sit_admin', true);
+          showAdminDashboard();
+        }
+      }
+    })();
 
     document.getElementById('adminPass').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') doAdminLogin();
     });
 
-    function doAdminLogin() {
+    async function doAdminLogin() {
       hideError('adminLoginError');
-      const user = document.getElementById('adminUser').value.trim();
-      const pass = document.getElementById('adminPass').value;
-      if (!user || !pass) { showError('adminLoginError', 'Please enter both username and password.'); return; }
-      if (user !== SIT_ADMIN.username || pass !== SIT_ADMIN.password) {
-        showError('adminLoginError', 'Invalid username or password.');
+      const email = document.getElementById('adminUser').value.trim();
+      const pass  = document.getElementById('adminPass').value;
+      if (!email || !pass) { showError('adminLoginError', 'Please enter both email and password.'); return; }
+
+      const { error } = await db.auth.signInWithPassword({ email, password: pass });
+      if (error) {
+        showError('adminLoginError', error.message || 'Invalid email or password.');
         document.getElementById('adminPass').value = '';
         return;
       }
@@ -989,7 +999,8 @@
       showAdminDashboard();
     }
 
-    function doAdminLogout() {
+    async function doAdminLogout() {
+      await db.auth.signOut();
       store.sessionRemove('rctc_sit_admin');
       window.location.reload();
     }

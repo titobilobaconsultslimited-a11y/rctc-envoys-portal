@@ -235,8 +235,8 @@
           <div class="login-card">
             <h3>🔒 Admin Login</h3>
             <div class="form-group">
-              <label for="adminUser">Username</label>
-              <input type="text" id="adminUser" placeholder="admin" autocomplete="off">
+              <label for="adminUser">Email</label>
+              <input type="email" id="adminUser" placeholder="admin@youremail.com" autocomplete="email">
             </div>
             <div class="form-group">
               <label for="adminPass">Password</label>
@@ -485,27 +485,36 @@
         </div>
       </div>`;
 
-    // ---- Check if admin already logged in ----
-    if (store.sessionGet('rctc_admin')) {
-      showAdminDashboard();
-    }
+    // ---- Check if admin already logged in (session or Supabase Auth) ----
+    (async () => {
+      if (store.sessionGet('rctc_admin')) {
+        showAdminDashboard();
+      } else {
+        const { data } = await db.auth.getSession();
+        if (data?.session) {
+          store.sessionSet('rctc_admin', true);
+          showAdminDashboard();
+        }
+      }
+    })();
 
     document.getElementById('adminPass').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') doAdminLogin();
     });
 
-    function doAdminLogin() {
+    async function doAdminLogin() {
       hideError('adminLoginError');
-      const user = document.getElementById('adminUser').value.trim();
-      const pass = document.getElementById('adminPass').value;
+      const email = document.getElementById('adminUser').value.trim();
+      const pass  = document.getElementById('adminPass').value;
 
-      if (!user || !pass) {
-        showError('adminLoginError', 'Please enter both username and password.');
+      if (!email || !pass) {
+        showError('adminLoginError', 'Please enter both email and password.');
         return;
       }
 
-      if (user !== ADMIN.username || pass !== ADMIN.password) {
-        showError('adminLoginError', 'Invalid username or password.');
+      const { error } = await db.auth.signInWithPassword({ email, password: pass });
+      if (error) {
+        showError('adminLoginError', error.message || 'Invalid email or password.');
         document.getElementById('adminPass').value = '';
         return;
       }
@@ -514,7 +523,8 @@
       showAdminDashboard();
     }
 
-    function doAdminLogout() {
+    async function doAdminLogout() {
+      await db.auth.signOut();
       store.sessionRemove('rctc_admin');
       window.location.reload();
     }
