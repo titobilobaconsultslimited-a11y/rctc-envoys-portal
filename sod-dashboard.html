@@ -66,7 +66,7 @@
       const eligibilityMap = {};
       await Promise.all(SOD_EXAMS.map(async exam => {
         try {
-          const _r = await fetch('/api/sod-exam-eligibility?matric_no=' + encodeURIComponent(matric) + '&exam_code=' + encodeURIComponent(exam.code));
+          const _r = await fetch('/api/sod?resource=eligibility&matric_no=' + encodeURIComponent(matric) + '&exam_code=' + encodeURIComponent(exam.code));
           if (_r.ok) eligibilityMap[exam.id] = await _r.json();
         } catch (_e) { /* fail open */ }
       }));
@@ -225,7 +225,7 @@
       const _exam = SOD_EXAMS.find(e => e.id === examId);
       if (_exam) {
         try {
-          const _er = await fetch('/api/sod-exam-eligibility?matric_no=' + encodeURIComponent(matric) + '&exam_code=' + encodeURIComponent(_exam.code));
+          const _er = await fetch('/api/sod?resource=eligibility&matric_no=' + encodeURIComponent(matric) + '&exam_code=' + encodeURIComponent(_exam.code));
           if (_er.ok) {
             const _ed = await _er.json();
             if (!_ed.eligible && _ed.total > 0) {

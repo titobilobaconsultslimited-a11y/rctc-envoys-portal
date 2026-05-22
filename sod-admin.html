@@ -1637,7 +1637,7 @@
       tableDiv.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Loading\u2026</p>';
       try {
         const token = await getAdminToken();
-        const resp  = await fetch('/api/admin/sod-classes?exam_code=' + encodeURIComponent(examCode), {
+        const resp  = await fetch('/api/sod?resource=classes&exam_code=' + encodeURIComponent(examCode), {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         const { classes } = await resp.json();
@@ -1673,7 +1673,7 @@
       if (!classDate)  { showAttToast('Please select a class date.', 'error'); return; }
       try {
         const token = await getAdminToken();
-        const resp  = await fetch('/api/admin/sod-classes', {
+        const resp  = await fetch('/api/sod?resource=classes', {
           method: 'POST',
           headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
           body: JSON.stringify({ exam_code: examCode, class_title: classTitle, class_date: classDate })
@@ -1690,7 +1690,7 @@
       if (!confirm('Delete this class session? All attendance records for it will also be deleted.')) return;
       try {
         const token = await getAdminToken();
-        const resp  = await fetch('/api/admin/sod-classes?id=' + classId, {
+        const resp  = await fetch('/api/sod?resource=classes&id=' + classId, {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + token }
         });
@@ -1711,7 +1711,7 @@
       if (!examCode) return;
       try {
         const token = await getAdminToken();
-        const resp  = await fetch('/api/admin/sod-classes?exam_code=' + encodeURIComponent(examCode), {
+        const resp  = await fetch('/api/sod?resource=classes&exam_code=' + encodeURIComponent(examCode), {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         const { classes } = await resp.json();
@@ -1739,7 +1739,7 @@
       listDiv.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Loading students\u2026</p>';
       try {
         const token = await getAdminToken();
-        const resp  = await fetch('/api/admin/sod-attendance?class_id=' + classId, {
+        const resp  = await fetch('/api/sod?resource=attendance&class_id=' + classId, {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         const { attendance } = await resp.json();
@@ -1785,7 +1785,7 @@
         .map(cb => cb.value);
       try {
         const token = await getAdminToken();
-        const resp  = await fetch('/api/admin/sod-attendance', {
+        const resp  = await fetch('/api/sod?resource=attendance', {
           method: 'POST',
           headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
           body: JSON.stringify({ class_id: classId, attendees: checked })
@@ -1811,7 +1811,7 @@
       cardsDiv.innerHTML = '';
       try {
         const token = await getAdminToken();
-        const resp  = await fetch('/api/admin/sod-attendance?exam_code=' + encodeURIComponent(examCode) + '&summary=true', {
+        const resp  = await fetch('/api/sod?resource=attendance&exam_code=' + encodeURIComponent(examCode) + '&summary=true', {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         const { summary, total_classes } = await resp.json();
@@ -1890,7 +1890,7 @@
     async function grantAttendanceOverride(matricNo, examCode) {
       try {
         const token = await getAdminToken();
-        const resp  = await fetch('/api/admin/sod-attendance-override', {
+        const resp  = await fetch('/api/sod?resource=override', {
           method: 'POST',
           headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
           body: JSON.stringify({ matric_no: matricNo, exam_code: examCode })
@@ -1905,7 +1905,7 @@
       if (!confirm('Revoke exam access override for ' + matricNo + '?')) return;
       try {
         const token = await getAdminToken();
-        const resp  = await fetch('/api/admin/sod-attendance-override?matric_no=' + encodeURIComponent(matricNo) + '&exam_code=' + encodeURIComponent(examCode), {
+        const resp  = await fetch('/api/sod?resource=override&matric_no=' + encodeURIComponent(matricNo) + '&exam_code=' + encodeURIComponent(examCode), {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + token }
         });

@@ -88,7 +88,7 @@
 
       // Attendance eligibility guard
       try {
-        const _eligR = await fetch('/api/sod-exam-eligibility?matric_no=' + encodeURIComponent(matric) + '&exam_code=' + encodeURIComponent(exam.code));
+        const _eligR = await fetch('/api/sod?resource=eligibility&matric_no=' + encodeURIComponent(matric) + '&exam_code=' + encodeURIComponent(exam.code));
         if (_eligR.ok) {
           const _eligD = await _eligR.json();
           if (!_eligD.eligible && _eligD.total > 0) {
