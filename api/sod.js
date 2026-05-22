@@ -163,6 +163,11 @@ module.exports = async function handler(req, res) {
           .eq('exam_code', exam_code.trim().toUpperCase());
         const overrideSet = new Set((overrides || []).map(o => o.matric_no));
 
+        // Include overridden students who have no attendance records at all
+        for (const matric_no of overrideSet) {
+          if (!(matric_no in studentMap)) studentMap[matric_no] = 0;
+        }
+
         return res.status(200).json({
           summary: Object.entries(studentMap).map(([matric_no, attended_count]) => ({
             matric_no,
