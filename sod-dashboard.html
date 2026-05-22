@@ -39,6 +39,20 @@
     const studentName = SOD_STUDENTS[matric];
     renderSodHeader(matric);
 
+    // ---- ATTENDANCE BLOCKED ALERT ----
+    (function() {
+      if (new URLSearchParams(window.location.search).get('blocked') === 'attendance') {
+        const _d = document.createElement('div');
+        _d.id = 'attBlockedBanner';
+        _d.style.cssText = 'background:#fff3cd;border:1.5px solid #ffc107;border-radius:8px;padding:13px 18px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;';
+        _d.innerHTML = '<div><strong style="color:#856404;">&#9888; Attendance Required</strong>' +
+          '<span style="color:#856404;font-size:0.87rem;margin-left:8px;">You do not meet the minimum 75% attendance requirement for that exam. Please contact your administrator to request access.</span></div>' +
+          '<button onclick="document.getElementById(\'attBlockedBanner\').remove()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:#856404;line-height:1;">&#10005;</button>';
+        const main = document.querySelector('main.dashboard-main');
+        if (main) main.insertBefore(_d, main.firstChild);
+      }
+    })();
+
     // ---- ASYNC INIT ----
     (async () => {
       const [studentResults, locks, theoryResults, theoryLocks] = await Promise.all([
@@ -47,6 +61,15 @@
         dbGetSodStudentTheoryResults(matric),
         dbGetSodTheoryLocks()
       ]);
+
+      // Fetch attendance eligibility for all MCQ exams in parallel
+      const eligibilityMap = {};
+      await Promise.all(SOD_EXAMS.map(async exam => {
+        try {
+          const _r = await fetch('/api/sod-exam-eligibility?matric_no=' + encodeURIComponent(matric) + '&exam_code=' + encodeURIComponent(exam.code));
+          if (_r.ok) eligibilityMap[exam.id] = await _r.json();
+        } catch (_e) { /* fail open */ }
+      }));
 
       const completedCount = studentResults.length;
       const totalExams     = SOD_EXAMS.length;
@@ -77,6 +100,8 @@
         SOD_EXAMS.forEach(exam => {
           const taken      = studentResults.find(r => r.examId === exam.id) || null;
           const examLocked = locks[exam.id] === true;
+          const _elig      = eligibilityMap[exam.id] || { eligible: true, total: 0, percentage: 0, attended: 0 };
+          const attBlocked = !taken && !examLocked && !_elig.eligible && _elig.total > 0;
         const card = document.createElement('div');
         card.className = 'exam-card' + (taken ? ' completed' : '');
 
@@ -94,6 +119,15 @@
           footerHTML = `
             <button class="btn btn-full" style="background:#6c757d;color:#fff;cursor:not-allowed;opacity:0.85;" disabled>
               &#128274; Locked by Admin
+            </button>`;
+        } else if (attBlocked) {
+          footerHTML = `
+            <div style="text-align:center;padding:4px 0 6px;">
+              <span style="display:inline-block;background:#fff3cd;color:#856404;border:1.5px solid #ffc107;border-radius:20px;padding:4px 14px;font-size:0.75rem;font-weight:700;">&#9888; Attendance Required</span>
+              <div style="font-size:0.76rem;color:var(--gray);margin-top:4px;">${_elig.percentage}% attendance &mdash; minimum 75% needed</div>
+            </div>
+            <button class="btn btn-full" style="background:#dee2e6;color:#6c757d;cursor:not-allowed;" disabled>
+              &#128274; Access Restricted
             </button>`;
         } else {
           footerHTML = `
@@ -116,7 +150,9 @@
               ? '<span class="badge badge-success">&#10003; Done</span>'
               : (examLocked
                   ? '<span class="badge" style="background:#fdecea;color:#e74c3c;">&#128274; Locked</span>'
-                  : '<span class="badge badge-warning">Pending</span>')}
+                  : (attBlocked
+                      ? '<span class="badge" style="background:#fff3cd;color:#856404;">&#9888; Attendance</span>'
+                      : '<span class="badge badge-warning">Pending</span>'))}
           </div>
           <div class="card-footer">${footerHTML}</div>`;
 
@@ -184,6 +220,20 @@
       if (currentLocks[examId] === true) {
         alert('This exam is currently locked by the administrator. Please check the timetable and try again at the scheduled time.');
         return;
+      }
+      // Server-side attendance eligibility guard
+      const _exam = SOD_EXAMS.find(e => e.id === examId);
+      if (_exam) {
+        try {
+          const _er = await fetch('/api/sod-exam-eligibility?matric_no=' + encodeURIComponent(matric) + '&exam_code=' + encodeURIComponent(_exam.code));
+          if (_er.ok) {
+            const _ed = await _er.json();
+            if (!_ed.eligible && _ed.total > 0) {
+              alert('You do not meet the minimum 75% attendance requirement for ' + _exam.code + '.\n\nAttendance: ' + _ed.attended + '/' + _ed.total + ' classes (' + _ed.percentage + '%).\n\nPlease contact your administrator to request access.');
+              return;
+            }
+          }
+        } catch (_e) { /* fail open if API unreachable */ }
       }
       clearSodExamProgress();
       saveSodExamProgress(examId, Date.now(), {});

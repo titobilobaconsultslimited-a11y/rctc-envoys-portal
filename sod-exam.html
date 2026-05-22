@@ -86,6 +86,18 @@
         return;
       }
 
+      // Attendance eligibility guard
+      try {
+        const _eligR = await fetch('/api/sod-exam-eligibility?matric_no=' + encodeURIComponent(matric) + '&exam_code=' + encodeURIComponent(exam.code));
+        if (_eligR.ok) {
+          const _eligD = await _eligR.json();
+          if (!_eligD.eligible && _eligD.total > 0) {
+            window.location.href = 'sod-dashboard.html?blocked=attendance';
+            return;
+          }
+        }
+      } catch (_e) { /* fail open — allow exam if API unreachable */ }
+
       const alreadyTaken = await dbHasSodStudentTakenExam(matric, examId);
       if (alreadyTaken) {
         window.location.href = 'sod-dashboard.html';

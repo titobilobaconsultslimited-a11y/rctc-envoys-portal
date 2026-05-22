@@ -130,6 +130,76 @@
       .admin-toolbar { flex-direction: column; }
       .admin-toolbar .form-group { min-width: 100%; }
     }
+
+    /* ---- Attendance Section ---- */
+    .att-tab-btn {
+      padding: 9px 22px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      border: none;
+      background: #e9ecef;
+      color: var(--navy);
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+      margin-left: 4px;
+      transition: var(--transition);
+    }
+    .att-tab-btn:first-child { margin-left: 0; }
+    .att-tab-btn.active { background: var(--navy); color: #fff; }
+    .att-form-card {
+      background: var(--light);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .att-student-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 14px;
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.12s;
+    }
+    .att-student-row:hover { background: #f8fafc; }
+    .att-student-row:last-child { border-bottom: none; }
+    .att-badge-blocked {
+      display: inline-block;
+      background: #fff3cd;
+      color: #856404;
+      border: 1.5px solid #ffc107;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .att-badge-eligible {
+      display: inline-block;
+      background: var(--success-light);
+      color: var(--success);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .att-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 22px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.88rem;
+      z-index: 9999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      animation: attSlideIn 0.2s ease;
+    }
+    .att-toast.success { background: var(--success); color: #fff; }
+    .att-toast.error   { background: var(--danger);  color: #fff; }
+    @keyframes attSlideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -177,6 +247,7 @@
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           <button onclick="showSection('analytics')" class="btn btn-navy btn-sm">📈 Analytics</button>
           <button onclick="showSection('theory')" class="btn btn-navy btn-sm">✍️ Theory Results</button>
+          <button onclick="showSection('attendance')" class="btn btn-navy btn-sm">📋 Attendance</button>
           <button onclick="downloadAllCSV()" class="btn btn-success">⬇ Download CSV</button>
           <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
         </div>
@@ -270,6 +341,7 @@
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           <button onclick="showSection('mcq')" class="btn btn-outline btn-sm">&#8592; MCQ Results</button>
           <button onclick="showSection('analytics')" class="btn btn-navy btn-sm">📈 Analytics</button>
+          <button onclick="showSection('attendance')" class="btn btn-navy btn-sm">📋 Attendance</button>
           <button onclick="downloadAllTheoryCSV()" class="btn btn-success">&#8595; Download CSV</button>
           <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
         </div>
@@ -357,6 +429,7 @@
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
           <button onclick="showSection('mcq')" class="btn btn-outline btn-sm">← MCQ Results</button>
+          <button onclick="showSection('attendance')" class="btn btn-navy btn-sm">📋 Attendance</button>
           <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
         </div>
       </div>
@@ -399,6 +472,95 @@
           </label>
         </div>
         <div id="analyticsTheoryStudentTable" style="overflow-x:auto;"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ATTENDANCE SECTION -->
+  <div id="attendanceDashSection" class="hidden">
+    <main class="admin-main">
+
+      <div class="admin-header-bar">
+        <div>
+          <h2>&#128203; SOD Attendance Management</h2>
+          <p>Redeemed Christian Theology College &mdash; Envoys Campus, School of Discipleship</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button onclick="showSection('mcq')" class="btn btn-outline btn-sm">&#8592; MCQ Results</button>
+          <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
+        </div>
+      </div>
+
+      <!-- Inner Tabs -->
+      <div style="display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--border);">
+        <button id="attTabClassesBtn" class="att-tab-btn active" onclick="switchAttTab('classes')">&#128197; Manage Classes</button>
+        <button id="attTabMarkBtn"    class="att-tab-btn"        onclick="switchAttTab('mark')">&#9989; Mark Attendance</button>
+        <button id="attTabReportBtn" class="att-tab-btn"        onclick="switchAttTab('report')">&#128202; Attendance Report</button>
+      </div>
+
+      <!-- ---- Tab 1: Manage Classes ---- -->
+      <div id="attTabClasses">
+        <div class="att-form-card">
+          <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;">
+            <div class="form-group" style="min-width:200px;">
+              <label for="attClassExamCode">Exam</label>
+              <select id="attClassExamCode" onchange="loadClassesForExam()"></select>
+            </div>
+            <div class="form-group" style="min-width:230px;">
+              <label for="attNewClassTitle">Class Title</label>
+              <input type="text" id="attNewClassTitle" placeholder="e.g. Week 1 &mdash; Introduction">
+            </div>
+            <div class="form-group" style="min-width:160px;">
+              <label for="attNewClassDate">Class Date</label>
+              <input type="date" id="attNewClassDate">
+            </div>
+            <div style="padding-bottom:1px;">
+              <button onclick="addNewClass()" class="btn btn-primary">+ Add Class</button>
+            </div>
+          </div>
+        </div>
+        <div id="attClassesTable">
+          <p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Select an exam above to view its class sessions.</p>
+        </div>
+      </div>
+
+      <!-- ---- Tab 2: Mark Attendance ---- -->
+      <div id="attTabMark" class="hidden">
+        <div class="att-form-card">
+          <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;">
+            <div class="form-group" style="min-width:200px;">
+              <label for="attMarkExamCode">Exam</label>
+              <select id="attMarkExamCode" onchange="loadMarkClassDropdown()"></select>
+            </div>
+            <div class="form-group" style="min-width:280px;">
+              <label for="attMarkClassSelect">Class Session</label>
+              <select id="attMarkClassSelect" onchange="loadStudentChecklist()"><option value="">-- Select Class --</option></select>
+            </div>
+          </div>
+        </div>
+        <div id="attMarkStudentList">
+          <p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Select an exam and class session above to load the student checklist.</p>
+        </div>
+        <div id="attMarkActions" class="hidden" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button onclick="selectAllStudents(true)"  class="btn btn-outline btn-sm">&#9745; Select All</button>
+          <button onclick="selectAllStudents(false)" class="btn btn-outline btn-sm">&#9746; Deselect All</button>
+          <button onclick="saveAttendance()" class="btn btn-primary">&#128190; Save Attendance</button>
+        </div>
+      </div>
+
+      <!-- ---- Tab 3: Attendance Report ---- -->
+      <div id="attTabReport" class="hidden">
+        <div class="att-form-card">
+          <div class="form-group" style="min-width:200px;max-width:340px;">
+            <label for="attReportExamCode">Exam</label>
+            <select id="attReportExamCode" onchange="loadAttendanceReport()"></select>
+          </div>
+        </div>
+        <div id="attReportSummaryCards" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;"></div>
+        <div id="attReportTable">
+          <p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Select an exam above to view the attendance report.</p>
+        </div>
       </div>
 
     </main>
@@ -1207,8 +1369,10 @@
       document.getElementById('adminDashSection').classList.toggle('hidden', which !== 'mcq');
       document.getElementById('theoryDashSection').classList.toggle('hidden', which !== 'theory');
       document.getElementById('analyticsDashSection').classList.toggle('hidden', which !== 'analytics');
+      document.getElementById('attendanceDashSection').classList.toggle('hidden', which !== 'attendance');
       if (which === 'theory') initTheoryDashboard();
       if (which === 'analytics') renderAnalytics();
+      if (which === 'attendance') initAttendanceSection();
     }
 
     let _analyticsTab = 'mcq';
@@ -1406,6 +1570,349 @@
               </tr>`).join('')}
           </tbody>
         </table>`;
+    }
+
+    // ============================================================
+    // ATTENDANCE SECTION LOGIC
+    // ============================================================
+
+    async function getAdminToken() {
+      const { data: { session } } = await db.auth.getSession();
+      return session?.access_token || null;
+    }
+
+    function showAttToast(msg, type = 'success') {
+      const el = document.createElement('div');
+      el.className = 'att-toast ' + type;
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3200);
+    }
+
+    function escHtml(str) {
+      return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function formatAttDate(dateStr) {
+      if (!dateStr) return '—';
+      const d = new Date(dateStr + 'T00:00:00');
+      return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function initAttendanceSection() {
+      populateAttExamDropdowns();
+      switchAttTab('classes');
+    }
+
+    function populateAttExamDropdowns() {
+      ['attClassExamCode', 'attMarkExamCode', 'attReportExamCode'].forEach(id => {
+        const sel = document.getElementById(id);
+        sel.innerHTML = '<option value="">-- Select Exam --</option>';
+        SOD_EXAMS.forEach(exam => {
+          const opt = document.createElement('option');
+          opt.value       = exam.code;
+          opt.textContent = exam.code + ' \u2014 ' + exam.title;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    function switchAttTab(tab) {
+      const tabs = { classes: 'attTabClasses', mark: 'attTabMark', report: 'attTabReport' };
+      const btns = { classes: 'attTabClassesBtn', mark: 'attTabMarkBtn', report: 'attTabReportBtn' };
+      Object.entries(tabs).forEach(([key, elId]) => {
+        document.getElementById(elId).classList.toggle('hidden', key !== tab);
+        document.getElementById(btns[key]).classList.toggle('active', key === tab);
+      });
+    }
+
+    // ---- Tab 1: Manage Classes ----
+    async function loadClassesForExam() {
+      const examCode = document.getElementById('attClassExamCode').value;
+      const tableDiv = document.getElementById('attClassesTable');
+      if (!examCode) {
+        tableDiv.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Select an exam above to view its class sessions.</p>';
+        return;
+      }
+      tableDiv.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Loading\u2026</p>';
+      try {
+        const token = await getAdminToken();
+        const resp  = await fetch('/api/admin/sod-classes?exam_code=' + encodeURIComponent(examCode), {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const { classes } = await resp.json();
+        if (!classes || !classes.length) {
+          tableDiv.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">No class sessions added yet for this exam. Use the form above to add one.</p>';
+          return;
+        }
+        tableDiv.innerHTML = '<div style="overflow-x:auto;"><table class="results-table"><thead><tr>' +
+          '<th>#</th><th>Date</th><th>Class Title</th>' +
+          '<th style="text-align:center;">Students Marked</th><th style="text-align:center;">Action</th>' +
+          '</tr></thead><tbody>' +
+          classes.map((c, i) =>
+            '<tr>' +
+            '<td><span class="rank-num">' + (i + 1) + '</span></td>' +
+            '<td>' + formatAttDate(c.class_date) + '</td>' +
+            '<td>' + escHtml(c.class_title) + '</td>' +
+            '<td style="text-align:center;"><span class="badge badge-navy">' + c.attendance_count + '</span></td>' +
+            '<td style="text-align:center;"><button class="btn btn-sm" style="background:var(--danger);color:#fff;border:none;border-radius:4px;padding:4px 12px;cursor:pointer;font-size:0.76rem;font-weight:700;" onclick="deleteClass(\'' + c.id + '\')">&#128465; Delete</button></td>' +
+            '</tr>'
+          ).join('') +
+          '</tbody></table></div>';
+      } catch (e) {
+        tableDiv.innerHTML = '<p style="color:var(--danger);">Error loading classes. Please try again.</p>';
+      }
+    }
+
+    async function addNewClass() {
+      const examCode   = document.getElementById('attClassExamCode').value;
+      const classTitle = document.getElementById('attNewClassTitle').value.trim();
+      const classDate  = document.getElementById('attNewClassDate').value;
+      if (!examCode)   { showAttToast('Please select an exam.', 'error'); return; }
+      if (!classTitle) { showAttToast('Please enter a class title.', 'error'); return; }
+      if (!classDate)  { showAttToast('Please select a class date.', 'error'); return; }
+      try {
+        const token = await getAdminToken();
+        const resp  = await fetch('/api/admin/sod-classes', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ exam_code: examCode, class_title: classTitle, class_date: classDate })
+        });
+        if (!resp.ok) { const e = await resp.json(); showAttToast(e.error || 'Failed to add class.', 'error'); return; }
+        document.getElementById('attNewClassTitle').value = '';
+        document.getElementById('attNewClassDate').value  = '';
+        showAttToast('Class session added!');
+        loadClassesForExam();
+      } catch (e) { showAttToast('Network error. Please try again.', 'error'); }
+    }
+
+    async function deleteClass(classId) {
+      if (!confirm('Delete this class session? All attendance records for it will also be deleted.')) return;
+      try {
+        const token = await getAdminToken();
+        const resp  = await fetch('/api/admin/sod-classes?id=' + classId, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!resp.ok) { showAttToast('Failed to delete class.', 'error'); return; }
+        showAttToast('Class deleted.');
+        loadClassesForExam();
+      } catch (e) { showAttToast('Network error.', 'error'); }
+    }
+
+    // ---- Tab 2: Mark Attendance ----
+    async function loadMarkClassDropdown() {
+      const examCode = document.getElementById('attMarkExamCode').value;
+      const classSel = document.getElementById('attMarkClassSelect');
+      document.getElementById('attMarkStudentList').innerHTML =
+        '<p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Select a class session above to load the student checklist.</p>';
+      document.getElementById('attMarkActions').classList.add('hidden');
+      classSel.innerHTML = '<option value="">-- Select Class --</option>';
+      if (!examCode) return;
+      try {
+        const token = await getAdminToken();
+        const resp  = await fetch('/api/admin/sod-classes?exam_code=' + encodeURIComponent(examCode), {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const { classes } = await resp.json();
+        if (!classes || !classes.length) {
+          classSel.innerHTML = '<option value="">No classes recorded for this exam yet</option>';
+          return;
+        }
+        classes.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value       = c.id;
+          opt.textContent = formatAttDate(c.class_date) + ' \u2014 ' + c.class_title;
+          classSel.appendChild(opt);
+        });
+      } catch (e) { showAttToast('Error loading classes.', 'error'); }
+    }
+
+    async function loadStudentChecklist() {
+      const classId = document.getElementById('attMarkClassSelect').value;
+      const listDiv = document.getElementById('attMarkStudentList');
+      if (!classId) {
+        listDiv.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Select a class session above.</p>';
+        document.getElementById('attMarkActions').classList.add('hidden');
+        return;
+      }
+      listDiv.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Loading students\u2026</p>';
+      try {
+        const token = await getAdminToken();
+        const resp  = await fetch('/api/admin/sod-attendance?class_id=' + classId, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const { attendance } = await resp.json();
+        const attendedSet    = new Set((attendance || []).filter(a => a.attended).map(a => a.matric_no));
+
+        const students = Object.entries(SOD_STUDENTS)
+          .filter(([m]) => m !== 'SOD202612345')
+          .sort((a, b) => a[1].localeCompare(b[1]));
+
+        if (!students.length) {
+          listDiv.innerHTML = '<p style="color:var(--gray);">No students registered.</p>';
+          return;
+        }
+        listDiv.innerHTML =
+          '<p style="font-size:0.82rem;color:var(--gray);margin-bottom:12px;">' +
+          students.length + ' students registered. Check those who attended this class.</p>' +
+          '<div style="border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;">' +
+          students.map(([matric, name]) =>
+            '<div class="att-student-row">' +
+            '<input type="checkbox" id="att_chk_' + matric + '" value="' + matric + '"' +
+            (attendedSet.has(matric) ? ' checked' : '') +
+            ' style="width:17px;height:17px;cursor:pointer;accent-color:var(--navy);">' +
+            '<label for="att_chk_' + matric + '" style="cursor:pointer;flex:1;font-size:0.87rem;">' +
+            '<code style="font-size:0.78rem;font-weight:700;color:var(--navy);">' + matric + '</code>' +
+            '&nbsp;&nbsp;' + escHtml(name) + '</label></div>'
+          ).join('') +
+          '</div>';
+        document.getElementById('attMarkActions').classList.remove('hidden');
+      } catch (e) {
+        listDiv.innerHTML = '<p style="color:var(--danger);">Error loading students. Please try again.</p>';
+      }
+    }
+
+    function selectAllStudents(checked) {
+      document.querySelectorAll('#attMarkStudentList input[type="checkbox"]')
+        .forEach(cb => cb.checked = checked);
+    }
+
+    async function saveAttendance() {
+      const classId = document.getElementById('attMarkClassSelect').value;
+      if (!classId) { showAttToast('No class session selected.', 'error'); return; }
+      const checked = [...document.querySelectorAll('#attMarkStudentList input[type="checkbox"]:checked')]
+        .map(cb => cb.value);
+      try {
+        const token = await getAdminToken();
+        const resp  = await fetch('/api/admin/sod-attendance', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ class_id: classId, attendees: checked })
+        });
+        if (!resp.ok) { const e = await resp.json(); showAttToast(e.error || 'Failed to save.', 'error'); return; }
+        const { marked } = await resp.json();
+        showAttToast('Attendance saved! ' + marked + ' student(s) marked present.');
+        loadClassesForExam();
+      } catch (e) { showAttToast('Network error.', 'error'); }
+    }
+
+    // ---- Tab 3: Attendance Report ----
+    async function loadAttendanceReport() {
+      const examCode = document.getElementById('attReportExamCode').value;
+      const tableDiv = document.getElementById('attReportTable');
+      const cardsDiv = document.getElementById('attReportSummaryCards');
+      if (!examCode) {
+        tableDiv.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Select an exam above to view the attendance report.</p>';
+        cardsDiv.innerHTML = '';
+        return;
+      }
+      tableDiv.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">Loading report\u2026</p>';
+      cardsDiv.innerHTML = '';
+      try {
+        const token = await getAdminToken();
+        const resp  = await fetch('/api/admin/sod-attendance?exam_code=' + encodeURIComponent(examCode) + '&summary=true', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const { summary, total_classes } = await resp.json();
+
+        if (!total_classes) {
+          tableDiv.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;padding:20px 0;">No class sessions have been recorded for this exam yet. Add classes in the <strong>Manage Classes</strong> tab.</p>';
+          return;
+        }
+
+        // Build summary map keyed by matric
+        const summaryMap = {};
+        (summary || []).forEach(s => { summaryMap[s.matric_no] = s; });
+
+        const allStudents = Object.entries(SOD_STUDENTS)
+          .filter(([m]) => m !== 'SOD202612345')
+          .sort((a, b) => a[1].localeCompare(b[1]));
+
+        let eligibleCount = 0, blockedCount = 0, overrideCount = 0;
+
+        const rows = allStudents.map(([matric, name]) => {
+          const s       = summaryMap[matric] || { attended_count: 0, override_granted: false };
+          const attended = s.attended_count || 0;
+          const pct      = total_classes ? Math.round((attended / total_classes) * 100) : 0;
+          const override = s.override_granted || false;
+          const eligible = pct >= 75 || override;
+          if (override) overrideCount++;
+          else if (eligible) eligibleCount++;
+          else blockedCount++;
+          return { matric, name, attended, total: total_classes, pct, override, eligible };
+        });
+
+        cardsDiv.innerHTML =
+          '<div class="stat-card green" style="min-width:130px;"><div class="stat-num">' + eligibleCount + '</div><div class="stat-lbl">Eligible (\u226575%)</div></div>' +
+          '<div class="stat-card" style="min-width:130px;background:#fff3cd;"><div class="stat-num" style="color:#856404;">' + blockedCount + '</div><div class="stat-lbl" style="color:#856404;">Blocked (&lt;75%)</div></div>' +
+          '<div class="stat-card orange" style="min-width:130px;"><div class="stat-num">' + overrideCount + '</div><div class="stat-lbl">Admin Override</div></div>';
+
+        tableDiv.innerHTML =
+          '<div style="overflow-x:auto;"><table class="results-table"><thead><tr>' +
+          '<th>#</th><th>Matric No.</th><th>Student Name</th>' +
+          '<th style="text-align:center;">Attended</th><th style="text-align:center;">Total</th>' +
+          '<th style="text-align:center;min-width:140px;">Attendance %</th>' +
+          '<th style="text-align:center;">Status</th><th style="text-align:center;">Override</th>' +
+          '</tr></thead><tbody>' +
+          rows.map((r, i) => {
+            const barColor = r.pct >= 75 ? 'var(--success)' : 'var(--danger)';
+            const statusBadge = r.override
+              ? '<span class="badge badge-navy">&#128275; Override</span>'
+              : (r.eligible
+                  ? '<span class="att-badge-eligible">&#10003; Eligible</span>'
+                  : '<span class="att-badge-blocked">&#9888; Blocked</span>');
+            const overrideBtn = r.override
+              ? '<button class="btn btn-sm" style="background:var(--danger);color:#fff;border:none;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:0.73rem;font-weight:700;" onclick="revokeAttendanceOverride(\'' + r.matric + '\',\'' + examCode + '\')">Revoke</button>'
+              : (!r.eligible
+                  ? '<button class="btn btn-sm" style="background:var(--success);color:#fff;border:none;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:0.73rem;font-weight:700;" onclick="grantAttendanceOverride(\'' + r.matric + '\',\'' + examCode + '\')">Grant Access</button>'
+                  : '<span style="color:#bbb;font-size:0.8rem;">\u2014</span>');
+            return '<tr>' +
+              '<td><span class="rank-num">' + (i + 1) + '</span></td>' +
+              '<td><code style="font-size:0.8rem;font-weight:600;">' + r.matric + '</code></td>' +
+              '<td>' + escHtml(r.name) + '</td>' +
+              '<td style="text-align:center;font-weight:700;">' + r.attended + '</td>' +
+              '<td style="text-align:center;">' + r.total + '</td>' +
+              '<td style="text-align:center;"><div style="display:flex;align-items:center;gap:8px;justify-content:center;">' +
+              '<div style="width:80px;background:#e9ecef;border-radius:20px;height:7px;overflow:hidden;">' +
+              '<div style="width:' + Math.min(r.pct, 100) + '%;background:' + barColor + ';height:100%;border-radius:20px;"></div></div>' +
+              '<span style="font-weight:700;font-size:0.82rem;color:' + barColor + ';">' + r.pct + '%</span></div></td>' +
+              '<td style="text-align:center;">' + statusBadge + '</td>' +
+              '<td style="text-align:center;">' + overrideBtn + '</td>' +
+              '</tr>';
+          }).join('') +
+          '</tbody></table></div>';
+      } catch (e) {
+        tableDiv.innerHTML = '<p style="color:var(--danger);">Error loading report. Please try again.</p>';
+      }
+    }
+
+    async function grantAttendanceOverride(matricNo, examCode) {
+      try {
+        const token = await getAdminToken();
+        const resp  = await fetch('/api/admin/sod-attendance-override', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ matric_no: matricNo, exam_code: examCode })
+        });
+        if (!resp.ok) { showAttToast('Failed to grant access.', 'error'); return; }
+        showAttToast('Exam access granted to ' + matricNo + '!');
+        loadAttendanceReport();
+      } catch (e) { showAttToast('Network error.', 'error'); }
+    }
+
+    async function revokeAttendanceOverride(matricNo, examCode) {
+      if (!confirm('Revoke exam access override for ' + matricNo + '?')) return;
+      try {
+        const token = await getAdminToken();
+        const resp  = await fetch('/api/admin/sod-attendance-override?matric_no=' + encodeURIComponent(matricNo) + '&exam_code=' + encodeURIComponent(examCode), {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!resp.ok) { showAttToast('Failed to revoke override.', 'error'); return; }
+        showAttToast('Override revoked for ' + matricNo + '.');
+        loadAttendanceReport();
+      } catch (e) { showAttToast('Network error.', 'error'); }
     }
 
     function renderTheoryStudentCompletion() {
