@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RCTC Envoys — My Exams</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    .fees-summary-card { background:#fff; border:1.5px solid var(--border); border-radius:var(--radius); padding:18px 20px; margin-bottom:20px; }
+    .fees-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; flex-wrap:wrap; gap:10px; }
+    .fees-card-title { font-size:1rem; font-weight:700; color:var(--navy); margin:0 0 2px; }
+    .fees-card-program { font-size:0.88rem; font-weight:600; color:var(--navy); margin:0; }
+    .fees-card-stats { display:flex; gap:24px; flex-wrap:wrap; margin-bottom:14px; }
+    .fees-stat { min-width:90px; }
+    .fees-stat-label { font-size:0.72rem; color:var(--gray); font-weight:600; text-transform:uppercase; letter-spacing:0.4px; }
+    .fees-stat-val { font-size:1.15rem; font-weight:800; color:var(--navy); }
+    .fees-progress-wrap { margin-top:4px; }
+    .fees-progress-bg { background:#e9ecef; border-radius:20px; height:10px; overflow:hidden; }
+    .fees-progress-fill { height:10px; border-radius:20px; transition:width 0.6s ease; }
+    .fees-pending-note { font-size:0.79rem; color:#856404; background:#fff3cd; padding:7px 12px; border-radius:6px; margin:10px 0 0; }
+    .fees-card-empty { background:#f8fafc; border-color:#e9ecef; }
+  </style>
 </head>
 <body>
 
@@ -17,6 +32,9 @@
     <!-- Welcome Banner -->
     <div class="dashboard-welcome" id="welcomeBanner"></div>
 
+    <!-- Fees Summary -->
+    <div id="feesSummarySection" style="margin-bottom:4px;"></div>
+
     <!-- Exam Grid -->
     <p class="section-title">📚 Available Examinations</p>
     <div class="exam-grid" id="examGrid"></div>
@@ -28,6 +46,49 @@
   <script src="js/supabase-client.js"></script>
   <script src="js/app.js"></script>
   <script>
+    let _myFeesData = null;
+
+    function openPayNowModal() {
+      if (!_myFeesData || !_myFeesData.program) return;
+      const p          = _myFeesData.program;
+      const hasDetails = p.bankName || p.accountNumber;
+      document.getElementById('payNowBankBox').innerHTML = hasDetails
+        ? `<p style="font-size:0.78rem;font-weight:700;color:var(--navy);margin:0 0 8px;">&#127968; Make your payment to:</p>
+           ${p.bankName      ? `<div style="font-size:0.85rem;"><strong>Bank:</strong> ${p.bankName}</div>` : ''}
+           ${p.accountName   ? `<div style="font-size:0.85rem;"><strong>Account Name:</strong> ${p.accountName}</div>` : ''}
+           ${p.accountNumber ? `<div style="font-size:0.88rem;margin-top:4px;"><strong>Account No.:</strong> <strong style="letter-spacing:2px;font-size:1rem;">${p.accountNumber}</strong></div>` : ''}
+           ${p.bankSortCode  ? `<div style="font-size:0.85rem;"><strong>Sort Code:</strong> ${p.bankSortCode}</div>` : ''}`
+        : `<p style="color:var(--gray);font-size:0.84rem;margin:0;">Payment details not configured. Contact the administrator for account information.</p>`;
+      document.getElementById('payNowAmount').value = '';
+      document.getElementById('payNowNote').value   = '';
+      document.getElementById('payNowSuccess').classList.add('hidden');
+      const btn = document.getElementById('payNowSubmitBtn');
+      btn.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'Submit Payment';
+      hideError('payNowError');
+      document.getElementById('payNowModal').classList.remove('hidden');
+    }
+
+    function closePayNowModal() {
+      document.getElementById('payNowModal').classList.add('hidden');
+    }
+
+    async function submitPayNow() {
+      const amount = document.getElementById('payNowAmount').value;
+      const note   = document.getElementById('payNowNote').value.trim();
+      if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+        showError('payNowError', 'Please enter a valid amount.'); return;
+      }
+      const btn = document.getElementById('payNowSubmitBtn');
+      btn.disabled = true; btn.textContent = 'Submitting…';
+      hideError('payNowError');
+      const result = await dbSubmitStudentPayment(matric, parseFloat(amount), note || null);
+      btn.disabled = false; btn.textContent = 'Submit Payment';
+      if (!result.ok) { showError('payNowError', 'Failed to submit. Please try again.'); return; }
+      document.getElementById('payNowSuccess').textContent = '&#10003; Payment submitted! It will appear on your dashboard once confirmed by the admin.';
+      document.getElementById('payNowSuccess').classList.remove('hidden');
+      btn.classList.add('hidden');
+    }
+
     // ---- AUTH CHECK ----
     const matric = requireStudentAuth();
     if (!matric) throw new Error('Not authenticated');
@@ -37,14 +98,48 @@
 
     // ---- ASYNC INIT ----
     (async () => {
-      const [studentResults, locks] = await Promise.all([
+      const [studentResults, locks, feesInfo] = await Promise.all([
         dbGetStudentResults(matric),
-        dbGetLocks()
+        dbGetLocks(),
+        dbGetMyFees(matric)
       ]);
+      _myFeesData = feesInfo;
 
       const completedCount = studentResults.length;
       const totalExams     = EXAMS.length;
       const pendingCount   = totalExams - completedCount;
+
+      // ---- FEES SECTION ----
+      if (feesInfo && feesInfo.program) {
+        const pct         = feesInfo.totalFee > 0 ? Math.round((feesInfo.totalPaid / feesInfo.totalFee) * 100) : 0;
+        const pendingPmts = feesInfo.payments.filter(p => p.status === 'pending').length;
+        document.getElementById('feesSummarySection').innerHTML = `
+          <div class="fees-summary-card">
+            <div class="fees-card-header">
+              <div>
+                <h3 class="fees-card-title">&#128179; School Fees</h3>
+                <p class="fees-card-program">${feesInfo.program.name}</p>
+              </div>
+              <button onclick="openPayNowModal()" class="btn btn-primary btn-sm">&#128176; Pay Now</button>
+            </div>
+            <div class="fees-card-stats">
+              <div class="fees-stat"><div class="fees-stat-label">Total Fee</div><div class="fees-stat-val">&#8358;${feesInfo.totalFee.toLocaleString()}</div></div>
+              <div class="fees-stat"><div class="fees-stat-label">Amount Paid</div><div class="fees-stat-val" style="color:var(--success);">&#8358;${feesInfo.totalPaid.toLocaleString()}</div></div>
+              <div class="fees-stat"><div class="fees-stat-label">Balance</div><div class="fees-stat-val" style="color:${feesInfo.balance > 0 ? 'var(--danger)' : 'var(--success)'};">&#8358;${feesInfo.balance.toLocaleString()}</div></div>
+            </div>
+            <div class="fees-progress-wrap">
+              <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--gray);margin-bottom:5px;"><span>Payment Progress</span><span>${pct}% Paid</span></div>
+              <div class="fees-progress-bg"><div class="fees-progress-fill" style="width:${Math.min(pct, 100)}%;background:${feesInfo.balance === 0 ? 'var(--success)' : 'var(--navy)'};"></div></div>
+            </div>
+            ${pendingPmts > 0 ? `<p class="fees-pending-note">&#8987; You have ${pendingPmts} pending payment${pendingPmts > 1 ? 's' : ''} awaiting admin confirmation.</p>` : ''}
+          </div>`;
+      } else {
+        document.getElementById('feesSummarySection').innerHTML = `
+          <div class="fees-summary-card fees-card-empty">
+            <h3 class="fees-card-title">&#128179; School Fees</h3>
+            <p style="color:var(--gray);font-size:0.86rem;margin:4px 0 0;">You have not been enrolled in a program yet. Please contact the administrator.</p>
+          </div>`;
+      }
 
       document.getElementById('welcomeBanner').innerHTML = `
         <div class="welcome-text">
@@ -127,5 +222,29 @@
 
     })(); // end async IIFE
   </script>
+
+  <!-- PAY NOW MODAL -->
+  <div class="modal-overlay hidden" id="payNowModal">
+    <div class="modal" style="max-width:440px;width:95%;">
+      <h3>&#128176; Submit a Payment</h3>
+      <div id="payNowBankBox" style="background:#f8fafc;border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:16px;"></div>
+      <div class="form-group">
+        <label>Amount Paid (&#8358;) *</label>
+        <input type="number" id="payNowAmount" min="1" step="100" placeholder="Enter the amount you paid">
+      </div>
+      <div class="form-group">
+        <label>Transaction Reference / Note</label>
+        <input type="text" id="payNowNote" placeholder="e.g. Transfer ref. TRF20240601">
+      </div>
+      <p style="font-size:0.78rem;color:var(--gray);margin-bottom:12px;">Your payment will show as <strong>Pending</strong> until confirmed by the admin.</p>
+      <div id="payNowError" class="error-msg hidden"></div>
+      <div id="payNowSuccess" class="hidden" style="background:var(--success-light,#d4edda);color:var(--success,#155724);border-radius:6px;padding:10px 14px;font-weight:600;font-size:0.88rem;margin-bottom:12px;"></div>
+      <div class="modal-actions">
+        <button onclick="closePayNowModal()" class="btn btn-outline">Close</button>
+        <button onclick="submitPayNow()" id="payNowSubmitBtn" class="btn btn-primary">Submit Payment</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

@@ -574,3 +574,98 @@ async function dbMoveSitQuestion(id, direction, localExamId) {
   });
   if (!ok) console.error('dbMoveSitQuestion:', data.error);
 }
+
+// ============================================================
+// FEES — STUDENT
+// ============================================================
+
+/** Returns program info, total fee, paid, balance, and payment list for a student. */
+async function dbGetMyFees(matric) {
+  const { ok, data } = await _api(`/api/fees?matric=${encodeURIComponent(matric)}`);
+  if (!ok) { console.error('dbGetMyFees:', data.error); return null; }
+  return data;
+}
+
+/** Student submits a pending payment notification. */
+async function dbSubmitStudentPayment(matric, amount, note) {
+  const { ok, data } = await _api('/api/fees', {
+    method: 'POST',
+    body: JSON.stringify({ matric, amount, note: note || null })
+  });
+  if (!ok) console.error('dbSubmitStudentPayment:', data.error);
+  return { ok, data };
+}
+
+// ============================================================
+// FEES — ADMIN
+// ============================================================
+
+/** Returns all programs, enrollments, and payments. */
+async function dbAdminGetFees() {
+  const { ok, data } = await _apiAdmin('/api/admin/fees');
+  if (!ok) { console.error('dbAdminGetFees:', data.error); return { programs: [], enrollments: [], payments: [] }; }
+  return data;
+}
+
+async function dbAdminAddProgram(name, description, totalFee, bankName, accountName, accountNumber, bankSortCode) {
+  const { ok, data } = await _apiAdmin('/api/admin/fees', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'add_program', name, description, total_fee: totalFee, bank_name: bankName, account_name: accountName, account_number: accountNumber, bank_sort_code: bankSortCode })
+  });
+  if (!ok) console.error('dbAdminAddProgram:', data.error);
+  return { ok, data };
+}
+
+async function dbAdminUpdateProgram(id, name, description, totalFee, bankName, accountName, accountNumber, bankSortCode) {
+  const { ok, data } = await _apiAdmin('/api/admin/fees', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'update_program', id, name, description, total_fee: totalFee, bank_name: bankName, account_name: accountName, account_number: accountNumber, bank_sort_code: bankSortCode })
+  });
+  if (!ok) console.error('dbAdminUpdateProgram:', data.error);
+  return { ok, data };
+}
+
+async function dbAdminDeleteProgram(id) {
+  const { ok, data } = await _apiAdmin('/api/admin/fees', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'delete_program', id })
+  });
+  if (!ok) console.error('dbAdminDeleteProgram:', data.error);
+  return { ok, data };
+}
+
+async function dbAdminEnrollStudent(matric, programId) {
+  const { ok, data } = await _apiAdmin('/api/admin/fees', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'enroll_student', matric, program_id: programId || null })
+  });
+  if (!ok) console.error('dbAdminEnrollStudent:', data.error);
+  return { ok, data };
+}
+
+async function dbAdminAddPayment(matric, amount, paymentDate, note) {
+  const { ok, data } = await _apiAdmin('/api/admin/fees', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'add_payment', matric, amount, payment_date: paymentDate, note: note || null })
+  });
+  if (!ok) console.error('dbAdminAddPayment:', data.error);
+  return { ok, data };
+}
+
+async function dbAdminConfirmPayment(id, status) {
+  const { ok, data } = await _apiAdmin('/api/admin/fees', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'confirm_payment', id, status })
+  });
+  if (!ok) console.error('dbAdminConfirmPayment:', data.error);
+  return { ok, data };
+}
+
+async function dbAdminDeletePayment(id) {
+  const { ok, data } = await _apiAdmin('/api/admin/fees', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'delete_payment', id })
+  });
+  if (!ok) console.error('dbAdminDeletePayment:', data.error);
+  return { ok, data };
+}

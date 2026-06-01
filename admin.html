@@ -264,7 +264,7 @@
           <p>Redeemed Christian Theology College — Envoys Campus</p>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <button onclick="downloadAllCSV()" class="btn btn-success">⬇ Download CSV</button>
+          <button onclick="downloadAllExcel()" class="btn btn-success">⬇ Download Excel Report</button>
           <button onclick="doAdminLogout()" class="btn btn-outline btn-sm">Logout</button>
         </div>
       </div>
@@ -294,6 +294,7 @@
         <button class="admin-tab-btn"        id="tabBtnStudents"  onclick="switchAdminTab('students')">👥 Student Management</button>
         <button class="admin-tab-btn"        id="tabBtnPreview"   onclick="switchAdminTab('preview')">🔍 Exam Preview</button>
         <button class="admin-tab-btn"        id="tabBtnAnalytics" onclick="switchAdminTab('analytics')">📈 Analytics</button>
+        <button class="admin-tab-btn"        id="tabBtnFees"      onclick="switchAdminTab('fees')">💳 Fees</button>
       </div>
 
       <!-- ═══════════ TAB PANEL: RESULTS ═══════════ -->
@@ -321,7 +322,7 @@
           </div>
           <div style="display:flex;align-items:flex-end;gap:8px;">
             <button onclick="clearFilters()" class="btn btn-outline btn-sm">Clear Filters</button>
-            <button onclick="downloadFilteredCSV()" class="btn btn-navy btn-sm">⬇ Export Filtered</button>
+            <button onclick="downloadFilteredExcel()" class="btn btn-navy btn-sm">⬇ Export Filtered Excel</button>
           </div>
         </div>
 
@@ -429,6 +430,51 @@
         </div>
       </div><!-- end #tabAnalyticsPanel -->
 
+      <!-- ═══════════ TAB PANEL: FEES ═══════════ -->
+      <div id="tabFeesPanel" class="hidden" style="padding-top:16px;">
+
+        <!-- Fees Stats -->
+        <div class="stats-grid" id="feesStatsGrid" style="margin-bottom:16px;"></div>
+
+        <!-- Programs -->
+        <div class="mgmt-section">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+            <h3 class="section-title" style="margin:0;">📚 Programs</h3>
+            <button onclick="openAddProgramModal()" class="btn btn-primary btn-sm">+ Add Program</button>
+          </div>
+          <div id="programsTableBody"></div>
+        </div>
+
+        <!-- Student Fee Overview -->
+        <div class="mgmt-section" style="margin-top:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+            <h3 class="section-title" style="margin:0;">📋 Student Fee Overview</h3>
+            <input type="text" id="feeOverviewSearch" placeholder="Search name or matric…" oninput="renderFeeOverview()"
+              style="padding:6px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.82rem;min-width:200px;">
+          </div>
+          <div style="overflow-x:auto;" id="feeOverviewWrap"></div>
+        </div>
+
+        <!-- Payment Records -->
+        <div class="mgmt-section" style="margin-top:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+            <h3 class="section-title" style="margin:0;">💰 Payment Records</h3>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <select id="paymentStatusFilter" onchange="renderPaymentsTable()"
+                style="padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.82rem;">
+                <option value="">All Status</option>
+                <option value="confirmed">&#10003; Confirmed</option>
+                <option value="pending">&#8987; Pending</option>
+                <option value="rejected">&#10007; Rejected</option>
+              </select>
+              <button onclick="openAddPaymentModal()" class="btn btn-sm" style="background:var(--success);color:#fff;">+ Add Payment</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;" id="paymentsTableWrap"></div>
+        </div>
+
+      </div><!-- end #tabFeesPanel -->
+
     </main>
   </div>
 
@@ -461,10 +507,88 @@
       </div>
     </div>
   </div>
+  <!-- ADD / EDIT PROGRAM MODAL -->
+  <div class="modal-overlay hidden" id="programModal">
+    <div class="modal" style="max-width:520px;width:95%;">
+      <h3 id="programModalTitle">📚 Add Program</h3>
+      <input type="hidden" id="programModalId">
+      <div class="form-group">
+        <label>Program Name *</label>
+        <input type="text" id="programModalName" placeholder="e.g. Diploma in Theology">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="programModalDesc" rows="2" placeholder="Optional short description"
+          style="width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Total Fee (&#8358;) *</label>
+        <input type="number" id="programModalFee" min="0" step="100" placeholder="e.g. 150000">
+      </div>
+      <p style="font-size:0.82rem;font-weight:700;color:var(--navy);margin:14px 0 8px;">&#127968; Payment Account Details <span style="font-weight:400;color:var(--gray);">(shown to students on Pay Now)</span></p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Bank Name</label>
+          <input type="text" id="programModalBank" placeholder="e.g. GTBank">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Account Name</label>
+          <input type="text" id="programModalAccName" placeholder="e.g. RCTC Envoys Campus">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Account Number</label>
+          <input type="text" id="programModalAccNum" placeholder="e.g. 0123456789">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Sort Code / Branch</label>
+          <input type="text" id="programModalSort" placeholder="e.g. 058">
+        </div>
+      </div>
+      <div id="programModalError" class="error-msg hidden" style="margin-top:12px;"></div>
+      <div class="modal-actions" style="margin-top:18px;">
+        <button onclick="closeProgramModal()" class="btn btn-outline">Cancel</button>
+        <button onclick="saveProgramModal()" class="btn btn-primary">Save Program</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD PAYMENT MODAL -->
+  <div class="modal-overlay hidden" id="addPaymentModal">
+    <div class="modal" style="max-width:440px;width:95%;">
+      <h3>&#128176; Record Payment</h3>
+      <div class="form-group">
+        <label>Student *</label>
+        <select id="addPaymentMatric"
+          style="width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.9rem;font-family:inherit;">
+          <option value="">&#8212; Select Student &#8212;</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Amount (&#8358;) *</label>
+        <input type="number" id="addPaymentAmount" min="1" step="100" placeholder="e.g. 50000">
+      </div>
+      <div class="form-group">
+        <label>Payment Date</label>
+        <input type="date" id="addPaymentDate">
+      </div>
+      <div class="form-group">
+        <label>Note / Reference</label>
+        <input type="text" id="addPaymentNote" placeholder="e.g. Bank transfer &#8212; ref. TRF20240601">
+      </div>
+      <div id="addPaymentError" class="error-msg hidden"></div>
+      <div class="modal-actions">
+        <button onclick="closeAddPaymentModal()" class="btn btn-outline">Cancel</button>
+        <button onclick="saveAddPayment()" class="btn btn-save-pay btn-sm" style="background:var(--success);color:#fff;padding:9px 20px;">Record Payment</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="js/data.js"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/fees-admin.js"></script>
   <script>
     // ============================================================
     // ADMIN DASHBOARD LOGIC
@@ -696,38 +820,200 @@
       applyFilters();
     }
 
-    // ---- CSV Downloads ----
-    const CSV_HEADERS = ['matric', 'name', 'examCode', 'examTitle', 'score', 'total', 'percentage', 'dateTaken'];
+    // ---- Excel Report Downloads (matching RCTC Academic Report Template) ----
 
-    function prepareCSVRows(rows) {
-      return rows.map(r => ({
-        matric:     r.matric,
-        name:       r.name || '',
-        examCode:   r.examCode,
-        examTitle:  r.examTitle,
-        score:      r.score,
-        total:      r.total,
-        percentage: r.percentage + '%',
-        dateTaken:  `${formatDate(r.dateTaken)} ${formatTime(r.dateTaken)}`
-      }));
+    // Nigerian 5-point grade scale
+    function _gradePoint(pct) {
+      if (pct >= 70) return 5.0;
+      if (pct >= 60) return 4.0;
+      if (pct >= 55) return 3.5;
+      if (pct >= 50) return 3.0;
+      if (pct >= 45) return 2.5;
+      if (pct >= 40) return 2.0;
+      return 0.0;
     }
 
-    function downloadAllCSV() {
+    function _gradeLabel(gpa) {
+      if (gpa >= 4.5) return 'DISTINCTION';
+      if (gpa >= 3.5) return 'CREDIT';
+      if (gpa >= 2.5) return 'MERIT';
+      if (gpa >= 1.5) return 'PASS';
+      return 'FAIL';
+    }
+
+    function buildExcelReport(resultRows) {
+      if (typeof XLSX === 'undefined') {
+        alert('Excel library is still loading. Please wait a moment and try again.');
+        return null;
+      }
+
+      const UNITS      = 2; // credit units per course
+      const numExams   = EXAMS.length;
+      const sumStart   = 3 + numExams * 2;
+      const totalCols  = sumStart + 6;
+      const totalUnits = numExams * UNITS;
+
+      // Build result lookup: matric -> examId -> {score, total}
+      const rMap = {};
+      resultRows.forEach(r => {
+        if (!rMap[r.matric]) rMap[r.matric] = {};
+        rMap[r.matric][r.examId] = { score: r.score, total: r.total };
+      });
+
+      // Unique students from the result set (preserve all registered students)
+      const matricSet = Object.keys(STUDENTS).filter(m =>
+        resultRows.some(r => r.matric === m)
+      );
+
+      // Compute per-student totals
+      const studentData = matricSet.map(matric => {
+        const name = STUDENTS[matric] || matric;
+        let totalScored = 0, totalQP = 0;
+        EXAMS.forEach(exam => {
+          const res = rMap[matric]?.[exam.id];
+          if (res) {
+            const pct = res.total > 0 ? (res.score / res.total) * 100 : 0;
+            totalScored += res.score;
+            totalQP     += _gradePoint(pct) * UNITS;
+          }
+        });
+        const gpa = totalUnits > 0
+          ? Math.round((totalQP / totalUnits) * 100) / 100
+          : 0;
+        return { matric, name, totalScored, totalQP, gpa };
+      });
+
+      // Rank by quality points then raw score
+      const ranked = [...studentData].sort(
+        (a, b) => b.totalQP - a.totalQP || b.totalScored - a.totalScored
+      );
+      const posMap = {};
+      ranked.forEach((s, i) => { posMap[s.matric] = i + 1; });
+
+      // ---- Build worksheet rows (array-of-arrays) ----
+      const rows = [];
+
+      // Row 0 — Institution name
+      const r0 = Array(totalCols).fill('');
+      r0[0] = 'THE REDEEMED CHRISTIAN BIBLE COLLEGE';
+      rows.push(r0);
+
+      // Row 1 — Report title
+      const r1 = Array(totalCols).fill('');
+      r1[0] = 'FINAL ACADEMIC REPORT SHEET.';
+      rows.push(r1);
+
+      // Row 2 — Region / Zone
+      const r2 = Array(totalCols).fill('');
+      r2[0] = 'REGION:';
+      r2[Math.floor(totalCols / 2)] = 'ZONE:';
+      rows.push(r2);
+
+      // Row 3 — blank
+      rows.push(Array(totalCols).fill(''));
+
+      // Row 4 — Exam session
+      const r4 = Array(totalCols).fill('');
+      r4[0] = '2025/2026 FINAL EXAMINATION';
+      rows.push(r4);
+
+      // Row 5 — Course name headers (each merged over SC + TUP cols) + summary headers
+      const r5 = Array(totalCols).fill('');
+      r5[0] = 'S/N';
+      r5[1] = 'CAMPUS NAME';
+      r5[2] = 'NAME';
+      EXAMS.forEach((exam, i) => {
+        r5[3 + i * 2] = `${exam.title.toUpperCase()} (${UNITS} UNITS)`;
+      });
+      r5[sumStart]     = 'OVERALL TOTAL POINTS';
+      r5[sumStart + 1] = 'TOTAL MARK SCORED';
+      r5[sumStart + 2] = 'TOTAL COURSE UNITS OFFERED';
+      r5[sumStart + 3] = 'GPA';
+      r5[sumStart + 4] = 'GRADE';
+      r5[sumStart + 5] = 'POSITION';
+      rows.push(r5);
+
+      // Row 6 — SC / TUP sub-headers
+      const r6 = Array(totalCols).fill('');
+      r6[0] = 'POSTGRADUATE DIP. IN THEOLOGY';
+      EXAMS.forEach((_, i) => {
+        r6[3 + i * 2]     = 'SC';
+        r6[3 + i * 2 + 1] = 'TUP';
+      });
+      rows.push(r6);
+
+      // Student data rows — sorted by rank
+      ranked.forEach((s, idx) => {
+        const row = Array(totalCols).fill('');
+        row[0] = idx + 1;  // S/N
+        row[1] = '';        // Campus (not captured in portal)
+        row[2] = s.name;
+
+        EXAMS.forEach((exam, i) => {
+          const res = rMap[s.matric]?.[exam.id];
+          if (res) {
+            const pct = res.total > 0 ? (res.score / res.total) * 100 : 0;
+            row[3 + i * 2]     = res.score;                   // SC — raw score
+            row[3 + i * 2 + 1] = _gradePoint(pct) * UNITS;   // TUP — quality points
+          } else {
+            row[3 + i * 2]     = 0;
+            row[3 + i * 2 + 1] = 0;
+          }
+        });
+
+        row[sumStart]     = s.totalQP;            // OVERALL TOTAL POINTS
+        row[sumStart + 1] = s.totalScored;        // TOTAL MARK SCORED
+        row[sumStart + 2] = totalUnits;           // TOTAL COURSE UNITS OFFERED
+        row[sumStart + 3] = s.gpa;               // GPA
+        row[sumStart + 4] = _gradeLabel(s.gpa);  // GRADE
+        row[sumStart + 5] = posMap[s.matric];    // POSITION
+        rows.push(row);
+      });
+
+      // ---- Create worksheet ----
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+
+      // ---- Merged cells ----
+      ws['!merges'] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: totalCols - 1 } }, // Institution name
+        { s: { r: 1, c: 0 }, e: { r: 1, c: totalCols - 1 } }, // Report title
+        { s: { r: 4, c: 0 }, e: { r: 4, c: totalCols - 1 } }, // Exam session
+        // Merge course name over SC + TUP columns
+        ...EXAMS.map((_, i) => ({
+          s: { r: 5, c: 3 + i * 2 },
+          e: { r: 5, c: 3 + i * 2 + 1 }
+        })),
+      ];
+
+      // ---- Column widths ----
+      ws['!cols'] = [
+        { wch: 5  },  // S/N
+        { wch: 14 },  // Campus Name
+        { wch: 28 },  // Student Name
+        ...Array.from({ length: numExams * 2 }, () => ({ wch: 5 })),
+        { wch: 22 }, { wch: 18 }, { wch: 26 },
+        { wch: 7  }, { wch: 14 }, { wch: 10 },
+      ];
+
+      return ws;
+    }
+
+    function downloadAllExcel() {
       if (!allResults.length) { alert('No results to export.'); return; }
-      downloadCSV(
-        `RCTC_Envoys_All_Results_${new Date().toISOString().slice(0,10)}.csv`,
-        prepareCSVRows(allResults),
-        CSV_HEADERS
-      );
+      const ws = buildExcelReport(allResults);
+      if (!ws) return;
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'RCTC Envoys Results');
+      XLSX.writeFile(wb, `RCTC_Academic_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
 
-    function downloadFilteredCSV() {
-      if (!filteredResults.length) { alert('No results to export.'); return; }
-      downloadCSV(
-        `RCTC_Envoys_Results_Filtered_${new Date().toISOString().slice(0,10)}.csv`,
-        prepareCSVRows(filteredResults),
-        CSV_HEADERS
-      );
+    function downloadFilteredExcel() {
+      if (!filteredResults.length) { alert('No filtered results to export.'); return; }
+      const ws = buildExcelReport(filteredResults);
+      if (!ws) return;
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'RCTC Filtered Results');
+      XLSX.writeFile(wb, `RCTC_Academic_Report_Filtered_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
 
     // ---- Reset Exam ----
@@ -795,8 +1081,8 @@
     // ============================================================
     // TAB SWITCHING
     // ============================================================
-    const _tabPanels = { results: 'tabResultsPanel', students: 'tabStudentsPanel', preview: 'tabPreviewPanel', analytics: 'tabAnalyticsPanel' };
-    const _tabBtns   = { results: 'tabBtnResults',   students: 'tabBtnStudents',   preview: 'tabBtnPreview',   analytics: 'tabBtnAnalytics' };
+    const _tabPanels = { results: 'tabResultsPanel', students: 'tabStudentsPanel', preview: 'tabPreviewPanel', analytics: 'tabAnalyticsPanel', fees: 'tabFeesPanel' };
+    const _tabBtns   = { results: 'tabBtnResults',   students: 'tabBtnStudents',   preview: 'tabBtnPreview',   analytics: 'tabBtnAnalytics', fees: 'tabBtnFees' };
 
     function switchAdminTab(tab) {
       Object.keys(_tabPanels).forEach(k => {
@@ -806,6 +1092,7 @@
       if (tab === 'students')  renderStudentManagement();
       if (tab === 'preview')   renderExamPreview();
       if (tab === 'analytics') { renderAnalyticsExamTable(); renderStudentCompletion(); }
+      if (tab === 'fees')      loadFeesTab();
     }
 
     // ============================================================
