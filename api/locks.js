@@ -1,39 +1,66 @@
 // ============================================================
-// GET /api/locks?portal=<portal>
+// GET /api/locks?portal=<portal>   — public, no auth (students)
+// PUT /api/locks                   — admin only (also handles
+//   rewrites from /api/admin/locks via vercel.json)
 //
-// Returns a map of { [exam_id]: locked } for the given portal.
 // Valid portals: main | sod | sit | sit-theory | sod-theory
-// Public — no auth required (students need this to know if an
-// exam is open before they attempt it).
 // ============================================================
 'use strict';
 
-const { handleCors }    = require('./_lib/cors');
-const { supabaseAdmin } = require('./_lib/supabase');
+const { handleCors }       = require('./_lib/cors');
+const { supabaseAdmin }    = require('./_lib/supabase');
+const { requireAdminAuth } = require('./_lib/admin-auth');
 
 const VALID_PORTALS = new Set(['main', 'sod', 'sit', 'sit-theory', 'sod-theory']);
 
 module.exports = async function handler(req, res) {
   if (handleCors(req, res)) return;
-  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { portal } = req.query;
-  if (!portal || !VALID_PORTALS.has(portal)) {
-    return res.status(400).json({ error: 'Valid portal query param is required (main | sod | sit | sit-theory | sod-theory)' });
+  // ---- GET: public student endpoint ----
+  if (req.method === 'GET') {
+    const { portal } = req.query;
+    if (!portal || !VALID_PORTALS.has(portal)) {
+      return res.status(400).json({ error: 'Valid portal query param is required (main | sod | sit | sit-theory | sod-theory)' });
+    }
+    const { data, error } = await supabaseAdmin
+      .from('exam_locks')
+      .select('exam_id, locked')
+      .eq('portal', portal);
+    if (error) {
+      console.error('[locks GET] fetch error:', error.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    const locks = {};
+    (data || []).forEach(row => { locks[row.exam_id] = row.locked; });
+    return res.status(200).json({ locks });
   }
 
-  const { data, error } = await supabaseAdmin
-    .from('exam_locks')
-    .select('exam_id, locked')
-    .eq('portal', portal);
+  // ---- PUT: admin lock management (requires auth) ----
+  if (req.method === 'PUT') {
+    const user = await requireAdminAuth(req, res);
+    if (!user) return;
 
-  if (error) {
-    console.error('[locks] fetch error:', error.message);
-    return res.status(500).json({ error: 'Database error' });
+    const { portal, examId, examIds, locked } = req.body || {};
+    if (!portal || !VALID_PORTALS.has(portal)) {
+      return res.status(400).json({ error: 'Valid portal is required' });
+    }
+    let rows;
+    if (Array.isArray(examIds) && examIds.length > 0) {
+      rows = examIds.map(id => ({ exam_id: id, locked: !!locked, portal }));
+    } else if (examId !== undefined) {
+      rows = [{ exam_id: examId, locked: !!locked, portal }];
+    } else {
+      return res.status(400).json({ error: 'examId or examIds is required' });
+    }
+    const { error } = await supabaseAdmin
+      .from('exam_locks')
+      .upsert(rows, { onConflict: 'exam_id,portal' });
+    if (error) {
+      console.error('[locks PUT] error:', error.message);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    return res.status(200).json({ success: true });
   }
 
-  const locks = {};
-  (data || []).forEach(row => { locks[row.exam_id] = row.locked; });
-
-  return res.status(200).json({ locks });
+  return res.status(405).json({ error: 'Method not allowed' });
 };

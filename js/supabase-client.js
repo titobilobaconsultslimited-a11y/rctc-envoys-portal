@@ -509,7 +509,7 @@ async function dbCheckStewardAccess(matricNo) {
 }
 
 async function dbSitWalkInLogin(fullName, matricNo) {
-  const { ok, data } = await _api('/api/auth/sit-walkin', {
+  const { ok, data } = await _api('/api/auth/sit-login', {
     method: 'POST',
     body: JSON.stringify({ fullName, matric: matricNo })
   });
