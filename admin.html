@@ -720,6 +720,9 @@
       applyFilters();
       renderStats();
       renderExamLockSection();
+      // Restore last active tab (survives page refresh)
+      const savedTab = localStorage.getItem('rctc_admin_tab');
+      if (savedTab && _tabPanels[savedTab]) switchAdminTab(savedTab);
     }
 
     function populateExamFilter() {
@@ -1089,6 +1092,7 @@
         document.getElementById(_tabPanels[k]).classList.toggle('hidden', k !== tab);
         document.getElementById(_tabBtns[k]).classList.toggle('active', k === tab);
       });
+      localStorage.setItem('rctc_admin_tab', tab);
       if (tab === 'students')  renderStudentManagement();
       if (tab === 'preview')   renderExamPreview();
       if (tab === 'analytics') { renderAnalyticsExamTable(); renderStudentCompletion(); }
