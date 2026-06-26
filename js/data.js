@@ -1466,6 +1466,7 @@ const SOD_STUDENTS = {
   "SOD202621888": "Kaka Temitope",
   "SOD202691159": "Ogunkola Victoria Titilope",
   "SOD202658803": "Ikutomoni Oluwatobi Deborah",
+  "SOD202696952": "FASHIPE TAIWO FLORENCE",
   // ---- ADMIN TEST ACCOUNT ----
   "SOD202612345": "Admin Test Account",
 };
